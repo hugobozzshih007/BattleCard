@@ -5,7 +5,7 @@
 	<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
 	<ProductVersion>10.0.20506</ProductVersion>
 	<SchemaVersion>2.0</SchemaVersion>
-	<ProjectGuid>{5971C0EA-2080-D12B-D57B-CD854E9FEEAC}</ProjectGuid>
+	<ProjectGuid>{CD53F41D-01D8-4F83-C07E-BE7FA8AA0994}</ProjectGuid>
 	<OutputType>Library</OutputType>
 	<AppDesignerFolder>Properties</AppDesignerFolder>
 	<RootNamespace></RootNamespace>
@@ -51,9 +51,11 @@
      <Compile Include="Assets\scripts\MapNode.cs" />
      <Compile Include="Assets\scripts\NodeType.cs" />
      <Compile Include="Assets\scripts\SixGonRays.cs" />
+     <Compile Include="Assets\scripts\debug.cs" />
      <Compile Include="Assets\scripts\selection.cs" />
      <None Include="Assets\shaders\alpha_map_illum2.shader" />
      <None Include="Assets\shaders\alpha_map_illum.shader" />
+     <None Include="Assets\shaders\alpha_map_Flag.shader" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

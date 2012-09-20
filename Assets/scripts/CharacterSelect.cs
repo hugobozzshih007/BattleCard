@@ -1,8 +1,9 @@
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class CharacterSelect : MonoBehaviour {
-	private IList neighbors;
+	public IList MoveRangeList;
 	private SixGonRays unit;
 	private Material originalMat;
 	public Material rollOver;
@@ -12,6 +13,8 @@ public class CharacterSelect : MonoBehaviour {
 	CharacterProperty thisProperty;
 	// Use this for initialization
 	void Start () {
+		MoveRangeList =  new List<Transform>();
+		MoveRangeList.Clear();
 		thisProperty = this.GetComponent<CharacterProperty>();
 		originalMat = GameObject.Find("unit0").transform.renderer.material;
 	}
@@ -20,19 +23,6 @@ public class CharacterSelect : MonoBehaviour {
 	void Update () {
 	
 	}
-	/*
-	void OnMouseDown(){
-		Transform mapUnit = getMapPosition();
-		if(mapUnit != null){
-			unit = mapUnit.GetComponent<SixGonRays>();
-			neighbors = unit.getNeighbors(thisProperty.moveRange);
-			foreach(Transform sixGon in neighbors){
-				sixGon.renderer.material = closeBy;
-			}
-			mapUnit.renderer.material = rollOver;
-		}
-	}*/
-	
 	// start to select 
 	public Transform getMapPosition(){
 		Transform mapPosition = null; 
@@ -43,6 +33,32 @@ public class CharacterSelect : MonoBehaviour {
 			mapPosition = hit.transform;
 		}
 		return mapPosition;
+	}
+	
+	public void findMoveRange(Transform root, int step, int maxStep){
+		if(root!=null){
+			Identy rootID = root.GetComponent<Identy>();
+			if(!rootID.River && !rootID.Trees){
+				if (maxStep < step){
+					return;
+				}else if(maxStep == step){
+					if(rootID.step == 0 || rootID.step>step){
+						rootID.step = step;
+						if(!MoveRangeList.Contains(root))
+							MoveRangeList.Add(root);
+					}
+				}else{
+					if(rootID.step == 0 || rootID.step>step){
+						rootID.step = step;
+						if(!MoveRangeList.Contains(root))
+							MoveRangeList.Add(root);
+						foreach(Transform child in rootID.neighbor){
+							findMoveRange(child,step+1,maxStep);
+						}
+					}
+				}
+			}
+		}
 	}
 	
 }

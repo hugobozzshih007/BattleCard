@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections;
 
 public class CharacterProperty : MonoBehaviour {
+	public int Player = 1;
 	public int moveRange = 1; 
 	public int atkRange = 1;
 	public int defPower = 1;
@@ -15,6 +16,13 @@ public class CharacterProperty : MonoBehaviour {
 	
 	// Use this for initialization
 	void Start () {
+		if(Player==1){
+			transform.position = GameObject.Find("unit_start_point_A").transform.position;
+			transform.Translate(0.0f,1.5f,0.0f);
+		}else if(Player==2){
+			transform.position = GameObject.Find("unit_start_point_B").transform.position;
+			transform.Translate(0.0f,1.5f,0.0f);
+		}
 	
 	}
 	
