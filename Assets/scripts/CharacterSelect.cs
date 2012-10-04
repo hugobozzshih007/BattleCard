@@ -1,11 +1,13 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using MapUtility;
 
 public class CharacterSelect : MonoBehaviour {
 	public IList MoveRangeList;
+	public IList AttackRangeList;
 	private SixGonRays unit;
-	private Material originalMat;
+	public Material originalMat;
 	public Material rollOver;
 	public Material closeBy;
 	private float castLength = 20.0f;
@@ -14,9 +16,11 @@ public class CharacterSelect : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		MoveRangeList =  new List<Transform>();
+		AttackRangeList = new List<Transform>();
 		MoveRangeList.Clear();
+		AttackRangeList.Clear();
 		thisProperty = this.GetComponent<CharacterProperty>();
-		originalMat = GameObject.Find("unit0").transform.renderer.material;
+		//originalMat = GameObject.Find("unit0").transform.renderer.material;
 	}
 	
 	// Update is called once per frame
@@ -36,9 +40,9 @@ public class CharacterSelect : MonoBehaviour {
 	}
 	
 	public void findMoveRange(Transform root, int step, int maxStep){
-		if(root!=null){
+		if(root!=null && (step>0)){
 			Identy rootID = root.GetComponent<Identy>();
-			if(!rootID.River && !rootID.Trees){
+			if(!rootID.River && !rootID.Trees && !MapUtility.MapHelper.IsMapOccupied(root)){
 				if (maxStep < step){
 					return;
 				}else if(maxStep == step){
@@ -58,7 +62,81 @@ public class CharacterSelect : MonoBehaviour {
 					}
 				}
 			}
+		}else if(root!=null && (step==0)){
+			Identy rootID = root.GetComponent<Identy>();
+			if(!rootID.River && !rootID.Trees){
+				if (maxStep < step){
+					return;
+				}else if(maxStep == step){
+					if(rootID.step == 0 || rootID.step>step){
+						rootID.step = step;
+						if(!MoveRangeList.Contains(root) && !MapUtility.MapHelper.IsMapOccupied(root))
+							MoveRangeList.Add(root);
+					}
+				}else{
+					if(rootID.step == 0 || rootID.step>step){
+						rootID.step = step;
+						if(!MoveRangeList.Contains(root)&& !MapUtility.MapHelper.IsMapOccupied(root))
+							MoveRangeList.Add(root);
+						foreach(Transform child in rootID.neighbor){
+							findMoveRange(child,step+1,maxStep);
+						}
+					}
+				}
+			}
 		}
 	}
 	
+	public void findAttackRange(Transform root, int step, int maxStep){
+		if(root!=null && (step>0)){
+			Identy rootID = root.GetComponent<Identy>();
+			if(!rootID.River && !rootID.Trees){
+				if (maxStep < step){
+					return;
+				}else if(maxStep == step){
+					if(rootID.step == 0 || rootID.step>step){
+						rootID.step = step;
+						if(!AttackRangeList.Contains(root))
+							AttackRangeList.Add(root);
+					}
+				}else{
+					if(rootID.step == 0 || rootID.step>step){
+						rootID.step = step;
+						if(!AttackRangeList.Contains(root))
+							AttackRangeList.Add(root);
+						foreach(Transform child in rootID.neighbor){
+							findAttackRange(child,step+1,maxStep);
+						}
+					}
+				}
+			}
+		}else if(root!=null && (step==0)){
+			Identy rootID = root.GetComponent<Identy>();
+			if(!rootID.River && !rootID.Trees){
+				if (maxStep < step){
+					return;
+				}else if(maxStep == step){
+					if(rootID.step == 0 || rootID.step>step){
+						rootID.step = step;
+						if(!AttackRangeList.Contains(root))
+							AttackRangeList.Add(root);
+					}
+				}else{
+					if(rootID.step == 0 || rootID.step>step){
+						rootID.step = step;
+						if(!AttackRangeList.Contains(root))
+							AttackRangeList.Add(root);
+						foreach(Transform child in rootID.neighbor){
+							findAttackRange(child,step+1,maxStep);
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	void OnApplicationQuit(){
+		MoveRangeList.Clear();
+		AttackRangeList.Clear();
+	}
 }

@@ -46,10 +46,13 @@
   <ItemGroup>
      <Compile Include="Assets\scripts\CharacterProperty.cs" />
      <Compile Include="Assets\scripts\CharacterSelect.cs" />
+     <Compile Include="Assets\scripts\GUItest.cs" />
      <Compile Include="Assets\scripts\Identy.cs" />
      <Compile Include="Assets\scripts\Main.cs" />
+     <Compile Include="Assets\scripts\MapHelper.cs" />
      <Compile Include="Assets\scripts\MapNode.cs" />
      <Compile Include="Assets\scripts\NodeType.cs" />
+     <Compile Include="Assets\scripts\RoundCounter.cs" />
      <Compile Include="Assets\scripts\SixGonRays.cs" />
      <Compile Include="Assets\scripts\debug.cs" />
      <Compile Include="Assets\scripts\selection.cs" />
