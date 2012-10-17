@@ -12,6 +12,7 @@ public class Identy : MonoBehaviour {
 	public bool Flag;
 	public bool StartPoint;
 	public Transform[] neighbor;
+	public Material originalMat; 
 	public int step = 0;
 	public IDictionary neighbors;
 	private bool test = true;

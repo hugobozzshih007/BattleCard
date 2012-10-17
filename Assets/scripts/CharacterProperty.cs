@@ -10,6 +10,7 @@ public class CharacterProperty : MonoBehaviour {
 	public int moveRange = 1; 
 	public int atkRange = 1;
 	public int defPower = 1;
+	public int ModifiedDefPow;
 	public int Hp;
 	public int atkPower = 1; 
 	public int Damage;
@@ -24,6 +25,7 @@ public class CharacterProperty : MonoBehaviour {
 	public bool Moved = false;
 	public bool Attacked = false;
 	public bool Activated = false;
+	public bool Tower = false;
 	bool playerDead = false;
 	public string activeAbility = "";
 	public string passiveAbility = "";
@@ -31,6 +33,8 @@ public class CharacterProperty : MonoBehaviour {
 	int guiSegY = 20;
 	int guiSeg = 10;
 	public Transform[] soldiers;
+	public int CriticalhitChance = 18;
+	
 	
 	//bool guiShow;
 	//bool summonList;
@@ -39,29 +43,48 @@ public class CharacterProperty : MonoBehaviour {
 	
 	// Use this for initialization
 	void Start () {
-		Moved = false;
+		if(Player==1){
+			Moved = false;
+			Attacked = false;
+			Activated = false;
+		}else{
+			Moved = true;
+			Attacked = true;
+			Activated = true;
+		}
 		death = true;
 		Ready = false;
 		Hp = defPower;
+		ModifiedDefPow = defPower;
 		Damage = atkPower;
-		if(Summoner){
-			Ready = true;
-			death = false;
-		}
-		Attacked = false;
-		Activated = false;
+		
 		if(Player>1)
 			WaitRounds = StandByRounds-1;
 		else
 			WaitRounds = StandByRounds;
-		//guiShow = false; 
-		//summonList = false;
-		if(Player==1){
-			transform.position = GameObject.Find("unit_start_point_A").transform.position;
-			transform.Translate(0.0f,1.5f,0.0f);
-		}else if(Player==2){
-			transform.position = GameObject.Find("unit_start_point_B").transform.position;
-			transform.Translate(0.0f,1.5f,0.0f);
+		
+		if(Summoner){
+			Ready = true;
+			death = false;
+			WaitRounds = 0;
+		}
+		
+		if(!Tower){
+			if(Player==1){
+				transform.position = GameObject.Find("unit_start_point_A").transform.position;
+				transform.Translate(0.0f,1.5f,0.0f);
+			}else if(Player==2){
+				transform.position = GameObject.Find("unit_start_point_B").transform.position;
+				transform.Translate(0.0f,1.5f,0.0f);
+			}
+		}else{
+			if(Player==1){
+				transform.position = GameObject.Find("red_tower").transform.position;
+				transform.Translate(0.0f,4.0f,0.0f);
+			}else if(Player==2){
+				transform.position = GameObject.Find("yellow_tower").transform.position;
+				transform.Translate(0.0f,4.0f,0.0f);
+			}
 		}
 	}
 	
@@ -78,26 +101,26 @@ public class CharacterProperty : MonoBehaviour {
 		}else{
 			TurnFinished = false;
 		}
+		if(TurnFinished && !Tower){
+			if(Player==1){
+				transform.renderer.material.SetColor("_Color",new Color(1.0f,155.0f/255.0f,155.0f/255.0f));
+			}else if(Player==2){
+				transform.renderer.material.SetColor("_Color",new Color(1.0f,245.0f/255.0f,90.0f/255.0f));
+			}
+		}else if(!TurnFinished && !Tower){
+			transform.renderer.material.SetColor("_Color",new Color(1.0f,1.0f,1.0f));
+		}
 		
 		if(WaitRounds==0){
 			Ready = true;
 		}else{
 			Ready = false;
 		}
-		
-		if(Hp<=0){
-			if(!Summoner){
-				death = true;
-				WaitRounds = StandByRounds;
-			}else{
-				death = true;
-				playerDead = true;
-			}
-		}
 	}
 	
 	public IList GetAttackPosition(){
 		IList targetLocations = new List<Transform>();
+		transform.GetComponent<CharacterSelect>().AttackRangeList.Clear();
 		Transform rootPos = transform.GetComponent<CharacterSelect>().getMapPosition();
 		transform.GetComponent<CharacterSelect>().findAttackRange(rootPos,0,atkRange);
 		IList attackableMaps = transform.GetComponent<CharacterSelect>().AttackRangeList;
@@ -105,11 +128,9 @@ public class CharacterProperty : MonoBehaviour {
 		if(attackableMaps.Contains(localMap)){
 			attackableMaps.Remove(localMap);
 		}
-		print("attackableMaps: "+attackableMaps.Count);
 		foreach(Transform map in attackableMaps){
 			if(MapHelper.IsMapOccupied(map)){
 				Transform occupiedObj = MapHelper.GetMapOccupiedObj(map);
-				print(occupiedObj);
 				if(occupiedObj!=null){
 					if(occupiedObj.GetComponent<CharacterProperty>().Player!=transform.GetComponent<CharacterProperty>().Player){
 						targetLocations.Add(map);
@@ -120,7 +141,6 @@ public class CharacterProperty : MonoBehaviour {
 		foreach(Transform s in transform.GetComponent<CharacterSelect>().AttackRangeList){
 			s.GetComponent<Identy>().step = 0;
 		}
-		
 		transform.GetComponent<CharacterSelect>().AttackRangeList.Clear();
 		return targetLocations;
 	}
@@ -139,12 +159,33 @@ public class CharacterProperty : MonoBehaviour {
 		return maps;
 	}
 	
+	public bool criticalHit(){
+		bool hit = false;
+		int realNum = Random.Range(1,100);
+		if(realNum<=CriticalhitChance){
+			hit = true;
+		}else{
+			hit = false;
+		}
+		return hit;
+	}
+	
 	void OnGUI(){
 		GUI.skin.box.fontStyle = FontStyle.BoldAndItalic;
-		GUI.skin.box.fontSize = 14;
+		GUI.skin.box.fontSize = 12;
 		if(!death){
-			GUI.Box(new Rect(screenPos.x-80,screenPos.y+40,150,30), NameString+" (HP:"+Hp+")");
+			GUI.Box(new Rect(screenPos.x-80,screenPos.y+40,150,30), NameString+" "+moveRange+"/"+atkRange+"/"+Damage+"/"+Hp);
+		}else if(Summoner && death){
+			Vector3 mapScreenPos = new Vector3(1.0f,1.0f);
+			if(Player==1)
+				mapScreenPos = Camera.main.WorldToScreenPoint(GameObject.Find("unit_start_point_A").transform.position);
+			else if(Player==2)
+				mapScreenPos = Camera.main.WorldToScreenPoint(GameObject.Find("unit_start_point_B").transform.position);
+			mapScreenPos.y = Screen.height - mapScreenPos.y;
+			
+			GUI.Box(new Rect(mapScreenPos.x-80,mapScreenPos.y+40,150,30), "Revive in: "+WaitRounds+"turns");
 		}
+		
 	}
 	
 	//summoning soldiers 

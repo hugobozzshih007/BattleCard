@@ -27,20 +27,29 @@ public class selection : MonoBehaviour {
 	private float viewScreenOldMouseX;
 	private float viewScreenOldMouseY;
 	private float viewScreenZoomHeight = 50.0f;
-	private float viewScreenPanSpeed = 200.0f;
+	private float viewScreenPanSpeed = 2000.0f;
+	private const float viewOffsetZ = 30.0f;
+	private Vector3 oldCamPosition;
+	private Vector3 newCamPosition;
 	private Transform currentGF;
 	private Transform attackTarget;
 	bool guiShow = false;
 	bool summonList = false;
 	bool summoner = false;
+	bool camMoveMode = false;
 	int guiSegX = 30;
 	int guiSegY = 20;
 	int guiSeg = 10;
+	int camStep = 0;
 	Vector3 screenPos;
+	Transform player;
+	bool tower;
+	RoundCounter players;
 	
 	void Start(){
-		sel = GameObject.Find("unit").transform;
+		sel = GameObject.Find("unit_start_point_A").transform;
 		selOld = sel;
+		players = Camera.mainCamera.GetComponent<RoundCounter>();
 		moveMode = false;
 		summonMode = false;
 		selectMode = false;
@@ -49,10 +58,23 @@ public class selection : MonoBehaviour {
 	
 	void panning(){
 		if(Input.GetMouseButtonDown(1)) {
-  			//print ("Panning...");
+			guiShow = false;
+			selectMode = false;
+			moveMode = false;
+			attackMode = false;
+			summonMode = false;
+			summonList = false;
     		viewScreenPanning = true;
     		viewScreenOldMouseX = Input.mousePosition.x;
     		viewScreenOldMouseY = Input.mousePosition.y;
+			if(neighbors!=null){
+				foreach(Transform map in neighbors){
+					if(map!=null)
+						map.renderer.material = originalMat;
+				}
+			}
+			updateTerritoryMat();
+			//neighbors.Clear();
 		}
 		if(viewScreenPanning==true) {
 		    if(Input.GetMouseButtonUp(1)) {
@@ -65,6 +87,25 @@ public class selection : MonoBehaviour {
 		}
 	}
 	
+	void alignCamera(Transform focus){
+		Vector3 newCamPosition = new Vector3(focus.position.x, viewScreenZoomHeight, focus.position.z-viewOffsetZ);
+		transform.position = newCamPosition;
+		camMoveMode = true;
+	}
+	
+	void translateMainCam(int segment){
+		float segX = (oldCamPosition.x-newCamPosition.x)/segment;
+		float segZ = (oldCamPosition.z-newCamPosition.z)/segment;
+		transform.position = new Vector3(transform.position.x-segX,viewScreenZoomHeight,transform.position.z-segZ);
+		camStep+=1;
+		if(camStep==segment){
+			camMoveMode = false;
+			camStep = 0;
+			screenPos = Camera.main.WorldToScreenPoint(chess.position);
+			screenPos.y = Screen.height - screenPos.y;
+		}
+	}
+	
 	//select map or character
 	void selecting(){
 		if(Input.GetMouseButtonDown(0) && !guiShow && !selectMode){
@@ -72,10 +113,22 @@ public class selection : MonoBehaviour {
         	Debug.DrawRay(ray.origin, ray.direction * castLength, Color.yellow);
 			RaycastHit hit;
 			if(Physics.Raycast(ray, out hit, castLength)){
-				if(!hit.transform.GetComponent<Identy>().MapUnit){
-					screenPos = Camera.main.WorldToScreenPoint(hit.transform.position);
-					screenPos.y = Screen.height - screenPos.y;
+				if(!hit.transform.GetComponent<Identy>().MapUnit && !hit.transform.GetComponent<CharacterProperty>().Tower){
 					chess = hit.transform;
+					newCamPosition = new Vector3(chess.position.x, viewScreenZoomHeight, chess.position.z-viewOffsetZ);
+					oldCamPosition = transform.position;
+					Vector3 diffCamPos = newCamPosition-oldCamPosition;
+					if(Math.Abs(diffCamPos.x)>25 || Math.Abs(diffCamPos.z)>20){
+						camMoveMode = true;
+					}else{
+						screenPos = Camera.main.WorldToScreenPoint(chess.position);
+						screenPos.y = Screen.height - screenPos.y;
+					}
+					if(chess.GetComponent<CharacterProperty>().Player>1){
+							player = players.playerB;
+						}else{
+							player = players.playerA;
+					}
 					CharacterProperty chessProperty = chess.GetComponent<CharacterProperty>();
 					if(chessProperty.TurnFinished){
 						guiShow = false;
@@ -94,10 +147,12 @@ public class selection : MonoBehaviour {
 				if(hit.transform.GetComponent<Identy>().MapUnit){
 					sel = hit.transform;
 					if(neighbors.Contains(sel)){
+						
 						if(sel.GetComponent<Identy>().Flag)
 							sel.renderer.material = rollOverFlag;
 						else
 							sel.renderer.material = rollOver;
+						
 						if(selOld!=sel){
 							if(selOld.GetComponent<Identy>().Flag)
 								selOld.renderer.material = closeByFlag;
@@ -107,7 +162,8 @@ public class selection : MonoBehaviour {
 						selOld = sel;
 						if(Input.GetMouseButtonDown(0)){
 							if(moveMode){
-								chess.GetComponent<CharacterSelect>().getMapPosition().renderer.material = originalMat;
+								Transform localUnit = chess.GetComponent<CharacterSelect>().getMapPosition();
+								localUnit.renderer.material = localUnit.GetComponent<Identy>().originalMat;
 								chess.position = sel.position;
 								chess.Translate(new Vector3(0.0f,1.5f,0.0f));
 								foreach(Transform sixGons in neighbors){
@@ -116,11 +172,15 @@ public class selection : MonoBehaviour {
 									}else{
 										sixGons.renderer.material = originalMat;}
 								}
+								/*
 								foreach(Transform s in chess.GetComponent<CharacterSelect>().MoveRangeList){
 									s.GetComponent<Identy>().step = 0;
-								}
+								}*/
 								chess.GetComponent<CharacterProperty>().Moved = true;
 								chess.GetComponent<CharacterSelect>().MoveRangeList.Clear();
+								updateTerritoryMat();
+								updateCharacterPowers(chess);
+								updateMapSteps();
 								moveMode = false;
 							} 
 							if(summonMode){
@@ -130,6 +190,7 @@ public class selection : MonoBehaviour {
 								currentGF.renderer.enabled = true;
 								currentGF.GetComponent<CharacterProperty>().Hp = currentGF.GetComponent<CharacterProperty>().defPower;
 								currentGF.GetComponent<CharacterProperty>().death = false;
+								player.GetComponent<ManaCounter>().Mana-=2;
 								foreach(Transform sixGons in neighbors){
 									if(sixGons.GetComponent<Identy>().Flag){
 										sixGons.renderer.material = FlagMat;
@@ -138,6 +199,8 @@ public class selection : MonoBehaviour {
 									}
 								}
 								summonMode = false;
+								updateCharacterPowers(currentGF);
+								updateTerritoryMat();
 							}
 							if(attackMode){
 								chess.GetComponent<CharacterSelect>().getMapPosition().renderer.material = originalMat;
@@ -149,7 +212,15 @@ public class selection : MonoBehaviour {
 										sixGons.renderer.material = originalMat;
 									}
 								}
+								/*
+								foreach(Transform s in chess.GetComponent<CharacterSelect>().AttackRangeList){
+									s.GetComponent<Identy>().step = 0;
+								}*/
+								chess.GetComponent<CharacterSelect>().AttackRangeList.Clear();
+								chess.GetComponent<CharacterProperty>().Attacked = true;
 								attackMode = false;
+								updateMapSteps();
+								updateTerritoryMat();
 							}
 							neighbors.Clear();
 							selectMode = false;
@@ -160,12 +231,64 @@ public class selection : MonoBehaviour {
 		}
 	}
 	
+	void updateTerritoryMat(){
+		foreach(Transform territory in players.GetTerritory(1)){
+			territory.GetComponent<Identy>().originalMat = players.TerritoryA;
+			territory.renderer.material = territory.GetComponent<Identy>().originalMat;
+		}
+		foreach(Transform territory in players.GetTerritory(2)){
+			territory.GetComponent<Identy>().originalMat = players.TerritoryB;
+			territory.renderer.material = territory.GetComponent<Identy>().originalMat;
+		}
+	}
+	
+	void updateMapSteps(){
+		Transform allMap = GameObject.Find("Maps").transform;
+		int mapUnitNum = allMap.GetChildCount();
+		for(int i=0;i<mapUnitNum;i++){
+			allMap.GetChild(i).GetComponent<Identy>().step = 0;
+			//print(allMap.GetChild(i).name + ".step=" + allMap.GetChild(i).GetComponent<Identy>().step);
+		}
+	}
+	
+	void updateCharacterPowers(Transform character){
+		CharacterProperty property = character.GetComponent<CharacterProperty>();
+		int addedAtk = players.GetIntensifiedPower(character,"atk");
+		int addedDef = players.GetIntensifiedPower(character,"def");
+		int oldDefPower = property.ModifiedDefPow;
+		property.ModifiedDefPow = property.defPower+addedDef;
+		property.Damage = property.atkPower+addedAtk;
+		if(property.Hp == oldDefPower)
+			property.Hp = property.ModifiedDefPow;
+	}
+	
+	void updateAllCharactersPowers(){
+		foreach(Transform character in players.PlayerAChesses){
+			CharacterProperty property = character.GetComponent<CharacterProperty>();
+			int addedAtk = players.GetIntensifiedPower(character,"atk");
+			int addedDef = players.GetIntensifiedPower(character,"def");
+			int oldDefPower = property.ModifiedDefPow;
+			property.ModifiedDefPow = property.defPower+addedDef;
+			property.Damage = property.atkPower+addedAtk;
+			if(property.Hp == oldDefPower)
+				property.Hp = property.ModifiedDefPow;
+		}
+		foreach(Transform character in players.PlayerBChesses){
+			CharacterProperty property = character.GetComponent<CharacterProperty>();
+			int addedAtk = players.GetIntensifiedPower(character,"atk");
+			int addedDef = players.GetIntensifiedPower(character,"def");
+			int oldDefPower = property.ModifiedDefPow;
+			property.ModifiedDefPow = property.defPower+addedDef;
+			property.Damage = property.atkPower+addedAtk;
+			if(property.Hp == oldDefPower)
+				property.Hp = property.ModifiedDefPow;
+		}
+	}
+	
 	void moveCommand(Transform chess){
 		if(chess!=null){
 			CharacterSelect character = chess.GetComponent<CharacterSelect>();
 			Transform currentPos = character.getMapPosition();
-			//Transform mainCh = MapHelper.GetMapOccupiedObj(currentPos);
-			//print(mainCh.name);
 			if(currentPos!=null){
 				character.findMoveRange(currentPos,0,chess.GetComponent<CharacterProperty>().moveRange);
 				neighbors = character.MoveRangeList;
@@ -193,7 +316,6 @@ public class selection : MonoBehaviour {
 			Transform currentPos = character.getMapPosition();
 			if(currentPos!=null){
 				neighbors = chess.GetComponent<CharacterProperty>().GetAttackPosition();
-				print(neighbors.Count);
 				if(neighbors.Count>0){
 					foreach(Transform sixGon in neighbors){
 						if(sixGon.GetComponent<Identy>().Flag){
@@ -212,7 +334,32 @@ public class selection : MonoBehaviour {
 	
 	void attack(Transform attacker, Transform targetLocation){
 		Transform target = MapHelper.GetMapOccupiedObj(targetLocation);
-		target.GetComponent<CharacterProperty>().Hp -= attacker.GetComponent<CharacterProperty>().Damage;
+		Transform attackerLocation = attacker.GetComponent<CharacterSelect>().getMapPosition();
+		if(attacker.GetComponent<CharacterProperty>().criticalHit()){
+			target.GetComponent<CharacterProperty>().Hp -= attacker.GetComponent<CharacterProperty>().Damage*2;
+			print("Critical Hit!");
+		}else{
+			target.GetComponent<CharacterProperty>().Hp -= attacker.GetComponent<CharacterProperty>().Damage;
+		}
+		IList targetAtkableMaps = target.GetComponent<CharacterProperty>().GetAttackPosition();
+		if(targetAtkableMaps.Contains(attackerLocation))
+			attacker.GetComponent<CharacterProperty>().Hp -= target.GetComponent<CharacterProperty>().Damage;
+		
+		if(attacker.GetComponent<CharacterProperty>().Hp<=0){
+			attacker.GetComponent<CharacterProperty>().death = true;
+			attacker.GetComponent<CharacterProperty>().Ready = false;
+			attacker.GetComponent<CharacterProperty>().WaitRounds = attacker.GetComponent<CharacterProperty>().StandByRounds;
+		}
+		
+		if(target.GetComponent<CharacterProperty>().Hp<=0){
+			if(!target.GetComponent<CharacterProperty>().Tower){
+				target.GetComponent<CharacterProperty>().death = true;
+				target.GetComponent<CharacterProperty>().Ready = false;
+				target.GetComponent<CharacterProperty>().WaitRounds = target.GetComponent<CharacterProperty>().StandByRounds;
+			}else{
+				target.GetComponent<CharacterProperty>().death = true;
+			}
+		}
 	}
 	
 	void summonCommand(Transform chess, Transform gf){
@@ -220,7 +367,10 @@ public class selection : MonoBehaviour {
 			CharacterSelect character = chess.GetComponent<CharacterSelect>();
 			Transform currentPos = character.getMapPosition();
 			if(currentPos!=null){
-				neighbors = chess.GetComponent<CharacterProperty>().GetSummonPosition();
+				//neighbors = chess.GetComponent<CharacterProperty>().GetSummonPosition();
+				foreach(Transform map in players.GetTerritory(chess.GetComponent<CharacterProperty>().Player)){
+					neighbors.Add(map);
+				}
 				currentGF = gf;
 				if(neighbors.Count>0){
 					foreach(Transform sixGon in neighbors){
@@ -239,10 +389,13 @@ public class selection : MonoBehaviour {
 	}
 	
 	void OnGUI(){
+		if(player==players.playerA)
+			GUI.backgroundColor = Color.red;
+		else
+			GUI.backgroundColor = Color.yellow;
 		if(guiShow){
-			
-			GUI.Box(new Rect(screenPos.x+guiSegX,screenPos.y+guiSegY,100,130), "Menu");
-			if(summoner && !chess.GetComponent<CharacterProperty>().Activated){
+			GUI.Box(new Rect(screenPos.x+guiSegX,screenPos.y+guiSegY,100,150), "Mana:"+player.GetComponent<ManaCounter>().Mana);
+			if(summoner && player.GetComponent<ManaCounter>().Mana>1){
 				if(GUI.Button(new Rect(screenPos.x+guiSegX+guiSeg, screenPos.y+guiSegY+guiSeg*2,80,20),"Summon")){
 					summonList = true;
 				}
@@ -254,21 +407,46 @@ public class selection : MonoBehaviour {
 					summonList = false;
 				}
 			}
-			if(!chess.GetComponent<CharacterProperty>().Attacked){
+			if(!chess.GetComponent<CharacterProperty>().Attacked && chess.GetComponent<CharacterProperty>().GetAttackPosition().Count>0){
 				if(GUI.Button(new Rect(screenPos.x+guiSegX+guiSeg, screenPos.y+guiSegY+guiSeg*6,80,20),"Attack")){
 					attackCommand(chess);
 					guiShow = false;
 					summonList = false;
-					chess.GetComponent<CharacterProperty>().Attacked = true;
 				}
 			}
 			if(!chess.GetComponent<CharacterProperty>().Attacked){
 				if(GUI.Button(new Rect(screenPos.x+guiSegX+guiSeg, screenPos.y+guiSegY+guiSeg*8,80,20),"Defence")){
 					guiShow = false;
 					summonList = false;
-					chess.GetComponent<CharacterProperty>().Hp+=1;
+					//chess.GetComponent<CharacterProperty>().Hp+=1;
 					chess.GetComponent<CharacterProperty>().Attacked = true;
 					chess.GetComponent<CharacterProperty>().Moved = true;
+					Transform locationMap = chess.GetComponent<CharacterSelect>().getMapPosition();
+					int playerSide = chess.GetComponent<CharacterProperty>().Player;
+					int theOtherSide = 1;
+					if(playerSide==1)
+						theOtherSide =2;
+					else if(playerSide==2)
+						theOtherSide =1;
+					
+					if(chess.GetComponent<CharacterProperty>().Summoner){
+						foreach(Transform territory in locationMap.GetComponent<Identy>().neighbor){
+							if(!players.IsInsideTerritory(territory,playerSide)&& territory!=null){
+								players.AddTerritory(territory,playerSide);
+								if(players.IsInsideTerritory(territory,theOtherSide)){
+									players.RemoveTerritory(territory,theOtherSide);
+								}
+							}
+						}
+					}
+					if(!players.IsInsideTerritory(locationMap,playerSide)&& locationMap!=null){
+						players.AddTerritory(locationMap,playerSide);
+						if(players.IsInsideTerritory(locationMap,theOtherSide)){
+							players.RemoveTerritory(locationMap,theOtherSide);
+						}
+					}
+					updateAllCharactersPowers();
+					updateTerritoryMat();
 				}
 			}
 			if(!chess.GetComponent<CharacterProperty>().Activated){
@@ -276,6 +454,16 @@ public class selection : MonoBehaviour {
 					guiShow = false;
 					summonList = false;
 					chess.GetComponent<CharacterProperty>().Activated = true;
+				}
+			}
+			if(!chess.GetComponent<CharacterProperty>().TurnFinished){
+				if(GUI.Button(new Rect(screenPos.x+guiSegX+guiSeg, screenPos.y+guiSegY+guiSeg*12,80,20),"End Turn")){
+					guiShow = false;
+					summonList = false;
+					chess.GetComponent<CharacterProperty>().Activated = true;
+					chess.GetComponent<CharacterProperty>().Attacked = true;
+					chess.GetComponent<CharacterProperty>().Moved = true;
+					chess.GetComponent<CharacterProperty>().TurnFinished = true;
 				}
 			}
 			if(summonList){
@@ -293,21 +481,28 @@ public class selection : MonoBehaviour {
 						if(GUI.Button(new Rect(screenPos.x+guiSegX*4+10, screenPos.y+guiSegY+20*seg,150,20),gf.GetComponent<CharacterProperty>().NameString + " ("+gf.GetComponent<CharacterProperty>().WaitRounds+") ")){
 							if(gf.GetComponent<CharacterProperty>().Ready){
 								summonCommand(chess,gf); 
-								gf.GetComponent<CharacterProperty>().death = false;
+								//gf.GetComponent<CharacterProperty>().death = false;
 								guiShow = false;
-								chess.GetComponent<CharacterProperty>().Activated = true;
+								//chess.GetComponent<CharacterProperty>().Activated = true;
 							}
 							summonList = false;
 						}	
 					}
 				}
 			}
-		}
+		}//else if(!chess.GetComponent<CharacterProperty>().Ready){
+			//waiting command here 
+		//}
 	}
 	
     void Update() {
 		panning();
 		selecting();
+		if(camMoveMode)
+			translateMainCam(80);
+		if (Input.GetKeyDown(KeyCode.Return)) {  
+    		Application.LoadLevel(1);  
+  		}  
     }
 	
 }

@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+	<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+	<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+	<ProductVersion>10.0.20506</ProductVersion>
+	<SchemaVersion>2.0</SchemaVersion>
+	<ProjectGuid>{05EC0D92-2EB3-DEC2-7F35-7027B67D37B7}</ProjectGuid>
+	<OutputType>Library</OutputType>
+	<AppDesignerFolder>Properties</AppDesignerFolder>
+	<RootNamespace></RootNamespace>
+	<AssemblyName>Assembly-CSharp-Editor</AssemblyName>
+	<TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+	<FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+	<DebugSymbols>true</DebugSymbols>
+	<DebugType>full</DebugType>
+	<Optimize>false</Optimize>
+	<OutputPath>Temp\bin\Debug\</OutputPath>
+	<DefineConstants>DEBUG;TRACE;UNITY_3_5_5;UNITY_3_5;UNITY_EDITOR;ENABLE_PROFILER;UNITY_STANDALONE_WIN;ENABLE_GENERICS;ENABLE_DUCK_TYPING;ENABLE_TERRAIN;ENABLE_MOVIES;ENABLE_WEBCAM;ENABLE_MICROPHONE;ENABLE_NETWORK;ENABLE_CLOTH;ENABLE_WWW;ENABLE_SUBSTANCE</DefineConstants>
+	<ErrorReport>prompt</ErrorReport>
+	<WarningLevel>4</WarningLevel>
+	<NoWarn>0169</NoWarn>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+	<DebugType>pdbonly</DebugType>
+	<Optimize>true</Optimize>
+	<OutputPath>Temp\bin\Release\</OutputPath>
+	<DefineConstants>TRACE</DefineConstants>
+	<ErrorReport>prompt</ErrorReport>
+	<WarningLevel>4</WarningLevel>
+	<NoWarn>0169</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+	<Reference Include="System" />
+    <Reference Include="System.XML" />
+	<Reference Include="System.Core" />
+	<Reference Include="UnityEngine">
+	  <HintPath>C:/Program Files (x86)/Unity/Editor/Data/Managed/UnityEngine.dll</HintPath>
+	</Reference>
+	<Reference Include="UnityEditor">
+	  <HintPath>C:/Program Files (x86)/Unity/Editor/Data/Managed/UnityEditor.dll</HintPath>
+	</Reference>
+  </ItemGroup>
+  <ItemGroup>
+     <Compile Include="Assets\Behave\Editor\BehaveAbout.cs" />
+     <Compile Include="Assets\Behave\Editor\BehaveAssetEditor.cs" />
+     <Compile Include="Assets\Behave\Editor\BehaveBrowser.cs" />
+     <Compile Include="Assets\Behave\Editor\BehaveComponentEditor.cs" />
+     <Compile Include="Assets\Behave\Editor\BehaveDebugWindow.cs" />
+     <Compile Include="Assets\Behave\Editor\BehaveEditor.cs" />
+     <Compile Include="Assets\Behave\Editor\BehaveMenu.cs" />
+     <Compile Include="Assets\Behave\Editor\BehaveTreeEditor.cs" />
+     <Compile Include="Assets\NGUI\Scripts\Editor\ComponentSelector.cs" />
+     <Compile Include="Assets\NGUI\Scripts\Editor\NGUIMenu.cs" />
+     <Compile Include="Assets\NGUI\Scripts\Editor\NGUISelectionTools.cs" />
+     <Compile Include="Assets\NGUI\Scripts\Editor\NGUITransformInspector.cs" />
+     <Compile Include="Assets\NGUI\Scripts\Editor\UIAtlasInspector.cs" />
+     <Compile Include="Assets\NGUI\Scripts\Editor\UIAtlasMaker.cs" />
+     <Compile Include="Assets\NGUI\Scripts\Editor\UICameraTool.cs" />
+     <Compile Include="Assets\NGUI\Scripts\Editor\UICreateNewUIWizard.cs" />
+     <Compile Include="Assets\NGUI\Scripts\Editor\UICreateWidgetWizard.cs" />
+     <Compile Include="Assets\NGUI\Scripts\Editor\UIDrawCallInspector.cs" />
+     <Compile Include="Assets\NGUI\Scripts\Editor\UIFilledSpriteInspector.cs" />
+     <Compile Include="Assets\NGUI\Scripts\Editor\UIFontInspector.cs" />
+     <Compile Include="Assets\NGUI\Scripts\Editor\UIFontMaker.cs" />
+     <Compile Include="Assets\NGUI\Scripts\Editor\UIImageButtonInspector.cs" />
+     <Compile Include="Assets\NGUI\Scripts\Editor\UILabelInspector.cs" />
+     <Compile Include="Assets\NGUI\Scripts\Editor\UIPanelInspector.cs" />
+     <Compile Include="Assets\NGUI\Scripts\Editor\UIPanelTool.cs" />
+     <Compile Include="Assets\NGUI\Scripts\Editor\UIPopupListInspector.cs" />
+     <Compile Include="Assets\NGUI\Scripts\Editor\UIScrollBarInspector.cs" />
+     <Compile Include="Assets\NGUI\Scripts\Editor\UISettings.cs" />
+     <Compile Include="Assets\NGUI\Scripts\Editor\UISlicedSpriteInspector.cs" />
+     <Compile Include="Assets\NGUI\Scripts\Editor\UISliderInspector.cs" />
+     <Compile Include="Assets\NGUI\Scripts\Editor\UISpriteAnimationInspector.cs" />
+     <Compile Include="Assets\NGUI\Scripts\Editor\UISpriteInspector.cs" />
+     <Compile Include="Assets\NGUI\Scripts\Editor\UITextureInspector.cs" />
+     <Compile Include="Assets\NGUI\Scripts\Editor\UITiledSpriteInspector.cs" />
+     <Compile Include="Assets\NGUI\Scripts\Editor\UIWidgetInspector.cs" />
+     <None Include="Assets\NGUI\Resources\Shaders\Depth.shader" />
+     <None Include="Assets\Behave\Changelog.txt" />
+     <None Include="Assets\NGUI\Examples\Atlases\Wooden\Arimo20.txt" />
+     <None Include="Assets\NGUI\Examples\Atlases\Wooden\Arimo14.txt" />
+     <None Include="Assets\NGUI\Resources\Shaders\Unlit - Masked Colored.shader" />
+     <None Include="Assets\NGUI\Examples\Atlases\Wooden\Arimo18.txt" />
+     <None Include="Assets\shaders\alpha_map_illum2.shader" />
+     <None Include="Assets\NGUI\Examples\Atlases\SciFi\SciFi Font - Header.txt" />
+     <None Include="Assets\NGUI\Resources\Shaders\Unlit - Transparent Colored (AlphaClip).shader" />
+     <None Include="Assets\NGUI\Examples\Atlases\Fantasy\Fantasy Font - Normal.txt" />
+     <None Include="Assets\NGUI\Examples\Atlases\Refractive\Refractive Font - Normal.txt" />
+     <None Include="Assets\Behave\Readme.txt" />
+     <None Include="Assets\NGUI\ReadMe.txt" />
+     <None Include="Assets\NGUI\Resources\Shaders\Unlit - Transparent Colored.shader" />
+     <None Include="Assets\NGUI\Resources\Shaders\Unlit - Transparent Colored (HardClip).shader" />
+     <None Include="Assets\NGUI\Resources\Shaders\Unlit - Transparent Colored Overlay.shader" />
+     <None Include="Assets\shaders\alpha_map_illum.shader" />
+     <None Include="Assets\NGUI\Examples\Other\English.txt" />
+     <None Include="Assets\NGUI\Resources\Shaders\Unlit - Transparent Colored (Packed).shader" />
+     <None Include="Assets\Behave\License.txt" />
+     <None Include="Assets\shaders\alpha_map_Flag.shader" />
+     <None Include="Assets\NGUI\Resources\Shaders\Unlit - Additive Colored.shader" />
+     <None Include="Assets\NGUI\Examples\Atlases\Refractive\Refractive Font - Header.txt" />
+     <None Include="Assets\NGUI\Examples\Shaders\Refractive.shader" />
+     <None Include="Assets\NGUI\Examples\Atlases\SciFi\SciFi Font - Normal.txt" />
+     <None Include="Assets\NGUI\Resources\Shaders\Unlit - Transparent Colored (SoftClip).shader" />
+ <Reference Include="NGUI">
+ <HintPath>Assets\NGUI\DLLs\NGUI.dll</HintPath>
+ </Reference>
+ <Reference Include="NGUI_Editor">
+ <HintPath>Assets\NGUI\DLLs\Editor\NGUI_Editor.dll</HintPath>
+ </Reference>
+ <Reference Include="Behave.Unity.Runtime">
+ <HintPath>Assets\Behave\Behave.Unity.Runtime.dll</HintPath>
+ </Reference>
+ <Reference Include="Behave.Unity.Assets">
+ <HintPath>Assets\Behave\Behave.Unity.Assets.dll</HintPath>
+ </Reference>
+ <Reference Include="Behave">
+ <HintPath>Assets\Behave\Compatibility\Behave.dll</HintPath>
+ </Reference>
+ <Reference Include="Behave.Unity.Editor">
+ <HintPath>Assets\Behave\Editor\Behave.Unity.Editor.dll</HintPath>
+ </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="Assembly-CSharp.csproj">
+      <Project>{CD53F41D-01D8-4F83-C07E-BE7FA8AA0994}</Project>      <Name>Assembly-CSharp</Name>    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+	   Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  
+</Project>
