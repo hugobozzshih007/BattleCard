@@ -105,23 +105,23 @@
      <None Include="Assets\NGUI\Examples\Shaders\Refractive.shader" />
      <None Include="Assets\NGUI\Examples\Atlases\SciFi\SciFi Font - Normal.txt" />
      <None Include="Assets\NGUI\Resources\Shaders\Unlit - Transparent Colored (SoftClip).shader" />
- <Reference Include="NGUI">
- <HintPath>Assets\NGUI\DLLs\NGUI.dll</HintPath>
- </Reference>
- <Reference Include="NGUI_Editor">
- <HintPath>Assets\NGUI\DLLs\Editor\NGUI_Editor.dll</HintPath>
+ <Reference Include="Behave.Unity.Assets">
+ <HintPath>Assets\Behave\Behave.Unity.Assets.dll</HintPath>
  </Reference>
  <Reference Include="Behave.Unity.Runtime">
  <HintPath>Assets\Behave\Behave.Unity.Runtime.dll</HintPath>
- </Reference>
- <Reference Include="Behave.Unity.Assets">
- <HintPath>Assets\Behave\Behave.Unity.Assets.dll</HintPath>
  </Reference>
  <Reference Include="Behave">
  <HintPath>Assets\Behave\Compatibility\Behave.dll</HintPath>
  </Reference>
  <Reference Include="Behave.Unity.Editor">
  <HintPath>Assets\Behave\Editor\Behave.Unity.Editor.dll</HintPath>
+ </Reference>
+ <Reference Include="NGUI">
+ <HintPath>Assets\NGUI\DLLs\NGUI.dll</HintPath>
+ </Reference>
+ <Reference Include="NGUI_Editor">
+ <HintPath>Assets\NGUI\DLLs\Editor\NGUI_Editor.dll</HintPath>
  </Reference>
   </ItemGroup>
   <ItemGroup>
