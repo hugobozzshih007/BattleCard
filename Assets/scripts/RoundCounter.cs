@@ -6,8 +6,8 @@ public class RoundCounter : MonoBehaviour {
 	public int roundCounter = 0;
 	public IList PlayerAChesses;
 	public IList PlayerBChesses;
-	private IList PlayerATerritory;
-	private IList PlayerBTerritory;
+	public IList PlayerATerritory;
+	public IList PlayerBTerritory;
 	public Transform playerA;
 	public Transform playerB;
 	Vector3 noWhere = new Vector3(0.0f,1000.0f,0.0f);

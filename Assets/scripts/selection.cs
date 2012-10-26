@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using MapUtility;
+using BuffUtility;
 
 public class selection : MonoBehaviour {
 	private Transform sel;
@@ -212,10 +213,6 @@ public class selection : MonoBehaviour {
 										sixGons.renderer.material = originalMat;
 									}
 								}
-								/*
-								foreach(Transform s in chess.GetComponent<CharacterSelect>().AttackRangeList){
-									s.GetComponent<Identy>().step = 0;
-								}*/
 								chess.GetComponent<CharacterSelect>().AttackRangeList.Clear();
 								chess.GetComponent<CharacterProperty>().Attacked = true;
 								attackMode = false;
@@ -252,36 +249,16 @@ public class selection : MonoBehaviour {
 	}
 	
 	void updateCharacterPowers(Transform character){
-		CharacterProperty property = character.GetComponent<CharacterProperty>();
-		int addedAtk = players.GetIntensifiedPower(character,"atk");
-		int addedDef = players.GetIntensifiedPower(character,"def");
-		int oldDefPower = property.ModifiedDefPow;
-		property.ModifiedDefPow = property.defPower+addedDef;
-		property.Damage = property.atkPower+addedAtk;
-		if(property.Hp == oldDefPower)
-			property.Hp = property.ModifiedDefPow;
+		BuffCalculation buffCal = new BuffCalculation(character);
+		buffCal.UpdateBuffValue();
 	}
 	
 	void updateAllCharactersPowers(){
 		foreach(Transform character in players.PlayerAChesses){
-			CharacterProperty property = character.GetComponent<CharacterProperty>();
-			int addedAtk = players.GetIntensifiedPower(character,"atk");
-			int addedDef = players.GetIntensifiedPower(character,"def");
-			int oldDefPower = property.ModifiedDefPow;
-			property.ModifiedDefPow = property.defPower+addedDef;
-			property.Damage = property.atkPower+addedAtk;
-			if(property.Hp == oldDefPower)
-				property.Hp = property.ModifiedDefPow;
+			updateCharacterPowers(character);
 		}
 		foreach(Transform character in players.PlayerBChesses){
-			CharacterProperty property = character.GetComponent<CharacterProperty>();
-			int addedAtk = players.GetIntensifiedPower(character,"atk");
-			int addedDef = players.GetIntensifiedPower(character,"def");
-			int oldDefPower = property.ModifiedDefPow;
-			property.ModifiedDefPow = property.defPower+addedDef;
-			property.Damage = property.atkPower+addedAtk;
-			if(property.Hp == oldDefPower)
-				property.Hp = property.ModifiedDefPow;
+			updateCharacterPowers(character);
 		}
 	}
 	
@@ -290,7 +267,7 @@ public class selection : MonoBehaviour {
 			CharacterSelect character = chess.GetComponent<CharacterSelect>();
 			Transform currentPos = character.getMapPosition();
 			if(currentPos!=null){
-				character.findMoveRange(currentPos,0,chess.GetComponent<CharacterProperty>().moveRange);
+				character.findMoveRange(currentPos,0,chess.GetComponent<CharacterProperty>().BuffMoveRange);
 				neighbors = character.MoveRangeList;
 				if(neighbors.Count>0){
 					foreach(Transform sixGon in neighbors){
@@ -418,11 +395,24 @@ public class selection : MonoBehaviour {
 				if(GUI.Button(new Rect(screenPos.x+guiSegX+guiSeg, screenPos.y+guiSegY+guiSeg*8,80,20),"Defence")){
 					guiShow = false;
 					summonList = false;
-					//chess.GetComponent<CharacterProperty>().Hp+=1;
-					chess.GetComponent<CharacterProperty>().Attacked = true;
-					chess.GetComponent<CharacterProperty>().Moved = true;
+					CharacterProperty chessProperty = chess.GetComponent<CharacterProperty>();
+					bool ifMolePassive = false;
+					foreach(PassiveType pt in chessProperty.PassiveAbility){
+						if(pt == PassiveType.DefenseAddOne){
+							ifMolePassive = true;
+							break;
+						}else{
+							ifMolePassive = false;
+						}
+					}
+					
+					if(ifMolePassive)
+						chessProperty.Hp +=1;
+					
+					chessProperty.Attacked = true;
+					chessProperty.Moved = true;
 					Transform locationMap = chess.GetComponent<CharacterSelect>().getMapPosition();
-					int playerSide = chess.GetComponent<CharacterProperty>().Player;
+					int playerSide = chessProperty.Player;
 					int theOtherSide = 1;
 					if(playerSide==1)
 						theOtherSide =2;

@@ -6,6 +6,23 @@ namespace MapUtility{
 	{
 		public MapHelper(){
 		}
+		
+		
+		public static bool CheckPassive(PassiveType pt, Transform chess){
+			bool check = false;
+			CharacterProperty chessProperty = chess.GetComponent<CharacterProperty>();
+			foreach(PassiveType type in chessProperty.PassiveAbility){
+				if(pt == type){
+					check = true;
+					break;
+				}else{
+					check = false;
+				}
+			}
+			return check;
+		}
+		
+		
 		public static bool IsMapOccupied(Transform map){
 			bool occupied = true;
 			if(map!=null){
@@ -39,6 +56,7 @@ namespace MapUtility{
 			}
 			return obj;
 		}
+		
 	}
 }
 

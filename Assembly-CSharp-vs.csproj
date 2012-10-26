@@ -123,6 +123,10 @@
      <Compile Include="Assets\NGUI\Scripts\UI\UITiledSprite.cs" />
      <Compile Include="Assets\NGUI\Scripts\UI\UITooltip.cs" />
      <Compile Include="Assets\NGUI\Scripts\UI\UIViewport.cs" />
+     <Compile Include="Assets\scripts\AttackCalculation.cs" />
+     <Compile Include="Assets\scripts\BuffCalculation.cs" />
+     <Compile Include="Assets\scripts\BuffList.cs" />
+     <Compile Include="Assets\scripts\BuffType.cs" />
      <Compile Include="Assets\scripts\CharacterProperty.cs" />
      <Compile Include="Assets\scripts\CharacterSelect.cs" />
      <Compile Include="Assets\scripts\GUItest.cs" />
@@ -132,6 +136,9 @@
      <Compile Include="Assets\scripts\MapHelper.cs" />
      <Compile Include="Assets\scripts\MapNode.cs" />
      <Compile Include="Assets\scripts\NodeType.cs" />
+     <Compile Include="Assets\scripts\Occupation.cs" />
+     <Compile Include="Assets\scripts\PassiveType.cs" />
+     <Compile Include="Assets\scripts\RaceType.cs" />
      <Compile Include="Assets\scripts\RoundCounter.cs" />
      <Compile Include="Assets\scripts\SixGonRays.cs" />
      <Compile Include="Assets\scripts\Tower.cs" />

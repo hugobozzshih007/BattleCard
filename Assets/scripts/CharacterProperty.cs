@@ -5,15 +5,24 @@ using System.Collections.Generic;
 
 public class CharacterProperty : MonoBehaviour {
 	public string NameString = "";
+	public RaceType Race;
+	public Occupation Occupation;
+	public PassiveType[] PassiveAbility;
 	public bool Summoner;
 	public int Player = 1;
 	public int moveRange = 1; 
 	public int atkRange = 1;
-	public int defPower = 1;
-	public int ModifiedDefPow;
-	public int Hp;
 	public int atkPower = 1; 
+	public int defPower = 1;
+	public int CriticalhitChance = 18;
+	public int SkillRate = 18;
+	public int ModifiedDefPow;
 	public int Damage;
+	public int Hp;
+	public int BuffAtkRange;
+	public int BuffMoveRange;
+	public int BuffCriticalHit;
+	public int BuffSkillRate;
 	public int summonCost = 2;
 	public int activeCost = 2;
 	public int StandByRounds = 2;
@@ -33,7 +42,6 @@ public class CharacterProperty : MonoBehaviour {
 	int guiSegY = 20;
 	int guiSeg = 10;
 	public Transform[] soldiers;
-	public int CriticalhitChance = 18;
 	
 	
 	//bool guiShow;
@@ -52,11 +60,16 @@ public class CharacterProperty : MonoBehaviour {
 			Attacked = true;
 			Activated = true;
 		}
+		//init initial status
 		death = true;
 		Ready = false;
 		Hp = defPower;
 		ModifiedDefPow = defPower;
 		Damage = atkPower;
+		BuffAtkRange = atkRange;
+		BuffCriticalHit = CriticalhitChance;
+		BuffMoveRange = moveRange;
+		BuffSkillRate = SkillRate;
 		
 		if(Player>1)
 			WaitRounds = StandByRounds-1;
@@ -122,7 +135,7 @@ public class CharacterProperty : MonoBehaviour {
 		IList targetLocations = new List<Transform>();
 		transform.GetComponent<CharacterSelect>().AttackRangeList.Clear();
 		Transform rootPos = transform.GetComponent<CharacterSelect>().getMapPosition();
-		transform.GetComponent<CharacterSelect>().findAttackRange(rootPos,0,atkRange);
+		transform.GetComponent<CharacterSelect>().findAttackRange(rootPos,0,BuffAtkRange);
 		IList attackableMaps = transform.GetComponent<CharacterSelect>().AttackRangeList;
 	    Transform localMap = transform.GetComponent<CharacterSelect>().getMapPosition();
 		if(attackableMaps.Contains(localMap)){
@@ -174,7 +187,7 @@ public class CharacterProperty : MonoBehaviour {
 		GUI.skin.box.fontStyle = FontStyle.BoldAndItalic;
 		GUI.skin.box.fontSize = 12;
 		if(!death){
-			GUI.Box(new Rect(screenPos.x-80,screenPos.y+40,150,30), NameString+" "+moveRange+"/"+atkRange+"/"+Damage+"/"+Hp);
+			GUI.Box(new Rect(screenPos.x-80,screenPos.y+40,150,30), NameString+" "+BuffMoveRange+"/"+BuffAtkRange+"/"+Damage+"/"+Hp);
 		}else if(Summoner && death){
 			Vector3 mapScreenPos = new Vector3(1.0f,1.0f);
 			if(Player==1)
