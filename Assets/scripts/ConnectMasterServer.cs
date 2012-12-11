@@ -3,7 +3,7 @@ using System.Collections;
 
 public class ConnectMasterServer : MonoBehaviour {
 	
-	public string GameName = "Monder Land";
+	public string GameName = "Monder Land is a cool idea";
 	public int ServerPort = 25002;
 	
 	private float timeoutHostList = 0.0f;
