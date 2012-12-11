@@ -7,21 +7,21 @@ namespace MapUtility{
 		public MapHelper(){
 		}
 		
-		
 		public static bool CheckPassive(PassiveType pt, Transform chess){
-			bool check = false;
-			CharacterProperty chessProperty = chess.GetComponent<CharacterProperty>();
-			foreach(PassiveType type in chessProperty.PassiveAbility){
-				if(pt == type){
-					check = true;
-					break;
-				}else{
-					check = false;
-				}
-			}
-			return check;
+			CharacterPassive chessPassive = chess.GetComponent<CharacterPassive>();
+			return chessPassive.PassiveDict[pt];
 		}
 		
+		public static bool Success(int rate){
+			bool ifSucceed = false;
+			int realNum = Random.Range(0,100);
+			if(realNum < rate){
+				ifSucceed = true;
+			}else{
+				ifSucceed = false;
+			}
+			return ifSucceed;
+		}
 		
 		public static bool IsMapOccupied(Transform map){
 			bool occupied = true;

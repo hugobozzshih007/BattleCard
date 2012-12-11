@@ -7,4 +7,14 @@ public enum PassiveType
 	Flying,
 	FlyingHit,
 	InvisibleInWoods,
+	WoundBite,
+	SuddenDeath,
+	MultiArrow,
+}
+
+public enum AttackType
+{
+	physical,
+	magical,
+	specific,
 }

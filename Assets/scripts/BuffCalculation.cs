@@ -184,24 +184,82 @@ namespace BuffUtility{
 		
 		public void UpdateBuffValue(){
 			CalBuffUsage();
-			BuffType[] buffList = null;
-			if(usage==BuffUsage.Intensify)
-				buffList = addBuff;
-			else if(usage==BuffUsage.Decrease)
-				buffList = deBuff;
-			else{
+			BuffType[] bList = null;
+			int oldDefPower = property.ModifiedDefPow;
+			if(usage==BuffUsage.Intensify){
+				bList = addBuff;
+				foreach(var pair in buffList.AddBuffDict){
+					if(pair.Value == false){
+						switch(pair.Key){
+							case BuffType.Attack:
+								property.Damage = property.atkPower;
+								break;
+							case BuffType.AttackRange:
+								property.BuffAtkRange = property.atkRange;
+								break;
+							case BuffType.CriticalHit:
+								property.BuffCriticalHit = property.CriticalhitChance;
+								break;
+							case BuffType.Defense:
+								if(property.AbleRestore){
+									property.ModifiedDefPow = property.defPower;
+									if(property.Hp == oldDefPower)
+										property.Hp = property.ModifiedDefPow;
+								}
+								break;
+							case BuffType.MoveRange:
+								property.BuffMoveRange = property.moveRange;
+								break;
+							case BuffType.SkillRate:
+								property.BuffSkillRate = property.SkillRate;
+								break;
+						}
+					}
+				}
+			}else if(usage==BuffUsage.Decrease){
+				bList = deBuff;
+				foreach(var pair in buffList.DeBuffDict){
+					if(pair.Value == false){
+						switch(pair.Key){
+							case BuffType.Attack:
+								property.Damage = property.atkPower;
+								break;
+							case BuffType.AttackRange:
+								property.BuffAtkRange = property.atkRange;
+								break;
+							case BuffType.CriticalHit:
+								property.BuffCriticalHit = property.CriticalhitChance;
+								break;
+							case BuffType.Defense:
+								if(property.AbleRestore){
+									property.ModifiedDefPow = property.defPower;
+									if(property.Hp == oldDefPower)
+										property.Hp = property.ModifiedDefPow;
+								}
+								break;
+							case BuffType.MoveRange:
+								property.BuffMoveRange = property.moveRange;
+								break;
+							case BuffType.SkillRate:
+								property.BuffSkillRate = property.SkillRate;
+								break;
+						}
+					}
+				}
+			}else{
 				property.Damage = property.atkPower;
-				int oldDefPower = property.ModifiedDefPow;
-				property.ModifiedDefPow = property.defPower;
-				if(property.Hp == oldDefPower)
-					property.Hp = property.ModifiedDefPow;
+				if(property.AbleRestore){
+					property.ModifiedDefPow = property.defPower;
+					if(property.Hp == oldDefPower)
+						property.Hp = property.ModifiedDefPow;
+				}
 				property.BuffMoveRange = property.moveRange;
 				property.BuffAtkRange = property.atkRange;
 				property.BuffCriticalHit = property.CriticalhitChance;
 				property.BuffSkillRate = property.SkillRate;
 			}
-			if(buffList!=null){
-				foreach(BuffType bt in buffList){
+			if(bList!=null){
+				foreach(BuffType bt in bList){
 					switch(bt){
 						case(BuffType.Attack):
 							property.Damage = property.atkPower + GetBuffValue(bt);
@@ -213,10 +271,11 @@ namespace BuffUtility{
 							property.BuffCriticalHit = property.CriticalhitChance + GetBuffValue(bt);
 							break;
 						case(BuffType.Defense):
-							int oldDefPower = property.ModifiedDefPow;
-							property.ModifiedDefPow = property.defPower + GetBuffValue(bt);
-							if(property.Hp == oldDefPower)
-								property.Hp = property.ModifiedDefPow;
+							if(property.AbleRestore){
+								property.ModifiedDefPow = property.defPower + GetBuffValue(bt);
+								if(property.Hp == oldDefPower)
+									property.Hp = property.ModifiedDefPow;
+							}
 							break;
 						case(BuffType.MoveRange):
 							property.BuffMoveRange = property.moveRange + GetBuffValue(bt);
@@ -227,6 +286,7 @@ namespace BuffUtility{
 					}
 				}
 			}
+			
 		}
 	}
 }

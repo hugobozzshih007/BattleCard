@@ -5,11 +5,13 @@ using System.Collections.Generic;
 
 public class CharacterProperty : MonoBehaviour {
 	public string NameString = "";
+	public Texture2D BigIcon;
+	public Texture2D SmallIcon;
 	public RaceType Race;
 	public Occupation Occupation;
-	public PassiveType[] PassiveAbility;
 	public bool Summoner;
 	public int Player = 1;
+	public int InitPlayer = 1;
 	public int moveRange = 1; 
 	public int atkRange = 1;
 	public int atkPower = 1; 
@@ -21,13 +23,17 @@ public class CharacterProperty : MonoBehaviour {
 	public int Hp;
 	public int BuffAtkRange;
 	public int BuffMoveRange;
-	public int BuffCriticalHit;
-	public int BuffSkillRate;
+	public int BuffCriticalHit = 18;
+	public int BuffSkillRate = 18;
 	public int summonCost = 2;
 	public int activeCost = 2;
 	public int StandByRounds = 2;
 	public int WaitRounds;
 	public bool character = true;
+	public bool UnStatus = false;
+	public bool AbleRestore = true;
+	public Dictionary<UnnormalStatus, int> UnStatusCounter;
+	public Dictionary<UnnormalStatus, int> LastUnStatusCounter;
 	public bool death;
 	public bool Ready;
 	public bool TurnFinished = false;
@@ -36,8 +42,6 @@ public class CharacterProperty : MonoBehaviour {
 	public bool Activated = false;
 	public bool Tower = false;
 	bool playerDead = false;
-	public string activeAbility = "";
-	public string passiveAbility = "";
 	int guiSegX = 30;
 	int guiSegY = 20;
 	int guiSeg = 10;
@@ -51,6 +55,24 @@ public class CharacterProperty : MonoBehaviour {
 	
 	// Use this for initialization
 	void Start () {
+		UnStatusCounter = new Dictionary<UnnormalStatus, int>();
+		LastUnStatusCounter = new Dictionary<UnnormalStatus, int>();
+		//print("Dictionary length:" + UnStatusCounter.Count);
+		UnStatusCounter.Add(UnnormalStatus.Burned,0);
+		UnStatusCounter.Add(UnnormalStatus.Chaos,0);
+		UnStatusCounter.Add(UnnormalStatus.Freezed,0);
+		UnStatusCounter.Add(UnnormalStatus.Poisoned,0);
+		UnStatusCounter.Add(UnnormalStatus.Sleeping,0);
+		UnStatusCounter.Add(UnnormalStatus.Wounded,0);
+		
+		LastUnStatusCounter.Add(UnnormalStatus.Burned,0);
+		LastUnStatusCounter.Add(UnnormalStatus.Chaos,0);
+		LastUnStatusCounter.Add(UnnormalStatus.Freezed,0);
+		LastUnStatusCounter.Add(UnnormalStatus.Poisoned,0);
+		LastUnStatusCounter.Add(UnnormalStatus.Sleeping,0);
+		LastUnStatusCounter.Add(UnnormalStatus.Wounded,0);
+		//print("Dictionary length after adds:" + UnStatusCounter.Count);
+		
 		if(Player==1){
 			Moved = false;
 			Attacked = false;
@@ -105,6 +127,9 @@ public class CharacterProperty : MonoBehaviour {
 	void Update () {
 		screenPos = Camera.main.WorldToScreenPoint(transform.position);
 		screenPos.y = Screen.height - screenPos.y;
+		if(Hp <= 0){
+			death = true;
+		}
 		if(death){
 			transform.position = noWhere;
 			transform.renderer.enabled=false;
@@ -128,6 +153,12 @@ public class CharacterProperty : MonoBehaviour {
 			Ready = true;
 		}else{
 			Ready = false;
+		}
+		if(Tower){
+			Moved = true;
+			Activated = true;
+			Attacked = true;
+			TurnFinished = true;
 		}
 	}
 	
@@ -182,12 +213,13 @@ public class CharacterProperty : MonoBehaviour {
 		}
 		return hit;
 	}
-	
+	/*
 	void OnGUI(){
+		
 		GUI.skin.box.fontStyle = FontStyle.BoldAndItalic;
 		GUI.skin.box.fontSize = 12;
 		if(!death){
-			GUI.Box(new Rect(screenPos.x-80,screenPos.y+40,150,30), NameString+" "+BuffMoveRange+"/"+BuffAtkRange+"/"+Damage+"/"+Hp);
+			GUI.Box(new Rect(screenPos.x-80,screenPos.y+40,150,20), NameString+" "+BuffMoveRange+"/"+BuffAtkRange+"/"+Damage+"/"+Hp);
 		}else if(Summoner && death){
 			Vector3 mapScreenPos = new Vector3(1.0f,1.0f);
 			if(Player==1)
@@ -196,13 +228,30 @@ public class CharacterProperty : MonoBehaviour {
 				mapScreenPos = Camera.main.WorldToScreenPoint(GameObject.Find("unit_start_point_B").transform.position);
 			mapScreenPos.y = Screen.height - mapScreenPos.y;
 			
-			GUI.Box(new Rect(mapScreenPos.x-80,mapScreenPos.y+40,150,30), "Revive in: "+WaitRounds+"turns");
+			GUI.Box(new Rect(mapScreenPos.x-80,mapScreenPos.y+40,150,20), "Revive in: "+WaitRounds+"turns");
 		}
 		
+		if(!death){
+			int seg=0;
+			int uSeg=0;
+			CharacterPassive passive = transform.GetComponent<CharacterPassive>();
+			foreach(var pair in passive.PassiveDict){
+				if(pair.Value == true){
+					seg+=1;
+					GUI.Box(new Rect(screenPos.x,screenPos.y+40+20*seg,80,20), pair.Key.ToString());
+				}
+			}
+			foreach(var pair in LastUnStatusCounter){
+				if(pair.Value>0){
+					uSeg+=1;
+					GUI.Box(new Rect(screenPos.x-80,screenPos.y+40+20*uSeg,80,20), pair.Key.ToString());
+				}
+			}
+		}
 	}
 	
 	//summoning soldiers 
-	/*
+	
 	public void SummonSoldier(Transform soldier){
 		Vector3 summonPos = GetSummonPosition().position;
 		summonPos.y = summonPos.y+1.5f;

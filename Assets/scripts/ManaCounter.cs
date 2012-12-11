@@ -14,6 +14,6 @@ public class ManaCounter : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-	
+		
 	}
 }
