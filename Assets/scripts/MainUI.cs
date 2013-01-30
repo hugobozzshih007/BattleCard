@@ -98,20 +98,31 @@ public class MainUI : MonoBehaviour {
 			attackShow = false;
 			skillShow = false;
 			summonShow = false;
-			if(CurrentChess!=null && CurrentChess.gameObject.layer==11 /*&& currentSelect.Playing*/ && !CurrentChess.GetComponent<CharacterProperty>().TurnFinished)
+			if(CurrentChess!=null && CurrentChess.gameObject.layer==11 && currentSelect.Playing && !CurrentChess.GetComponent<CharacterProperty>().TurnFinished)
 				MainGuiFade = true;
 		}
 	}
 	
 	bool attackable(Transform chess){
-		AttackCalculation atc = new AttackCalculation(chess);
-		return (atc.GetAttableTarget(atc.Attacker).Count>0);
+		MoveCharacter mc = transform.GetComponent<MoveCharacter>();
+		bool able = false;
+		if(!mc.MoveMode){
+			AttackCalculation atc = new AttackCalculation(chess);
+			able = (atc.GetAttableTarget(atc.Attacker).Count>0);
+		}else{
+			able = false;
+		}
+		return able;
 	}
 	
 	// Update is called once per frame
 	void Update () {
 		mousePos.x = Input.mousePosition.x;
 		mousePos.y = Screen.height-Input.mousePosition.y;
+		if(!currentSelect.Playing){
+			MainGuiFade = false;
+			SubGuiFade = false;
+		}
 		if(MainGuiFade)
 			fadeInMain();
 		else
@@ -400,15 +411,15 @@ public class MainUI : MonoBehaviour {
 							skill.GetComponent<SkillProperty>().GetRealSkillRate();
 							skill.GetComponent<SkillProperty>().PassSkillRate = MapHelper.Success(skill.GetComponent<SkillProperty>().SkillRate);
 							skill.GetComponent<SkillProperty>().ActivateSkill();
-							print("count");
 							currentSelect.player.GetComponent<ManaCounter>().Mana -= skill.GetComponent<SkillProperty>().SkillCost;
 							CurrentChess.GetComponent<CharacterProperty>().Activated = true;
+							currentSelect.AnimStateNetWork(CurrentChess,AnimVault.AnimState.skill);
 							SubGuiFade = false;
 							TurnFinished(CurrentChess);
 							//update network
 							currentSelect.SkillCmdNetwork(CurrentChess,skill);
 						}else{
-								currentSelect.skillCommand(skill);
+							currentSelect.skillCommand(skill);
 						}
 					}
 					seg +=1;

@@ -1,0 +1,43 @@
+1.17 ------
+- Has improved the performance of the tool. (30%up)
+- Auto Save : changes to the active state. (keep the active state of the prefab)
+- Added Tag property to the EffectScript.
+- FXMaker_SimpleTest.scene modified
+
+1.167 ------
+- Fixed bug : Problems invisible in the InspectorEditor. (LightSkin only)
+- Text field Read Enter button
+
+1.166 ------
+- Fixed bug : Modified to be automatically saved when the toolbar to select.
+
+1.165 ------
+- Fixed bug : Fixed the error that occurs when you click the empty toolbar.
+
+1.163 ------
+- Fixed bug (For Unity 3.5.6 and higher)
+Error messages have been removed. (ReadPixels was called to read pixels from system frame buffer, while not inside drawing frame.)
+
+1.162 ------
+
+- Fixed bug
+Invisible grid (Unity 3.XX only)
+export error (NgObject.cs)
+
+1.16 ------
+- Support for Unity4.0 (Tested unity 4.0b11)
+- problem unity4.0b11. (GUI.Toolbar.tooltip,  there is a problem in the output)
+
+1.15 ------
+BuildSprite draw call has been optimized.
+
+1.14 ------
+NcParticleSystem.OnRender function has been optimized.
+
+1.13 ------
+SampleScene modified
+
+---------------------------------------------------
+FX Maker 1.0 Release	2012.07.01
+
+

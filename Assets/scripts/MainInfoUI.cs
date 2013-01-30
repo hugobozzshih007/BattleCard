@@ -19,6 +19,7 @@ public class MainInfoUI : MonoBehaviour {
 	GUIStyle[] numberStyle = new GUIStyle[3];
 	float iconWidth = 20.0f;
 	InfoUI iconVault; 
+	int allMaps;
 	RoundCounter rc;
 	float _mainAlpha, _targetAlpha;
 	int delayCounter = 600;
@@ -57,8 +58,8 @@ public class MainInfoUI : MonoBehaviour {
 		numberStyle[0].fontSize = 24;
 		numberStyle[1].fontSize = 30;
 		numberStyle[2].fontSize = 44;
-		iconVault = this.GetComponent<InfoUI>();
-		rc = this.GetComponent<RoundCounter>();
+		iconVault = transform.GetComponent<InfoUI>();
+		rc = transform.GetComponent<RoundCounter>();
 		roundStyle = new GUIStyle(manaStyle);
 		roundStyle.fontSize = 48;
 		roundStyle.alignment = TextAnchor.MiddleCenter;

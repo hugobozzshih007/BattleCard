@@ -6,7 +6,7 @@ using MapUtility;
 using BuffUtility;
 
 public class selection : MonoBehaviour {
-	Transform sel;
+	public Transform sel;
 	public LayerMask MaskMap;
 	public LayerMask MaskCharaceter;
 	public Transform chess = null;
@@ -39,18 +39,19 @@ public class selection : MonoBehaviour {
 	private const float viewOffsetZ = 30.0f;
 	private Vector3 oldCamPosition;
 	private Vector3 newCamPosition;
-	private Transform currentGF;
-	//public Transform AttackTarget;
-	public bool guiShow = false;
-	bool summonList = false;
-	bool skillList = false;
-	bool summoner = false;
+	Transform currentGF;
+	//bool summonList = false;
+	//bool skillList = false;
+	//bool summoner = false;
 	bool camMoveMode = false;
-	bool infoUI = false;
-	int guiSegX = 30;
-	int guiSegY = 20;
-	int guiSeg = 10;
+	//bool infoUI = false;
+	public bool SummonIn = false;
+	//int guiSegX = 30;
+	//int guiSegY = 20;
+	//int guiSeg = 10;
 	int camStep = 0;
+	float t = 0;
+	float fadeInTime = 2.0f;
 	Vector3 screenPos;
 	public Transform player, CurrentSkill;
 	MainUI mainUI;
@@ -58,6 +59,13 @@ public class selection : MonoBehaviour {
 	StatusUI statusUI;
 	RoundCounter players;
 	MainInfoUI chessUI;
+	CommonFX fxVault; 
+	AttackCalFX attackerCal;
+	Color red = new Color(1.0f,155.0f/255.0f,155.0f/255.0f,1.0f);
+	Color yellow = new Color(1.0f,245.0f/255.0f,90.0f/255.0f,1.0f);
+	Color rollOverBlue = new Color(0.3f,0.3f,0.3f,1.0f);
+	Color rollOverRed = new Color(0.7f,0.7f,0.7f,1.0f);
+	public bool reviveMode = false;
 	
 	void Start(){
 		sel = GameObject.Find("unit_start_point_A").transform;
@@ -69,6 +77,8 @@ public class selection : MonoBehaviour {
 		statusUI = transform.GetComponent<StatusUI>();
 		mainUI = transform.GetComponent<MainUI>();
 		chessUI = transform.GetComponent<MainInfoUI>();
+		fxVault = transform.GetComponent<CommonFX>();
+		attackerCal = transform.GetComponent<AttackCalFX>();
 	}
 	
 	void Awake(){
@@ -84,7 +94,14 @@ public class selection : MonoBehaviour {
 			Playing = APlaying;
 		}
 	}
-	
+	void CleanMapsMat(){
+		Transform allMap = GameObject.Find("Maps").transform;
+		for(int i =0; i< allMap.GetChildCount(); i++){
+			allMap.GetChild(i).renderer.material = originalMat;
+			networkView.RPC("RPCUpdateMat",RPCMode.OthersBuffered,allMap.GetChild(i).name,1);
+		}
+	}
+		
 	void panning(){
 		if(mainUI.Cancel){
 			selectMode = false;
@@ -92,12 +109,8 @@ public class selection : MonoBehaviour {
 			attackMode = false;
 			summonMode = false;
 			skillMode = false;
-			if(neighbors!=null){
-				foreach(Transform map in neighbors){
-					if(map!=null)
-						map.renderer.material = originalMat;
-				}
-			}
+			
+			CleanMapsMat();
 			updateTerritoryMat();
 		}
 		
@@ -107,14 +120,17 @@ public class selection : MonoBehaviour {
 			mainUI.SubGuiFade = false;
 			chessUI.MainFadeIn = false;
 			chessUI.TargetFadeIn = false;
-			//chessUI.SetChessesNull();
-			selectMode = false;
+			
 			moveMode = false;
 			attackMode = false;
-			summonMode = false;
-			summonList = false;
-			skillList = false;
+			
+			//summonList = false;
+			//skillList = false;
 			skillMode = false;
+			if(!reviveMode){
+				selectMode = false;
+				summonMode = false;
+			}
 			
 			if(chess != null){
 				chess.gameObject.layer = 10;
@@ -128,11 +144,8 @@ public class selection : MonoBehaviour {
     		viewScreenPanning = true;
     		viewScreenOldMouseX = Input.mousePosition.x;
     		viewScreenOldMouseY = Input.mousePosition.y;
-			if(neighbors!=null){
-				foreach(Transform map in neighbors){
-					if(map!=null)
-						map.renderer.material = originalMat;
-				}
+			if(!reviveMode){
+				CleanMapsMat();
 			}
 			updateTerritoryMat();
 			//neighbors.Clear();
@@ -145,6 +158,14 @@ public class selection : MonoBehaviour {
 		    // since we use a quick and dirty transform, reset the camera height to what it was
 		    viewScreenPanVector.y = viewScreenZoomHeight; 
 		    transform.position = viewScreenPanVector;
+		}
+		float zoomRate = 100.0f;
+		float distance = Camera.main.fov;
+		if(Input.GetAxis("Mouse ScrollWheel") != 0.0){
+    		distance -= (Input.GetAxis("Mouse ScrollWheel") * Time.deltaTime) * zoomRate * Mathf.Abs(distance);
+			foreach(Camera t in Camera.allCameras){
+				t.fov = distance;
+			}
 		}
 	}
 	
@@ -215,7 +236,7 @@ public class selection : MonoBehaviour {
 								player = players.playerA;
 						}
 						CharacterProperty chessProperty = chess.GetComponent<CharacterProperty>();
-						if(chessProperty.TurnFinished /*|| !Playing*/){
+						if(chessProperty.TurnFinished || !Playing){
 							//guiShow = false;
 							mainUI.MainGuiFade = false;
 							mainUI.IgnoreMainUI = true;
@@ -224,7 +245,7 @@ public class selection : MonoBehaviour {
 							chessUI.MainFadeIn = true;
 							chessUI.TargetFadeIn = true;
 							//this.GetComponent<InfoUI>().infoUI = true;
-						}else /*if(Playing)*/{
+						}else if(Playing){
 							//guiShow = true;
 							if(!chessProperty.TurnFinished){
 								mainUI.MainGuiFade = true;
@@ -232,7 +253,7 @@ public class selection : MonoBehaviour {
 								mainUI.MainGuiFade = false;
 							}
 						}
-						summoner = chess.GetComponent<CharacterProperty>().Summoner;
+						//summoner = chess.GetComponent<CharacterProperty>().Summoner;
 					}
 				}
 			}
@@ -246,89 +267,75 @@ public class selection : MonoBehaviour {
 					if(hit.transform.GetComponent<Identy>().MapUnit){
 						sel = hit.transform;
 						if(neighbors.Contains(sel)){
-							
-							if(sel.GetComponent<Identy>().Flag){
-								sel.renderer.material = rollOverFlag;
+							sel.renderer.material = rollOver;
+							if(MapHelper.IsMapOccupied(sel)){
+								Transform targetChess = MapHelper.GetMapOccupiedObj(sel);
+								mainUI.IgnoreMainUI = true;
+								chessUI.InsertChess(targetChess);
+								chessUI.TargetFadeIn = true;
+								networkView.RPC("RPCUpdateMainInfoUI",RPCMode.Others,targetChess.name,true);
 							}else{
-								sel.renderer.material = rollOver;
-								if(MapHelper.IsMapOccupied(sel)){
-									Transform targetChess = MapHelper.GetMapOccupiedObj(sel);
-									mainUI.IgnoreMainUI = true;
-									chessUI.InsertChess(targetChess);
-									chessUI.TargetFadeIn = true;
-									networkView.RPC("RPCUpdateMainInfoUI",RPCMode.Others,targetChess.name,true);
-								}else{
-									mainUI.IgnoreMainUI = false;
-									chessUI.TargetFadeIn = false;
-									networkView.RPC("RPCUpdateMainInfoUI",RPCMode.Others,sel.name,false);
-								}
-								networkView.RPC("RPCUpdateMat",RPCMode.Others,sel.name,3);
+								mainUI.IgnoreMainUI = false;
+								chessUI.TargetFadeIn = false;
+								networkView.RPC("RPCUpdateMainInfoUI",RPCMode.Others,sel.name,false);
 							}
+							networkView.RPC("RPCUpdateMat",RPCMode.Others,sel.name,2);
+							
 							
 							if(selOld!=sel && neighbors.Contains(selOld)){
-								if(selOld.GetComponent<Identy>().Flag){
-									selOld.renderer.material = closeByFlag;
-								}else{
-									selOld.renderer.material = closeBy;
-									mainUI.IgnoreMainUI = false;
-									chessUI.TargetFadeIn = false;
-									networkView.RPC("RPCUpdateMainInfoUI",RPCMode.Others,sel.name,false);
-									networkView.RPC("RPCUpdateMat",RPCMode.Others,selOld.name,2);
-								}
+								selOld.renderer.material = closeBy;
+								mainUI.IgnoreMainUI = false;
+								chessUI.TargetFadeIn = false;
+								networkView.RPC("RPCUpdateMainInfoUI",RPCMode.Others,sel.name,false);
+								networkView.RPC("RPCUpdateMat",RPCMode.Others,selOld.name,3);
 							}
 							selOld = sel;
 							if(Input.GetMouseButtonDown(0)){
 								if(moveMode){
-									Transform localUnit = chess.GetComponent<CharacterSelect>().getMapPosition();
-									localUnit.renderer.material = localUnit.GetComponent<Identy>().originalMat;
-									chess.position = sel.position;
-									chess.Translate(new Vector3(0.0f,1.5f,0.0f));
+									CharacterSelect chessSelect = chess.GetComponent<CharacterSelect>();
+									CharacterProperty chessProperty = chess.GetComponent<CharacterProperty>();
+									Transform localUnit = chessSelect.getMapPosition();
+									localUnit.renderer.material = originalMat;
+									networkView.RPC("RPCUpdateMat",RPCMode.Others,localUnit.name,1);
+									//animate character moving from point to point, start point: locarUnit, end point: sel
+									IList pathList = new List<Transform>();
+									pathList = chessSelect.FindPathList(localUnit,GetSteps(localUnit,sel),sel);
+									MoveCharacter mc = transform.GetComponent<MoveCharacter>();
+									mc.SetSteps(chess,pathList);
 									
 									foreach(Transform sixGons in neighbors){
-										if(sixGons.GetComponent<Identy>().Flag){
-											sixGons.renderer.material = FlagMat;
-										}else{
-											sixGons.renderer.material = originalMat;
-											networkView.RPC("RPCUpdateMat",RPCMode.Others,sixGons.name,1);
-										}
+										sixGons.renderer.material = originalMat;
+										networkView.RPC("RPCUpdateMat",RPCMode.Others,sixGons.name,1);
 									}
 									
-									chess.GetComponent<CharacterProperty>().Moved = true;
-									chess.GetComponent<CharacterSelect>().MoveRangeList.Clear();
-									
-									/*
-									selOld.renderer.material = originalMat;
-									networkView.RPC("RPCUpdateMat",RPCMode.Others,selOld.name,1);
-									sel.renderer.material = originalMat;
-									networkView.RPC("RPCUpdateMat",RPCMode.Others,sel.name,1);
-									*/
+									//chessProperty.Moved = true;
+									chessSelect.MoveRangeList.Clear();
 									
 									updateTerritoryMat();
 									
-									updateCharacterPowers(chess);
-									//updateMapSteps(); 
-									
-									//update network
-									networkView.RPC("RPCUpdateChessPosition",RPCMode.Others,sel.name,chess.name);
-									networkView.RPC("RPCUpdateChessMoved",RPCMode.Others,chess.name,true);
 									moveMode = false;
 									networkView.RPC("RPCUpdateStatusUI",RPCMode.Others,chess.name,2,false);
-									//chess.gameObject.layer = 10;
-									//networkView.RPC("RPCUpdateChessLayers",RPCMode.Others ,chess.name,10);
-									
 									//update UI
 									mainUI.SubGuiFade = false;
-									if(chess.GetComponent<CharacterProperty>().Attacked && chess.GetComponent<CharacterProperty>().Activated && chess.GetComponent<CharacterProperty>().Moved){
-										chess.GetComponent<CharacterProperty>().TurnFinished = true;
+									if(chessProperty.Attacked && chessProperty.Activated && chessProperty.Moved){
+										chessProperty.TurnFinished = true;
 										chess.gameObject.layer = 10;
 										MoveToLayer(chess,10);
 										EndTurnNetwork();
 									}
-								} 
+								}
 								if(summonMode){
-									chess.GetComponent<CharacterSelect>().getMapPosition().renderer.material = originalMat;
+									if(!reviveMode){
+										chess.GetComponent<CharacterSelect>().getMapPosition().renderer.material = originalMat;
+										networkView.RPC("RPCUpdateMat", RPCMode.Others,chess.GetComponent<CharacterSelect>().getMapPosition().name,1);
+									}
+									networkView.RPC("RPCSummonIn",RPCMode.AllBuffered,currentGF.name, sel.name);
+									networkView.RPC("RPCShowUp",RPCMode.Others,currentGF.name);
 									currentGF.position = sel.position;
 									currentGF.Translate(new Vector3(0.0f,1.5f,0.0f));
+									Transform targetLook = transform.GetComponent<MoveCharacter>().GetClosetChess(currentGF);
+									currentGF.LookAt(targetLook.transform.position);
+						
 									currentGF.renderer.enabled = true;
 									currentGF.GetComponent<CharacterProperty>().Hp = currentGF.GetComponent<CharacterProperty>().defPower;
 									currentGF.GetComponent<CharacterProperty>().death = false;
@@ -338,30 +345,20 @@ public class selection : MonoBehaviour {
 									currentGF.GetComponent<CharacterProperty>().TurnFinished = true;
 									player.GetComponent<ManaCounter>().Mana-=currentGF.GetComponent<CharacterProperty>().summonCost;
 									foreach(Transform sixGons in neighbors){
-										if(sixGons.GetComponent<Identy>().Flag){
-											sixGons.renderer.material = FlagMat;
-										}else{
-											sixGons.renderer.material = originalMat;
-											networkView.RPC("RPCUpdateMat",RPCMode.Others,sixGons.name,1);
-										}
+										sixGons.renderer.material =originalMat;
+										networkView.RPC("RPCUpdateMat",RPCMode.Others,sixGons.name,1);
 									}
-									summonMode = false;
+									
 									
 									//update network
 									networkView.RPC("RPCUpdateStatusUI",RPCMode.Others,chess.name,4,false);
 									networkView.RPC("RPCUpdateChessPosition",RPCMode.Others,sel.name,currentGF.name);
 									networkView.RPC("RPCUpdateRenderStatus",RPCMode.Others,currentGF.name, currentGF.renderer.enabled);
 									networkView.RPC("RPCUpdateChessSummon",RPCMode.Others,currentGF.name);
+									networkView.RPC("RPCLookAtTarget",RPCMode.Others,currentGF.name,targetLook.name);
 									networkView.RPC("RPCUpdateMana",RPCMode.Others,player.GetComponent<ManaCounter>().Mana,currentGF.GetComponent<CharacterProperty>().Player );
 									
-									updateCharacterPowers(currentGF);
-									
-									/*
-									selOld.renderer.material = originalMat;
-									networkView.RPC("RPCUpdateMat",RPCMode.Others,selOld.name,1);
-									sel.renderer.material = originalMat;
-									networkView.RPC("RPCUpdateMat",RPCMode.Others,sel.name,1);
-									*/
+									updateAllCharactersPowers();
 									updateTerritoryMat();
 									
 									//chess.gameObject.layer = 10;
@@ -369,78 +366,39 @@ public class selection : MonoBehaviour {
 									
 									// update UI
 									mainUI.SubGuiFade = false;
-									mainUI.MainGuiFade = true;
-								}
+									if(!reviveMode)
+										mainUI.MainGuiFade = true;
+									else{
+										mainUI.MainGuiFade = false;
+										selectMode = false;
+									}
+									summonMode = false;
+									networkView.RPC("RPCUpdateRevive", RPCMode.All,false);
+								} 
 								if(attackMode){
+									// restore the original mat for the map
 									chess.GetComponent<CharacterSelect>().getMapPosition().renderer.material = originalMat;
-									AttackCalculation attackerCal = new AttackCalculation(chess);
-									attackerCal.InsertTarget(sel);
-									attackerCal.CriticalHit = attackerCal.CalcriticalHit(AttackType.physical);
-									attackerCal.UpdateAttackResult(AttackType.physical);
-									chessUI.Critical = attackerCal.CriticalHit;
-									chessUI.DelayFadeOut = true;
-									chessUI.TargetFadeIn = false;
-									
-									//update network
-									networkView.RPC("RPCUpdateAttackResult", RPCMode.Others, chess.name, sel.name,attackerCal.CriticalHit);
-									networkView.RPC("RPCUpdateChessAttacked", RPCMode.Others, chess.name, true);
-									//networkView.RPC("RPCUpdateMainInfoUI",RPCMode.Others,MapHelper.GetMapOccupiedObj(sel).name,true);
-									networkView.RPC("RPCUpdateInfoUIState",RPCMode.Others,true,true,attackerCal.CriticalHit);
-									networkView.RPC("RPCUpdateMainInfoUI",RPCMode.Others,MapHelper.GetMapOccupiedObj(sel).name,false);
-									
-									
-									//default map steps before get new attackpositions
-									//updateMapSteps();
-									Transform currentTarget = MapHelper.GetMapOccupiedObj(sel);
-
-									if(!currentTarget.GetComponent<CharacterProperty>().death){
-										//fight back
-										AttackCalculation currentTargetAtk = new AttackCalculation(currentTarget);
-										bool atkable = currentTargetAtk.GetAttableTarget(currentTarget).Contains(chess.GetComponent<CharacterSelect>().getMapPosition());
-										
-										if(atkable){
-											currentTargetAtk.InsertTarget(chess.GetComponent<CharacterSelect>().getMapPosition());
-											currentTargetAtk.CriticalHit = currentTargetAtk.CalcriticalHit(AttackType.physical);
-											chessUI.CriticalRight = currentTargetAtk.CriticalHit;
-											currentTargetAtk.UpdateAttackResult(AttackType.physical);
-											if(chess.GetComponent<CharacterProperty>().Hp<=0){
-												chessUI.DelayFadeOut = true;
-												chessUI.MainFadeIn = false;
-											}
-											networkView.RPC("RPCUpdateAttackResult", RPCMode.Others, currentTarget.name, chess.name,currentTargetAtk.CriticalHit);
-											networkView.RPC("RPCUpdateInfoUIState",RPCMode.Others,false,true,currentTargetAtk.CriticalHit);
-										}
-									}
-									
-									
-									
+									networkView.RPC("RPCUpdateMat",RPCMode.Others,chess.GetComponent<CharacterSelect>().getMapPosition().name,1);
 									foreach(Transform sixGons in neighbors){
-										if(sixGons.GetComponent<Identy>().Flag){
-											sixGons.renderer.material = FlagMat;
-										}else{
-											sixGons.renderer.material = originalMat;
-											networkView.RPC("RPCUpdateMat",RPCMode.Others,sixGons.name,1);
-										}
+										sixGons.renderer.material =originalMat;
+										networkView.RPC("RPCUpdateMat",RPCMode.Others,sixGons.name,1);
 									}
-									
 									chess.GetComponent<CharacterSelect>().AttackRangeList.Clear();
-									chess.GetComponent<CharacterProperty>().Attacked = true;
+									// activate the attack animation
+									if(!AnimStateNetWork(chess,AnimVault.AnimState.attack)){
+										AttackActivate(chess, sel);	
+									}else{
+										chess.FindChild("Models").GetComponent<AttackEvent>().SetTarget(chess,sel);
+									}
+								
+									//chess.GetComponent<CharacterProperty>().Attacked = true;
 									
 									attackMode = false;
 									networkView.RPC("RPCUpdateStatusUI",RPCMode.Others,chess.name,1,false);
-									//updateMapSteps();
-									/*
-									selOld.renderer.material = originalMat;
-									networkView.RPC("RPCUpdateMat",RPCMode.Others,selOld.name,1);
-									sel.renderer.material = originalMat;
-									networkView.RPC("RPCUpdateMat",RPCMode.Others,sel.name,1);
-									*/
+							
 									updateTerritoryMat();
-									
-									//chess.gameObject.layer = 10;
-									//networkView.RPC("RPCUpdateChessLayers",RPCMode.Others, chess.name,10);
-									// update UI
-									mainUI.SubGuiFade = false;
+								
+									//mainUI.SubGuiFade = false;
 									if(chess.GetComponent<CharacterProperty>().Attacked && chess.GetComponent<CharacterProperty>().Activated && chess.GetComponent<CharacterProperty>().Moved){
 										chess.GetComponent<CharacterProperty>().TurnFinished = true;
 										chess.gameObject.layer = 10;
@@ -450,7 +408,7 @@ public class selection : MonoBehaviour {
 										EndTurnNetwork();
 									}
 									
-								}
+								} 
 								if(skillMode){
 									if(CurrentSkill!=null){
 										CurrentSkill.GetComponent<SkillProperty>().GetRealSkillRate();
@@ -464,28 +422,19 @@ public class selection : MonoBehaviour {
 										chess.GetComponent<CharacterProperty>().Activated = true;
 										
 										foreach(Transform sixGons in neighbors){
-											if(sixGons.GetComponent<Identy>().Flag){
-												sixGons.renderer.material = FlagMat;
-											}else{
-												sixGons.renderer.material = originalMat;
-												networkView.RPC("RPCUpdateMat",RPCMode.Others,sixGons.name,1);
-											}
+											sixGons.renderer.material = originalMat;
+											networkView.RPC("RPCUpdateMat",RPCMode.Others,sixGons.name,1);
 										}
 										
 										chessUI.DelayFadeOut = true;
 										chessUI.TargetFadeIn = false;
-										
+										AnimStateNetWork(chess,AnimVault.AnimState.skill);
 										// update network
 										networkView.RPC("RPCUpdateChessActivated",RPCMode.Others, chess.name,true);
 										networkView.RPC("RPCUpdateChessSkillCmd", RPCMode.Others, chess.name,CurrentSkill.name,sel.name,CurrentSkill.GetComponent<SkillProperty>().PassSkillRate);
 										networkView.RPC("RPCUpdateMana",RPCMode.Others,player.GetComponent<ManaCounter>().Mana,player.GetComponent<CharacterProperty>().Player);
-										skillList = false;
-										/*
-										selOld.renderer.material = originalMat;
-										networkView.RPC("RPCUpdateMat",RPCMode.Others,selOld.name,1);
-										sel.renderer.material = originalMat;
-										networkView.RPC("RPCUpdateMat",RPCMode.Others,sel.name,1);
-										*/
+										//skillList = false;
+									
 										updateTerritoryMat();
 									}else{
 										print("Where is current skill???????????");
@@ -521,14 +470,14 @@ public class selection : MonoBehaviour {
 		foreach(Transform territory in players.GetTerritory(1)){
 			aTNames.Add(territory.name);
 			networkView.RPC("RPCUpdateTerritory",RPCMode.Others,territory.name, 1);
-			territory.GetComponent<Identy>().originalMat = players.TerritoryA;
-			territory.renderer.material = territory.GetComponent<Identy>().originalMat;
+			//territory.GetComponent<Identy>().originalMat = players.TerritoryA;
+			territory.GetComponent<Identy>().ShowMap.renderer.material = players.TerritoryA;
 		}
 		foreach(Transform territory in players.GetTerritory(2)){
 			bTNames.Add(territory.name);
 			networkView.RPC("RPCUpdateTerritory",RPCMode.Others,territory.name, 2);
-			territory.GetComponent<Identy>().originalMat = players.TerritoryB;
-			territory.renderer.material = territory.GetComponent<Identy>().originalMat;
+			//territory.GetComponent<Identy>().originalMat = players.TerritoryB;
+			territory.GetComponent<Identy>().ShowMap.renderer.material = players.TerritoryB;
 		}
 	}
 	
@@ -550,13 +499,17 @@ public class selection : MonoBehaviour {
 	
 	public void updateAllCharactersPowers(){
 		foreach(Transform character in players.AllChesses){
-			updateCharacterPowers(character);
+			if(!character.GetComponent<CharacterProperty>().death)
+				updateCharacterPowers(character);
+				networkView.RPC("RPCUpdateChessPower",RPCMode.Others,character.name);
 		}
 	}
 	
 	public void moveCommand(Transform chess){
+		neighbors.Clear();
 		if(chess!=null){
 			updateMapSteps();
+			neighbors.Clear();
 			CharacterSelect character = chess.GetComponent<CharacterSelect>();
 			Transform currentPos = character.getMapPosition();
 			if(currentPos!=null){
@@ -564,16 +517,11 @@ public class selection : MonoBehaviour {
 				neighbors = character.MoveRangeList;
 				if(neighbors.Count>0){
 					foreach(Transform sixGon in neighbors){
-						if(sixGon.GetComponent<Identy>().Flag){
-							sixGon.renderer.material = closeByFlag;
-						}else{
-							sixGon.renderer.material = closeBy;
-							networkView.RPC("RPCUpdateMat",RPCMode.Others,sixGon.name,2);
-							
-						}
+						sixGon.renderer.material = closeBy;
+						networkView.RPC("RPCUpdateMat",RPCMode.Others,sixGon.name,3);
 					}
 					currentPos.renderer.material = rollOver;
-					networkView.RPC("RPCUpdateMat",RPCMode.Others,currentPos.name,3);
+					networkView.RPC("RPCUpdateMat",RPCMode.Others,currentPos.name,2);
 					selectMode = true;
 					moveMode =true;
 				}else{
@@ -584,6 +532,8 @@ public class selection : MonoBehaviour {
 	}
 	
 	public void attackCommand(Transform chess){
+		neighbors.Clear();
+		updateAllCharactersPowers();
 		if(chess!=null){
 			//updateMapSteps();
 			AttackCalculation attackerCal = new AttackCalculation(chess);
@@ -593,15 +543,11 @@ public class selection : MonoBehaviour {
 				neighbors = attackerCal.GetAttableTarget(attackerCal.Attacker);
 				if(neighbors.Count>0){
 					foreach(Transform sixGon in neighbors){
-						if(sixGon.GetComponent<Identy>().Flag){
-							sixGon.renderer.material = closeByFlag;
-						}else{
-							sixGon.renderer.material = closeBy;
-							networkView.RPC("RPCUpdateMat",RPCMode.Others,sixGon.name,2);
-						}
+						sixGon.renderer.material= closeBy;
+						networkView.RPC("RPCUpdateMat",RPCMode.Others,sixGon.name,3);
 					}
-					currentPos.renderer.material = rollOver;
-					networkView.RPC("RPCUpdateMat",RPCMode.Others,currentPos.name,3);
+					currentPos.renderer.material= rollOver;
+					networkView.RPC("RPCUpdateMat",RPCMode.Others,currentPos.name,2);
 					selectMode = true;
 					attackMode = true;
 				}
@@ -610,6 +556,7 @@ public class selection : MonoBehaviour {
 	}
 	
 	public void defenseCommand(Transform chess){
+		neighbors.Clear();
 		if(chess!=null){
 			Transform locationMap = chess.GetComponent<CharacterSelect>().getMapPosition();
 			CharacterProperty chessProperty = chess.GetComponent<CharacterProperty>();
@@ -639,9 +586,12 @@ public class selection : MonoBehaviour {
 				}
 			}
 		}
+		updateAllCharactersPowers();
 	}
 	
 	public void summonCommand(Transform chess, Transform gf){
+		neighbors.Clear();
+		updateAllCharactersPowers();
 		if(chess!=null){
 			CharacterSelect character = chess.GetComponent<CharacterSelect>();
 			Transform currentPos = character.getMapPosition();
@@ -654,15 +604,11 @@ public class selection : MonoBehaviour {
 				currentGF = gf;
 				if(neighbors.Count>0){
 					foreach(Transform sixGon in neighbors){
-						if(sixGon.GetComponent<Identy>().Flag){
-							sixGon.renderer.material = closeByFlag;
-						}else{
-							sixGon.renderer.material = closeBy;
-							networkView.RPC("RPCUpdateMat",RPCMode.Others,sixGon.name,2);
-						}
+						sixGon.renderer.material= closeBy;
+						networkView.RPC("RPCUpdateMat",RPCMode.Others,sixGon.name,3);
 					}
-					currentPos.renderer.material = rollOver;
-					networkView.RPC("RPCUpdateMat",RPCMode.Others,currentPos.name,3);
+					currentPos.renderer.material= rollOver;
+					networkView.RPC("RPCUpdateMat",RPCMode.Others,currentPos.name,2);
 					selectMode = true;
 					summonMode = true;
 				}
@@ -671,6 +617,7 @@ public class selection : MonoBehaviour {
 	}
 	
 	public void skillCommand(Transform skill){
+		updateAllCharactersPowers();
 		if(chess!=null){
 			CharacterSelect character = chess.GetComponent<CharacterSelect>();
 			Transform currentPos = character.getMapPosition();
@@ -679,21 +626,34 @@ public class selection : MonoBehaviour {
 				neighbors = cSkill.GetSelectionRange();
 				if(neighbors.Count>0){
 					foreach(Transform sixGon in neighbors){
-						if(sixGon.GetComponent<Identy>().Flag){
-							sixGon.renderer.material = closeByFlag;
-						}else{
-							sixGon.renderer.material = closeBy;
-							networkView.RPC("RPCUpdateMat",RPCMode.Others,sixGon.name,2);
-						}
+						sixGon.renderer.material= closeBy;
+						networkView.RPC("RPCUpdateMat",RPCMode.Others,sixGon.name,3);
 					}
-					currentPos.renderer.material = rollOver;
-					networkView.RPC("RPCUpdateMat",RPCMode.Others,currentPos.name,3);
+					currentPos.renderer.material= rollOver;
+					networkView.RPC("RPCUpdateMat",RPCMode.Others,currentPos.name,2);
 					CurrentSkill = skill;
 					selectMode = true;
 					skillMode = true;
 				}
 			}
 		}
+	}
+	
+	public void ReviveCommand(Transform masterChess){
+		if(Playing){
+			neighbors.Clear();
+			neighbors = GetAllEmptyMaps();
+			if(neighbors.Count>0){
+				foreach(Transform haxgon in neighbors){
+					haxgon.renderer.material= closeBy;
+					networkView.RPC("RPCUpdateMat",RPCMode.Others,haxgon.name,3);
+				}
+				selectMode = true;
+				summonMode = true;
+				currentGF = masterChess;
+			}
+		}
+		reviveMode = true;
 	}
 	
 	public void MoveToLayer(Transform character, int layer){
@@ -706,237 +666,64 @@ public class selection : MonoBehaviour {
 			}
 		}
 	}
-	/*
-	void OnGUI(){
-		GUI.depth = 3;
-		if(player==players.playerA)
-			GUI.backgroundColor = Color.red;
-		else
-			GUI.backgroundColor = Color.yellow;
-		if(guiShow){
-			GUI.Box(new Rect(screenPos.x+guiSegX,screenPos.y+guiSegY,100,160), "Mana:"+player.GetComponent<ManaCounter>().Mana);
-			if(summoner && player.GetComponent<ManaCounter>().Mana>=1){
-				if(GUI.Button(new Rect(screenPos.x+guiSegX+guiSeg, screenPos.y+guiSegY+guiSeg*2,80,20),"Summon")){
-					summonList = true;
-					this.GetComponent<InfoUI>().infoUI = false;
-				}
-			}
-			if(!chess.GetComponent<CharacterProperty>().Moved){
-				if(GUI.Button(new Rect(screenPos.x+guiSegX+guiSeg, screenPos.y+guiSegY+guiSeg*4,80,20),"Move")){
-					moveCommand(chess);
-					
-					guiShow = false;
-					summonList = false;
-					skillList = false;
-					this.GetComponent<InfoUI>().infoUI = false;
-					networkView.RPC("RPCUpdateStatusUI",RPCMode.Others,chess.name,2,true);
-					networkView.RPC("RPCUpdateStatusUI",RPCMode.Others,chess.name,4,false);
-					networkView.RPC("RPCUpdateStatusUI",RPCMode.Others,chess.name,3,false);
-					networkView.RPC("RPCUpdateStatusUI",RPCMode.Others,chess.name,1,false);
-				}
-			}
-			if(!chess.GetComponent<CharacterProperty>().Attacked){
-				AttackCalculation atc = new AttackCalculation(chess);
-				if(atc.GetAttableTarget(atc.Attacker).Count>0){
-					if(GUI.Button(new Rect(screenPos.x+guiSegX+guiSeg, screenPos.y+guiSegY+guiSeg*6,80,20),"Attack")){
-						attackCommand(chess);
-						
-						guiShow = false;
-						summonList = false;
-						skillList = false;
-						this.GetComponent<InfoUI>().infoUI = false;
-						networkView.RPC("RPCUpdateStatusUI",RPCMode.Others,chess.name,1,true);
-						networkView.RPC("RPCUpdateStatusUI",RPCMode.Others,chess.name,4,false);
-						networkView.RPC("RPCUpdateStatusUI",RPCMode.Others,chess.name,3,false);
-						networkView.RPC("RPCUpdateStatusUI",RPCMode.Others,chess.name,2,false);
-					}
-				}
-			}
-			if(!chess.GetComponent<CharacterProperty>().Attacked){
-				if(GUI.Button(new Rect(screenPos.x+guiSegX+guiSeg, screenPos.y+guiSegY+guiSeg*8,80,20),"Defense")){
-					guiShow = false;
-					summonList = false;
-					skillList = false;
-					
-					CharacterProperty chessProperty = chess.GetComponent<CharacterProperty>();
-					
-					chessProperty.Attacked = true;
-					chessProperty.Moved = true;
-					
-					//update network
-					this.GetComponent<InfoUI>().infoUI = false;
-					networkView.RPC("RPCCancelStatusUI",RPCMode.Others,chess.name);
-					networkView.RPC("RPCUpdateChessAttacked", RPCMode.Others, chess.name, true);
-					networkView.RPC("RPCUpdateChessMoved", RPCMode.Others, chess.name, true);
-					
-					Transform locationMap = chess.GetComponent<CharacterSelect>().getMapPosition();
-					int playerSide = chessProperty.Player;
-					int theOtherSide = 1;
-					if(playerSide==1)
-						theOtherSide =2;
-					else if(playerSide==2)
-						theOtherSide =1;
-					
-					if(chess.GetComponent<CharacterProperty>().Summoner){
-						foreach(Transform territory in locationMap.GetComponent<Identy>().neighbor){
-							if(!players.IsInsideTerritory(territory,playerSide)&& territory!=null){
-								players.AddTerritory(territory,playerSide);
-								if(players.IsInsideTerritory(territory,theOtherSide)){
-									players.RemoveTerritory(territory,theOtherSide);
-								}
-							}
-						}
-					}
-					if(!players.IsInsideTerritory(locationMap,playerSide)&& locationMap!=null){
-						players.AddTerritory(locationMap,playerSide);
-						if(players.IsInsideTerritory(locationMap,theOtherSide)){
-							players.RemoveTerritory(locationMap,theOtherSide);
-						}
-					}
-					//chess.gameObject.layer = 10;
-					// network update
-					//networkView.RPC("RPCUpdateChessEndTurn",RPCMode.Others,chess.name,chessProperty.TurnFinished);
-					updateAllCharactersPowers();
-					updateTerritoryMat();
-					
-					bool ifMolePassive = MapHelper.CheckPassive(PassiveType.DefenseAddOne,chess);
-					
-					if(ifMolePassive){
-						chessProperty.Hp +=1;
-						networkView.RPC("RPCMolePassive",RPCMode.Others,chess.name,ifMolePassive);
-					}
-					//networkView.RPC("RPCUpdateChessLayers",RPCMode.Others, chess.name,10);
-				}
-			}
-			if(!chess.GetComponent<CharacterProperty>().Activated){
-				if(GUI.Button(new Rect(screenPos.x+guiSegX+guiSeg, screenPos.y+guiSegY+guiSeg*10,80,20),"Skills")){
-					skillList = true;
-					summonList = false;
-					this.GetComponent<InfoUI>().infoUI = false;
-					//chess.GetComponent<CharacterProperty>().Activated = true;
-				}
-			}
-			if(GUI.Button(new Rect(screenPos.x+guiSegX+guiSeg, screenPos.y+guiSegY+guiSeg*12,80,20),"Info")){
-				Texture2D textureInfo = chess.GetComponent<CharacterProperty>().cardInfo;
-				guiShow = false;
-				skillList = false;
-				summonList = false;
-				this.GetComponent<InfoUI>().infoUI = true;
-				this.GetComponent<InfoUI>().TextureInfo = textureInfo;
-			}
-			
-			if(!chess.GetComponent<CharacterProperty>().TurnFinished){
-				if(GUI.Button(new Rect(screenPos.x+guiSegX+guiSeg, screenPos.y+guiSegY+guiSeg*14,80,20),"End Turn")){
-					
-					guiShow = false;
-					skillList = false;
-					summonList = false;
-					this.GetComponent<InfoUI>().infoUI = false;
-					chess.GetComponent<CharacterProperty>().Activated = true;
-					chess.GetComponent<CharacterProperty>().Attacked = true;
-					chess.GetComponent<CharacterProperty>().Moved = true;
-					chess.GetComponent<CharacterProperty>().TurnFinished = true;
-					chess.gameObject.layer = 10;
-					//update netwrok
-					networkView.RPC("RPCCancelStatusUI",RPCMode.Others,chess.name);
-					networkView.RPC("RPCUpdateChessEndTurn",RPCMode.Others,chess.name,true);
-					networkView.RPC("RPCUpdateChessLayers",RPCMode.Others, chess.name,10);
-				}
-			}
-			if(summonList){
-				GUI.Box(new Rect(screenPos.x+guiSegX*4,screenPos.y+guiSegY,150,150),"GFs");
-				IList soldiers = null;
-				if(chess.GetComponent<CharacterProperty>().Player == 1){
-					soldiers = Camera.mainCamera.GetComponent<RoundCounter>().PlayerAChesses;
-				}else if(chess.GetComponent<CharacterProperty>().Player == 2){
-					soldiers = Camera.mainCamera.GetComponent<RoundCounter>().PlayerBChesses;
-				}
-				int seg = 0;
-				foreach(Transform gf in soldiers){
-					if(gf.GetComponent<CharacterProperty>().death && !gf.GetComponent<CharacterProperty>().Summoner){
-						seg+=1;
-						if(GUI.Button(new Rect(screenPos.x+guiSegX*4+10, screenPos.y+guiSegY+20*seg,150,20),gf.GetComponent<CharacterProperty>().NameString + " ("+gf.GetComponent<CharacterProperty>().WaitRounds+") ")){
-							if(gf.GetComponent<CharacterProperty>().Ready && player.GetComponent<ManaCounter>().Mana >= gf.GetComponent<CharacterProperty>().summonCost){
-								summonCommand(chess,gf); 
-								//gf.GetComponent<CharacterProperty>().death = false;
-								guiShow = false;
-								networkView.RPC("RPCUpdateStatusUI",RPCMode.Others,chess.name,4,true);
-								networkView.RPC("RPCUpdateStatusUI",RPCMode.Others,chess.name,1,false);
-								networkView.RPC("RPCUpdateStatusUI",RPCMode.Others,chess.name,2,false);
-								networkView.RPC("RPCUpdateStatusUI",RPCMode.Others,chess.name,3,false);
-								//chess.GetComponent<CharacterProperty>().Activated = true;
-							}
-							summonList = false;
-						}	
-					}
-				}
-			}
-			if(skillList){
-				GUI.Box(new Rect(screenPos.x+guiSegX*4,screenPos.y+guiSegY,150,150),"Skills");
-				Transform[] skills = chess.GetComponent<SkillSets>().Skills;
-				int seg =0;
-				foreach(Transform skill in skills){
-					if(player.GetComponent<ManaCounter>().Mana>=skill.GetComponent<SkillProperty>().SkillCost){
-						seg+=1;
-						if(GUI.Button(new Rect(screenPos.x+guiSegX*4+10, screenPos.y+guiSegY+20*seg,150,20),skill.GetComponent<SkillProperty>().SkillName + " ("+skill.GetComponent<SkillProperty>().SkillCost+" M) ")){
-							networkView.RPC("RPCUpdateStatusUI",RPCMode.Others,chess.name,3,true);
-							networkView.RPC("RPCUpdateStatusUI",RPCMode.Others,chess.name,1,false);
-							networkView.RPC("RPCUpdateStatusUI",RPCMode.Others,chess.name,2,false);
-							networkView.RPC("RPCUpdateStatusUI",RPCMode.Others,chess.name,4,false);
-							if(!skill.GetComponent<SkillProperty>().NeedToSelect){
-								skill.GetComponent<SkillProperty>().GetRealSkillRate();
-								skill.GetComponent<SkillProperty>().PassSkillRate = MapHelper.Success(skill.GetComponent<SkillProperty>().SkillRate);
-								skill.GetComponent<SkillProperty>().ActivateSkill();
-								player.GetComponent<ManaCounter>().Mana -= skill.GetComponent<SkillProperty>().SkillCost;
-								chess.GetComponent<CharacterProperty>().Activated = true;
-								//chess.gameObject.layer = 10;
-								//update network
-								networkView.RPC("RPCUpdateChessSkillCmdA",RPCMode.Others,chess.name,skill.name,skill.GetComponent<SkillProperty>().PassSkillRate);
-								networkView.RPC("RPCUpdateChessActivated",RPCMode.Others, chess.name,true);
-								networkView.RPC("RPCUpdateMana",RPCMode.Others,player.GetComponent<ManaCounter>().Mana,player.GetComponent<CharacterProperty>().Player);
-								
-							}else{
-								skillCommand(skill);
-							}
-							skillList = false;
-							guiShow = false;
-						}
-					}
-				}
+	
+	IList GetAllEmptyMaps(){
+		IList allMaps = new List<Transform>();
+		Transform allMap = GameObject.Find("Maps").transform;
+		for(int i=0; i<allMap.childCount; i++){
+			if(!MapHelper.IsMapOccupied(allMap.GetChild(i))){
+				allMaps.Add(allMap.GetChild(i));
 			}
 		}
+		return allMaps;
 	}
-	*/
-	/*
-	void RPCUpdateProperty(Transform chess){
-		if(chess!=null){
-			CharacterProperty cp = chess.GetComponent<CharacterProperty>();
-			networkView.RPC("RPCUpdateChessUnnormal",RPCMode.Others,chess.name,0,cp.UnStatusCounter[UnnormalStatus.Burned]);
-			networkView.RPC("RPCUpdateChessLastUnnormal",RPCMode.Others,chess.name,0,cp.LastUnStatusCounter[UnnormalStatus.Burned]);
-			networkView.RPC("RPCUpdateChessUnnormal",RPCMode.Others,chess.name,1,cp.UnStatusCounter[UnnormalStatus.Chaos]);
-			networkView.RPC("RPCUpdateChessLastUnnormal",RPCMode.Others,chess.name,1,cp.LastUnStatusCounter[UnnormalStatus.Chaos]);
-			networkView.RPC("RPCUpdateChessUnnormal",RPCMode.Others,chess.name,2,cp.UnStatusCounter[UnnormalStatus.Freezed]);
-			networkView.RPC("RPCUpdateChessLastUnnormal",RPCMode.Others,chess.name,2,cp.LastUnStatusCounter[UnnormalStatus.Freezed]);
-			networkView.RPC("RPCUpdateChessUnnormal",RPCMode.Others,chess.name,3,cp.UnStatusCounter[UnnormalStatus.Poisoned]);
-			networkView.RPC("RPCUpdateChessLastUnnormal",RPCMode.Others,chess.name,3,cp.LastUnStatusCounter[UnnormalStatus.Poisoned]);
-			networkView.RPC("RPCUpdateChessUnnormal",RPCMode.Others,chess.name,4,cp.UnStatusCounter[UnnormalStatus.Sleeping]);
-			networkView.RPC("RPCUpdateChessLastUnnormal",RPCMode.Others,chess.name,4,cp.LastUnStatusCounter[UnnormalStatus.Sleeping]);
-			networkView.RPC("RPCUpdateChessUnnormal",RPCMode.Others,chess.name,5,cp.UnStatusCounter[UnnormalStatus.Wounded]);
-			networkView.RPC("RPCUpdateChessLastUnnormal",RPCMode.Others,chess.name,5,cp.LastUnStatusCounter[UnnormalStatus.Wounded]);
-			
-			networkView.RPC("RPCUpdateChessStatus",RPCMode.Others,chess.name,0,cp.BuffMoveRange);
-			networkView.RPC("RPCUpdateChessStatus",RPCMode.Others,chess.name,1,cp.BuffAtkRange);
-			networkView.RPC("RPCUpdateChessStatus",RPCMode.Others,chess.name,2,cp.Damage);
-			networkView.RPC("RPCUpdateChessStatus",RPCMode.Others,chess.name,3,cp.Hp);
-			networkView.RPC("RPCUpdateChessStatus",RPCMode.Others,chess.name,4,cp.BuffCriticalHit);
-			networkView.RPC("RPCUpdateChessStatus",RPCMode.Others,chess.name,5,cp.BuffSkillRate);
-			networkView.RPC("RPCUpdateChessStatus",RPCMode.Others,chess.name,6,cp.StandByRounds);
-		}
+	
+	int GetSteps(Transform start, Transform dest){
+		int step = 0;
+		float dis = Vector3.Distance(start.transform.position, dest.transform.position);
+		if(dis>13)
+			step=3;
+		else if(dis<13 && dis>7)
+			step=2;
+		else if(dis<7)
+			step=1;
+		return step;
 	}
-	*/
+	
+	
     void Update() {
 		panning();	
 		selecting();
+		if(SummonIn){
+			if(currentGF!=null){
+				t+=Time.deltaTime/fadeInTime;
+				float alpha = Mathf.Lerp(0.0f,1.0f,t);
+				Color oldCol = currentGF.renderer.material.color;
+				oldCol.a = alpha;
+				currentGF.renderer.material.color = oldCol;
+				List<Transform> models = new List<Transform>();
+				Transform model = currentGF.FindChild("Models");
+				if(model.childCount>0){
+					for(int i=0; i<model.childCount; i++){
+						if(model.GetChild(i).GetComponent<SkinnedMeshRenderer>()!=null){
+							models.Add(model.GetChild(i));
+						}
+					}
+				}
+				if(models.Count>0){
+					foreach(Transform m in models){
+						m.renderer.material.color = oldCol;
+					}
+				}
+					
+				
+				if(alpha>=0.95){
+					if(MapHelper.SetObjOldShader(currentGF,1.0f))
+						SummonIn = false;
+				}
+			}
+		}
+		
 		if(camMoveMode)
 			translateMainCam(80);
 		if (Input.GetKeyDown(KeyCode.Return)) {  
@@ -958,6 +745,20 @@ public class selection : MonoBehaviour {
 		networkView.RPC("RPCUpdateStatusUI",RPCMode.Others,chess.name,2,false);
 	}
 	
+	public void AttackActivate(Transform chess, Transform sel){
+		attackerCal.CriticalHit = attackerCal.CalcriticalHit(chess,AttackType.physical);
+		attackerCal.fightBack = true;
+		attackerCal.SetAttackSequence(chess, sel);
+		chessUI.Critical = attackerCal.CriticalHit;
+		chessUI.DelayFadeOut = true;
+		chessUI.TargetFadeIn = false;
+		
+		//update network
+		networkView.RPC("RPCUpdateAttackResult", RPCMode.Others, chess.name, sel.name,attackerCal.CriticalHit);
+		networkView.RPC("RPCUpdateInfoUIState",RPCMode.Others,true,true,attackerCal.CriticalHit);
+		networkView.RPC("RPCUpdateMainInfoUI",RPCMode.Others,MapHelper.GetMapOccupiedObj(sel).name,false);
+	}
+	
 	public void DefenseNetwork(){
 		CharacterProperty chessProperty = chess.GetComponent<CharacterProperty>();
 		networkView.RPC("RPCCancelStatusUI",RPCMode.Others,chess.name);
@@ -966,8 +767,9 @@ public class selection : MonoBehaviour {
 		
 		bool ifMolePassive = MapHelper.CheckPassive(PassiveType.DefenseAddOne,chess);			
 		if(ifMolePassive){
-			chessProperty.Hp +=1;
+			chess.GetComponent<BuffList>().ExtraDict[BuffType.Defense]+=1;
 			networkView.RPC("RPCMolePassive",RPCMode.Others,chess.name,ifMolePassive);
+			updateCharacterPowers(chess);
 		}
 	}
 	
@@ -998,6 +800,13 @@ public class selection : MonoBehaviour {
 		networkView.RPC("RPCUpdateMana",RPCMode.Others,player.GetComponent<ManaCounter>().Mana,player.GetComponent<CharacterProperty>().Player);				
 	}
 	
+	public bool AnimStateNetWork(Transform chess,AnimVault.AnimState state){
+		Transform model = chess.FindChild("Models");
+		if(model.GetComponent<AnimVault>()!=null)
+			networkView.RPC("RPCUpdateAnimState", RPCMode.All, chess.name, state.ToString());
+		return model.GetComponent<AnimVault>()!=null; 
+	}
+	
 	[RPC]
 	void RPCUpdateChessPosition(string selName, string chessName){
 		Transform selection = GameObject.Find(selName).transform;
@@ -1007,15 +816,21 @@ public class selection : MonoBehaviour {
 	}
 	
 	[RPC]
+	void RPCLookAtTarget(string selName, string targetName){
+		Transform chess = GameObject.Find(selName).transform;
+		Transform target = GameObject.Find(targetName).transform;
+		chess.LookAt(target.transform.position);
+	}
+	
+	[RPC]
 	void RPCUpdateTerritory(string tANames, int side){
 		if(tANames!=null){
 			Transform map = GameObject.Find(tANames).transform;
-			//if(!players.IsInsideTerritory(map,side))
-			//	players.AddTerritory(map,side);
+			
 			if(side==1)
-				map.renderer.material = players.TerritoryA;
+				map.GetComponent<Identy>().ShowMap.renderer.material = players.TerritoryA;
 			else if(side==2)
-				map.renderer.material = players.TerritoryB;
+				map.GetComponent<Identy>().ShowMap.renderer.material = players.TerritoryB;
 		}
 		
 	}
@@ -1023,10 +838,9 @@ public class selection : MonoBehaviour {
 	void RPCMolePassive(string chessName, bool passive){
 		if(passive){
 			Transform chess = GameObject.Find(chessName).transform;
-			chess.GetComponent<CharacterProperty>().Hp+=1;
+			chess.GetComponent<BuffList>().ExtraDict[BuffType.Defense]+=1;
 		}
 	}
-	
 	
 	[RPC]
 	void RPCUpdateChessEndTurn(string chessName, bool endTurn){
@@ -1095,10 +909,9 @@ public class selection : MonoBehaviour {
 	void RPCUpdateAttackResult(string chessName, string selName, bool state){
 		Transform selection = GameObject.Find(selName).transform;
 		Transform chess = GameObject.Find(chessName).transform;
-		AttackCalculation attackerCal = new AttackCalculation(chess);
-		attackerCal.InsertTarget(selection);
 		attackerCal.CriticalHit = state;
-		attackerCal.UpdateAttackResult(AttackType.physical);
+		attackerCal.fightBack = true;
+		attackerCal.SetAttackSequence(chess,selection);
 	}
 	
 	[RPC]
@@ -1147,10 +960,11 @@ public class selection : MonoBehaviour {
 		if(mat==1){
 			selection.renderer.material = originalMat;
 		}else if(mat==2){
-			selection.renderer.material = closeBy;
-		}else if(mat==3){
 			selection.renderer.material = rollOver;
+		}else if(mat==3){
+			selection.renderer.material = closeBy;
 		}
+		
 	}
 	
 	[RPC]
@@ -1301,5 +1115,53 @@ public class selection : MonoBehaviour {
 			chessUI.Critical = critiq;
 		else
 			chessUI.CriticalRight = critiq;
+	}
+	
+	[RPC]
+	void RPCShowUp(string chessName){
+		Transform chess = GameObject.Find(chessName).transform;
+		currentGF = chess;
+	}
+	
+	[RPC]
+	void RPCSummonIn(string chessName, string selName){
+		Transform chess = GameObject.Find(chessName).transform;
+		Transform sel = GameObject.Find(selName).transform;
+		Vector3 fxPos = new Vector3(sel.transform.position.x,sel.transform.position.y+0.1f,sel.transform.position.z);
+		Transform flashIn = Instantiate(fxVault.SummonIn,fxPos,Quaternion.identity) as Transform;
+		Destroy(GameObject.Find(flashIn.name).gameObject, 3.0f);
+		if(chess.GetComponent<CharacterProperty>().Player==1)
+			MapHelper.SetObjTransparent(chess,red,0.0f);
+		else
+			MapHelper.SetObjTransparent(chess,yellow,0.0f);
+		SummonIn = true;
+		t = 0;
+	}
+	
+	[RPC]
+	void RPCUpdateRevive(bool state){
+		reviveMode = state;
+	}
+	
+	[RPC]
+	void RPCUpdateAnimState(string chessName, string state){
+		Transform chess = GameObject.Find(chessName).transform;
+		Transform model = chess.FindChild("Models");
+		AnimVault.AnimState newState = AnimVault.AnimState.attack;
+		switch(state){
+			case "attack":
+				newState = AnimVault.AnimState.attack;
+				break;
+			case "idle":
+				newState = AnimVault.AnimState.idle;
+				break;
+			case "run":
+				newState = AnimVault.AnimState.run;
+				break;
+			case "skill":
+				newState = AnimVault.AnimState.skill;
+				break;
+		}
+		model.GetComponent<AnimVault>().CurrentState = newState;
 	}
 }

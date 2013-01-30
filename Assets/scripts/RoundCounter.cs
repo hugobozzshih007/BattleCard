@@ -23,8 +23,11 @@ public class RoundCounter : MonoBehaviour {
 	private int camStep = 0;
 	public Material TerritoryA;
 	public Material TerritoryB;
-	
-	
+	bool checkRound = false;
+	RoundUI rUI;
+	MainUI mUI;
+	MainInfoUI infoUI;
+	selection currentSel;
 	// Use this for initialization
 	void Start () {
 		roundCounter = 1;
@@ -64,6 +67,11 @@ public class RoundCounter : MonoBehaviour {
 		
 		PlayerATerritory.Add(GameObject.Find("unit_start_point_A").transform);
 		PlayerBTerritory.Add(GameObject.Find("unit_start_point_B").transform);
+		
+		rUI = transform.GetComponent<RoundUI>();
+		mUI = transform.GetComponent<MainUI>();
+		infoUI = transform.GetComponent<MainInfoUI>();
+		currentSel = transform.GetComponent<selection>();
 	}
 	
 	void Awake(){
@@ -273,6 +281,7 @@ public class RoundCounter : MonoBehaviour {
 	void updateRound(IList chesses){
 		foreach(Transform gf in chesses){
 			CharacterProperty gfp = gf.GetComponent<CharacterProperty>();
+			BuffList gfB = gf.GetComponent<BuffList>();
 			gfp.Moved = false;
 			gfp.Attacked = false;
 			gfp.Activated = false;
@@ -338,6 +347,16 @@ public class RoundCounter : MonoBehaviour {
 		}
 	}
 	
+	void updateExtraBuff(){
+		foreach(Transform gf in AllChesses){
+			if(!gf.GetComponent<CharacterProperty>().death){
+				foreach(BuffType Buff in Enum.GetValues(typeof(BuffType))){
+					gf.GetComponent<BuffList>().ExtraDict[Buff] = 0;
+				}
+			}
+		}
+	}
+	
 	void updateWaitRounds(){
 		foreach(Transform gf in PlayerAChesses){
 			if(!gf.GetComponent<CharacterProperty>().Ready){
@@ -394,15 +413,8 @@ public class RoundCounter : MonoBehaviour {
 	
 	void revivePlayer(Transform player){
 		CharacterProperty property = player.GetComponent<CharacterProperty>();
-		if(property.death && property.Ready){
-			if(property.Player==1)
-				player.position = GameObject.Find("unit_start_point_A").transform.position;
-			else if(property.Player==2)
-				player.position = GameObject.Find("unit_start_point_B").transform.position;
-			property.death = false;
-			property.Hp = property.defPower;
-			player.renderer.enabled = true;
-		}
+		if(property.death && property.Ready)
+			transform.GetComponent<selection>().ReviveCommand(player);
 	}
 	
 	void updateAllCharactersPowers(){
@@ -434,18 +446,33 @@ public class RoundCounter : MonoBehaviour {
 		}
 	}
 	
-	
+	void UpdateLayers(){
+		foreach(Transform t in AllChesses){
+			t.gameObject.layer = 10;
+		}
+		mUI.MainGuiFade = false;
+		mUI.SubGuiFade = false;
+		infoUI.MainFadeIn = false;
+		infoUI.TargetFadeIn = false;
+	}
 	// Update is called once per frame
 	void Update () {
 		if(roundCounter%2 == 1){
 			if(CheckRound(PlayerAChesses)|| checkAllDeath(PlayerAChesses)){
+				if(!checkRound && !currentSel.reviveMode){
+					rUI.SetRoundUI(Color.yellow);
+					checkRound = true;
+				}
+			}
+			if(rUI.UIfinished){
+				UpdateLayers();
 				updateWaitRounds();
 				oldCamPosition = transform.position;
 				getNewCamPos(2);
 				camMoveMode = true;
 				playerB.GetComponent<ManaCounter>().Mana+=2;
 				updateUnnormalStatus();
-				revivePlayer(playerB);
+				updateExtraBuff();
 				UpdateChessList();
 				updateRound(PlayerBChesses);
 				updateAllCharactersPowers();
@@ -453,18 +480,29 @@ public class RoundCounter : MonoBehaviour {
 				transform.GetComponent<selection>().APlaying=false;
 				transform.GetComponent<selection>().BPlaying=true;
 				updatePlaying();
+				revivePlayer(playerB);
 				roundCounter += 1;
+				checkRound = false;
+				rUI.UIfinished = false;
+				
 			}
 		} 
 		if(roundCounter%2 == 0){
 			if(CheckRound(PlayerBChesses)|| checkAllDeath(PlayerBChesses)){
+				if(!checkRound && !currentSel.reviveMode){
+					rUI.SetRoundUI(Color.red);
+					checkRound = true;
+				}
+			}
+			if(rUI.UIfinished){
+				UpdateLayers();
 				updateWaitRounds();
 				oldCamPosition = transform.position;
 				getNewCamPos(1);
 				camMoveMode = true;
 				playerA.GetComponent<ManaCounter>().Mana+=2;
 				updateUnnormalStatus();
-				revivePlayer(playerA);
+				updateExtraBuff();
 				UpdateChessList();
 				updateRound(PlayerAChesses);
 				updateAllCharactersPowers();
@@ -473,7 +511,10 @@ public class RoundCounter : MonoBehaviour {
 				transform.GetComponent<selection>().APlaying=true;
 				transform.GetComponent<selection>().BPlaying=false;
 				updatePlaying();
+				revivePlayer(playerA);
 				roundCounter += 1;
+				checkRound = false;
+				rUI.UIfinished = false;
 				
 			}
 		}

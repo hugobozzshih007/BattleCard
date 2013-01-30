@@ -8,6 +8,7 @@ public class BuffList : MonoBehaviour {
 	public BuffType[] deBuff;
 	public Dictionary<BuffType, bool> AddBuffDict;
 	public Dictionary<BuffType, bool> DeBuffDict;
+	public Dictionary<BuffType, int> ExtraDict;
 	
 	// Use this for initialization
 	void Start () {
@@ -28,6 +29,10 @@ public class BuffList : MonoBehaviour {
 			foreach(BuffType bt in addBuff){
 				DeBuffDict[bt] = true;
 			}
+		}
+		ExtraDict = new Dictionary<BuffType, int>();
+		foreach(BuffType Buff in Enum.GetValues(typeof(BuffType))){
+			ExtraDict.Add(Buff, 0);
 		}
 	}
 	

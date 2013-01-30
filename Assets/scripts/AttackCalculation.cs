@@ -12,6 +12,7 @@ public class AttackCalculation{
 	CharacterProperty attackerProperty, targetProperty;
 	CharacterSelect attackerSelect, targetSelect;
 	DamageSlidingUI sUI;
+	DeathFX dFX;
 	
 	public AttackCalculation(Transform attacker){
 		Attacker = attacker;
@@ -73,13 +74,6 @@ public class AttackCalculation{
 		IList targets = new List<Transform>();
 		targets = attacker.GetComponent<CharacterProperty>().GetAttackPosition();
 		bool flyHitable = MapHelper.CheckPassive(PassiveType.FlyingHit, attacker)|| MapHelper.CheckPassive(PassiveType.Flying, attacker);
-		//Debug.Log("flyHitable: " +flyHitable);
-		/*
-		if(attacker == Target){
-			if(!targets.Contains(attackerLocation)){
-				targets.Add(attackerLocation);
-			}
-		}*/
 		
 		foreach(Transform map in targets){
 			Transform enemy = MapHelper.GetMapOccupiedObj(map);
@@ -106,19 +100,21 @@ public class AttackCalculation{
 		return ableTargets;
 	}
 	
-	void ShowDamageUI(Transform target,int damage){
-		DamageUI dUI = new DamageUI(target,damage);
+	void ShowDamageUI(Transform target,int damage, Transform atk){
+		DamageUI dUI = new DamageUI(target,damage, atk);
 		sUI.UIItems.Add(dUI);
 	}
 	
 	public void UpdateAttackResult(AttackType mode){
+		dFX = Camera.mainCamera.GetComponent<DeathFX>();
 		if(mode == AttackType.physical){
 			if(Attacker.GetComponent<CharacterPassive>().PassiveDict[PassiveType.SuddenDeath]){
-				if(!targetProperty.Tower && MapHelper.Success(10))
+				if(!targetProperty.Tower && MapHelper.Success(10)){
 					targetProperty.Hp = 0;
+				}
 				else{
 					targetProperty.Hp -= attackerProperty.Damage;
-					ShowDamageUI(Target, attackerProperty.Damage);
+					ShowDamageUI(Target, attackerProperty.Damage, Attacker);
 				}
 				
 			}else if(Attacker.GetComponent<CharacterPassive>().PassiveDict[PassiveType.MultiArrow]){
@@ -130,11 +126,11 @@ public class AttackCalculation{
 					targetList.Remove(Target);
 				if(CriticalHit){
 					targetProperty.Hp -= attackerProperty.Damage*2;
-					ShowDamageUI(Target, attackerProperty.Damage*2);
+					ShowDamageUI(Target, attackerProperty.Damage*2, Attacker);
 					Debug.Log("Critical Hit!");
 				}else{
 					targetProperty.Hp -= attackerProperty.Damage;
-					ShowDamageUI(Target, attackerProperty.Damage);
+					ShowDamageUI(Target, attackerProperty.Damage, Attacker);
 				}
 				
 				Transform[] tArray = new Transform[targetList.Count];
@@ -142,22 +138,22 @@ public class AttackCalculation{
 				if(tArray.Length > 1){
 					for(int i=0;i<2;i++){
 						tArray[i].GetComponent<CharacterProperty>().Hp -= 1;
-						ShowDamageUI(tArray[i], 1);
+						ShowDamageUI(tArray[i], 1, Attacker);
 					}
 				}else if(tArray.Length < 2){
 					for(int i=0;i<tArray.Length;i++){
 						tArray[i].GetComponent<CharacterProperty>().Hp -= 1;
-						ShowDamageUI(tArray[i], 1);
+						ShowDamageUI(tArray[i], 1, Attacker);
 					}
 				}
 				
 			}else if(CriticalHit){
 				targetProperty.Hp -= attackerProperty.Damage*2;
-				ShowDamageUI(Target, attackerProperty.Damage*2);
+				ShowDamageUI(Target, attackerProperty.Damage*2, Attacker);
 				Debug.Log("Critical Hit!");
 			}else{
 				targetProperty.Hp -= attackerProperty.Damage;
-				ShowDamageUI(Target, attackerProperty.Damage);
+				ShowDamageUI(Target, attackerProperty.Damage, Attacker);
 			}
 			
 			if(Attacker.GetComponent<CharacterPassive>().PassiveDict[PassiveType.WoundBite]){
@@ -171,7 +167,7 @@ public class AttackCalculation{
 				Debug.Log("Critical Hit!");
 			}else{
 				targetProperty.Hp -= attackerProperty.Damage;
-				ShowDamageUI(Target, attackerProperty.Damage);
+				ShowDamageUI(Target, attackerProperty.Damage, Attacker);
 			}
 		}
 		/*
@@ -180,17 +176,19 @@ public class AttackCalculation{
 		}*/
 		
 		if(attackerProperty.Hp<=0){
-			attackerProperty.death = true;
+			//attackerProperty.death = true;
+			//dFX.SetDeathSequence(Attacker);
 			attackerProperty.Ready = false;
 			attackerProperty.WaitRounds = attackerProperty.StandByRounds;
 		}
 		
 		if(targetProperty.Hp<=0){
 			if(!targetProperty.Tower){
-				targetProperty.death = true;
+				//dFX.SetDeathSequence(Target);
 				targetProperty.Ready = false;
 				targetProperty.WaitRounds = targetProperty.StandByRounds;
 			}else{
+				
 				targetProperty.death = true;
 			}
 		}

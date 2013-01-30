@@ -10,7 +10,7 @@ public class Suicide : MonoBehaviour, CommonSkill {
 	
 	// Use this for initialization
 	void Start () {
-		attacker = transform.parent;
+		attacker = transform.parent.parent;
 	}
 	
 	public void InsertSelection (Transform map)
@@ -34,13 +34,15 @@ public class Suicide : MonoBehaviour, CommonSkill {
 				atkList.Add(MapHelper.GetMapOccupiedObj(unit));
 			}
 		}
-		
-		attacker.GetComponent<CharacterProperty>().Hp = 0;
+		int d = attacker.GetComponent<CharacterProperty>().Hp+1;
+		attacker.GetComponent<CharacterProperty>().Hp -= (attacker.GetComponent<CharacterProperty>().Hp+1);
+		DamageUI aDieUI = new DamageUI(attacker, d, attacker);
+		sUI.UIItems.Add(aDieUI);
 		
 		if(atkList.Count>0){
 			foreach(Transform target in atkList){
 				target.GetComponent<CharacterProperty>().Hp -= attacker.GetComponent<CharacterProperty>().Damage;
-				DamageUI dUI = new DamageUI(target,attacker.GetComponent<CharacterProperty>().Damage);
+				DamageUI dUI = new DamageUI(target,attacker.GetComponent<CharacterProperty>().Damage, attacker);
 				sUI.UIItems.Add(dUI);
 			}
 			sUI.FadeInUI = true;

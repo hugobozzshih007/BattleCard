@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using MapUtility;
 
 public class CharacterSelect : MonoBehaviour {
@@ -17,6 +18,7 @@ public class CharacterSelect : MonoBehaviour {
 	void Start () {
 		MoveRangeList =  new List<Transform>();
 		AttackRangeList = new List<Transform>();
+		
 		MoveRangeList.Clear();
 		AttackRangeList.Clear();
 		thisProperty = this.GetComponent<CharacterProperty>();
@@ -87,6 +89,76 @@ public class CharacterSelect : MonoBehaviour {
 		}
 	}
 	
+	public IList FindPathList(Transform root,int maxStep, Transform destination){
+		IList pathList = new List<Transform>();
+		if(root!=null){
+			Identy rootID = root.GetComponent<Identy>();
+			
+			if(maxStep == 1){
+				pathList.Add(root);
+				pathList.Add(destination);
+			}else if(maxStep == 2){
+				pathList.Add(root);
+				Dictionary<float, Transform> sortingDict = new Dictionary<float,Transform>();
+				foreach(Transform t in rootID.neighbor){
+					if(t!=null){
+						Identy tID = t.GetComponent<Identy>();
+						if(!tID.River && !tID.Trees && !MapUtility.MapHelper.IsMapOccupied(t)){
+							float dis = Vector3.Distance(t.transform.position, destination.transform.position);
+							if(!sortingDict.ContainsKey(dis))
+								sortingDict.Add(dis,t);
+						}
+					}
+				}
+				var list = sortingDict.Keys.ToList();
+				list.Sort();
+				Transform midPath = sortingDict[list[0]];
+				pathList.Add(midPath);
+				
+				pathList.Add(destination);
+				
+			}else if(maxStep == 3){
+				pathList.Add(root);
+				Dictionary<float, Transform> sortingDict = new Dictionary<float,Transform>();
+				foreach(Transform t in rootID.neighbor){
+					if(t!=null){
+						Identy tID = t.GetComponent<Identy>();
+						if(!tID.River && !tID.Trees && !MapUtility.MapHelper.IsMapOccupied(t)){
+							float dis = Vector3.Distance(t.transform.position, destination.transform.position);
+							if(!sortingDict.ContainsKey(dis))
+								sortingDict.Add(dis,t);
+						}
+					}
+				}
+				var list = sortingDict.Keys.ToList();
+				list.Sort();
+				Transform midPath = sortingDict[list[0]];
+				pathList.Add(midPath);
+				
+				sortingDict.Clear();
+				list.Clear();
+				Identy midPathID = midPath.GetComponent<Identy>();
+				foreach(Transform t in midPathID.neighbor){
+					if(t!=null){
+						Identy tID = t.GetComponent<Identy>();
+						if(!tID.River && !tID.Trees && !MapUtility.MapHelper.IsMapOccupied(t)){
+							float dis = Vector3.Distance(t.transform.position, destination.transform.position);
+							if(!sortingDict.ContainsKey(dis))
+								sortingDict.Add(dis,t);
+						}
+					}
+				}
+				list = sortingDict.Keys.ToList();
+				list.Sort();
+				Transform midPathB = sortingDict[list[0]];
+				pathList.Add(midPathB);
+				
+				pathList.Add(destination);
+			}
+		}
+		return pathList;
+	}
+	
 	public void findAttackRange(Transform root, int step, int maxStep){
 		if(root!=null && (step>0)){
 			Identy rootID = root.GetComponent<Identy>();
@@ -136,6 +208,7 @@ public class CharacterSelect : MonoBehaviour {
 	}
 	
 	void OnApplicationQuit(){
+		
 		MoveRangeList.Clear();
 		AttackRangeList.Clear();
 	}

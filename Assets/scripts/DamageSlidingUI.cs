@@ -4,12 +4,16 @@ using System.Collections.Generic;
 
 public struct DamageUI{
 	public Transform Chess;
+	public Transform Attacker;
 	public Rect StartPoint; 
 	public int Damage;
 	
 	
-	public DamageUI(Transform chess, int damage){
+	public DamageUI(Transform chess, int damage, Transform attacker){
+		RoundUI rUI = Camera.mainCamera.GetComponent<RoundUI>();
+		rUI.Wait = true;
 		int boxW = 80; int boxH = 40;
+		Attacker = attacker;
 		Vector3 screenPos = Camera.main.WorldToScreenPoint(chess.position);
 		screenPos.y = Screen.height - screenPos.y;
 		Chess = chess;
@@ -28,6 +32,8 @@ public class DamageSlidingUI : MonoBehaviour {
 	bool showUI = false;
 	float _textAlpha;
 	int delayCounter = 120;
+	DeathFX dFX;
+	
 	
 	// Use this for initialization
 	void Awake () {
@@ -37,6 +43,7 @@ public class DamageSlidingUI : MonoBehaviour {
 		smallFloating.normal.textColor = Color.green;
 		smallFloating.font = UIFont;
 		smallFloating.fontSize = 40;
+		dFX = transform.GetComponent<DeathFX>();
 	}
 	
 	void FadeIn(){
@@ -57,6 +64,14 @@ public class DamageSlidingUI : MonoBehaviour {
 			showUI = false;
 			delayCounter = 120;
 			diffHeight = 0.0f;
+			foreach(DamageUI ui in UIItems){
+				if(ui.Chess.GetComponent<CharacterProperty>().Hp<=0){
+					DeathUI dUI = new DeathUI(ui.Chess, ui.Attacker);
+				}else{
+					RoundUI rUI = Camera.mainCamera.GetComponent<RoundUI>();
+					rUI.Wait = false;
+				}
+			}
 			UIItems.Clear();
 		}
 	}

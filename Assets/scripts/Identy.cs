@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class Identy : MonoBehaviour {
-	
+	public LayerMask realMapLayer;
 	public bool MapUnit;
 	public bool summoner;
 	public bool River;
@@ -16,8 +16,8 @@ public class Identy : MonoBehaviour {
 	public int step = 0;
 	public IDictionary neighbors;
 	private bool test = true;
-	
-	public void getStructure(){
+	public Transform ShowMap; 
+	void getStructure(){
 		neighbor = new Transform[6];
 		neighbors = new Dictionary<string,Transform>(6);
 		//shoot rays depends on how many steps
@@ -43,10 +43,31 @@ public class Identy : MonoBehaviour {
 		neighbors.Add("Bot",neighbor[3]);
 		neighbors.Add("BotLeft",neighbor[4]);
 		neighbors.Add("TopLeft",neighbor[5]);
+		
+		ShowMap = GetRealMap(transform);
+	}
+	
+	
+	Transform GetRealMap(Transform map){
+		Transform obj = null;
+		if(map!=null){
+			Vector3 rayDir = -map.up;
+			Vector3 startPos = map.position;
+			startPos.y = map.position.y+1.0f;
+			Ray rayUp = new Ray(startPos, rayDir);
+			RaycastHit hit;
+			if(Physics.Raycast(rayUp,out hit,2.0f,realMapLayer)){
+				obj = hit.transform;
+				//print(obj);
+			}else{
+				print("shit: "+ map);
+			}
+		}
+		return obj;
 	}
 	
 	// Use this for initialization
-	void Start () {
+	void Awake () {
 		if(MapUnit){
 			getStructure();
 		}

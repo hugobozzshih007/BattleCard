@@ -49,14 +49,14 @@ public class BombAttack : MonoBehaviour, CommonSkill {
 			if(transform.GetComponent<SkillProperty>().PassSkillRate){
 				damage = 2;
 				unit.GetComponent<CharacterProperty>().Hp -= damage;
-				DamageUI dUI = new DamageUI(unit,damage);
+				DamageUI dUI = new DamageUI(unit,damage, attacker);
 				sUI.UIItems.Add(dUI);
 				sUI.FadeInUI = true;
 				print("Bombed critical hit!");
 			}else{
 				damage = 1;
 				unit.GetComponent<CharacterProperty>().Hp -= damage;
-				DamageUI dUI = new DamageUI(unit,damage);
+				DamageUI dUI = new DamageUI(unit,damage, attacker);
 				sUI.UIItems.Add(dUI);
 				sUI.FadeInUI = true;
 				print("Bombed!");

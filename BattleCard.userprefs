@@ -1,19 +1,28 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\scripts\ConnectMasterServer.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\scripts\Animations\AttackEvent.cs">
     <Files>
-      <File FileName="Assets\scripts\selection.cs" Line="1" Column="1" />
-      <File FileName="Assets\scripts\CharacterProperty.cs" Line="1" Column="1" />
-      <File FileName="Assets\scripts\InfoUI.cs" Line="1" Column="1" />
-      <File FileName="Assets\scripts\MainInfoUI.cs" Line="1" Column="1" />
-      <File FileName="Assets\scripts\SkillSlidingUI.cs" Line="1" Column="1" />
-      <File FileName="Assets\scripts\MainUI.cs" Line="100" Column="15" />
-      <File FileName="Assets\shaders\image\EdgeDetectNormals.shader" Line="1" Column="1" />
-      <File FileName="Assets\scripts\ConnectMasterServer.cs" Line="11" Column="47" />
+      <File FileName="Assets\scripts\selection.cs" Line="748" Column="14" />
+      <File FileName="Assets\scripts\Animations\AnimVault.cs" Line="22" Column="32" />
+      <File FileName="Assets\scripts\MoveCharacter.cs" Line="97" Column="6" />
+      <File FileName="Assets\scripts\MainUI.cs" Line="1" Column="1" />
+      <File FileName="Assets\scripts\Animations\AttackEvent.cs" Line="7" Column="27" />
+      <File FileName="Assets\scripts\AttackCalFX.cs" Line="243" Column="7" />
+      <File FileName="Assets\scripts\FightBack.cs" Line="19" Column="31" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
-        <State expanded="True" selected="True" />
+        <State expanded="True">
+          <Node name="Assembly-CSharp" expanded="True">
+            <Node name="Assets" expanded="True">
+              <Node name="scripts" expanded="True">
+                <Node name="Animations" expanded="True">
+                  <Node name="AttackEvent.cs" selected="True" />
+                </Node>
+              </Node>
+            </Node>
+          </Node>
+        </State>
       </Pad>
       <Pad Id="ClassPad">
         <State expanded="True" selected="True" />

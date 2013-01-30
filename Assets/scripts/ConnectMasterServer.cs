@@ -29,7 +29,7 @@ public class ConnectMasterServer : MonoBehaviour {
 	}
 	
 	void Awake(){
-		windowRect = new Rect(Screen.width-300,0,300,100);
+		windowRect = new Rect(Screen.width-300,50,300,100);
 		serverListRect = new Rect(0, 0, Screen.width - windowRect.width, 100);
 		// Start connection test
 		connectionTestResult = Network.TestConnection();

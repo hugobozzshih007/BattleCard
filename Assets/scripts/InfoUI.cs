@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
 
 public class InfoUI : MonoBehaviour {
-	public Texture2D[] Move, Range, Damage,Hp, Critiq, Skill;
+	public Texture2D[] Move, Range, Damage,Hp, Critiq, Skill, BuffInt, BuffRate;
 	public Texture2D Fly, Mole, FlyHit, Haste, Flamming;
 	Rect posStaticInfo;
 	Rect posHeadIcon;

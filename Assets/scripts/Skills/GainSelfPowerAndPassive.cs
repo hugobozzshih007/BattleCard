@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using MapUtility;
+using BuffUtility;
 
 public class GainSelfPowerAndPassive : MonoBehaviour, CommonSkill {
 	
@@ -10,6 +11,7 @@ public class GainSelfPowerAndPassive : MonoBehaviour, CommonSkill {
 	public PowerType[] Mode;
 	public int[] Value;
 	public Dictionary<PowerType, int> PowerList; 
+	Transform fxBuffAtk, fxBuffDef, fxBuffRange, fxBuffCritiq, fxBuffMove, fxBuffSkill;
 	int skillRate;
 	
 	// Use this for initialization
@@ -19,6 +21,21 @@ public class GainSelfPowerAndPassive : MonoBehaviour, CommonSkill {
 		for(int i=0;i<Mode.Length;i++){
 			PowerList.Add(Mode[i],Value[i]);
 		}
+		CommonFX cFX  = Camera.main.GetComponent<CommonFX>();
+		fxBuffAtk = cFX.BuffAtk;
+		fxBuffCritiq = cFX.BuffCritiq;
+		fxBuffDef = cFX.BuffDef;
+		fxBuffMove = cFX.BuffMove;
+		fxBuffRange = cFX.BuffRange;
+		fxBuffSkill = cFX.BuffSkill;
+	}
+	
+	void BuffVisualUI(BuffType type, int val, BuffSlidingUI bSUI){
+		Dictionary<BuffType,int> dict = new Dictionary<BuffType, int>();
+		dict.Add(type, val);
+		BuffUI bUI = new BuffUI(aider,dict);
+		bSUI.UIItems.Add(bUI);
+		bSUI.FadeInUI = true;
 	}
 	
 	public void InsertSelection (Transform map)
@@ -33,26 +50,46 @@ public class GainSelfPowerAndPassive : MonoBehaviour, CommonSkill {
 	
 	public void Execute ()
 	{
+		BuffSlidingUI bSUI = Camera.mainCamera.GetComponent<BuffSlidingUI>();
 		aider.GetComponent<CharacterPassive>().PassiveDict[mode] = true;
+		BuffCalculation bCal = new BuffCalculation(aider);
 		foreach(var pair in PowerList){
 			switch(pair.Key){
 				case PowerType.Critical:
-					aider.GetComponent<CharacterProperty>().BuffCriticalHit += pair.Value;
+					aider.GetComponent<BuffList>().ExtraDict[BuffType.CriticalHit] += pair.Value;
+					BuffVisualUI(BuffType.CriticalHit, pair.Value, bSUI);
+					MapHelper.SetFX(aider,fxBuffCritiq,4.0f);
+					bCal.UpdateBuffValue();
 					break;
 				case PowerType.Damage:
-					aider.GetComponent<CharacterProperty>().Damage += pair.Value;
+					aider.GetComponent<BuffList>().ExtraDict[BuffType.Attack] += pair.Value;
+					BuffVisualUI(BuffType.Attack, pair.Value, bSUI);
+					MapHelper.SetFX(aider,fxBuffAtk,4.0f);
+					bCal.UpdateBuffValue();
 					break;
 				case PowerType.Hp:
-					aider.GetComponent<CharacterProperty>().Hp += pair.Value;
+					aider.GetComponent<BuffList>().ExtraDict[BuffType.Defense] += pair.Value;
+					BuffVisualUI(BuffType.Defense, pair.Value, bSUI);
+					MapHelper.SetFX(aider,fxBuffDef,4.0f);
+					bCal.UpdateBuffValue();
 					break;
 				case PowerType.SkillRate:
-					aider.GetComponent<CharacterProperty>().BuffSkillRate += pair.Value;
+					aider.GetComponent<BuffList>().ExtraDict[BuffType.SkillRate] += pair.Value;
+					BuffVisualUI(BuffType.SkillRate, pair.Value, bSUI);
+					MapHelper.SetFX(aider,fxBuffSkill,4.0f);
+					bCal.UpdateBuffValue();
 					break;
 				case PowerType.MoveRange:
-					aider.GetComponent<CharacterProperty>().BuffMoveRange += pair.Value;
+					aider.GetComponent<BuffList>().ExtraDict[BuffType.MoveRange] += pair.Value;
+					BuffVisualUI(BuffType.MoveRange, pair.Value, bSUI);
+					MapHelper.SetFX(aider,fxBuffMove,4.0f);
+					bCal.UpdateBuffValue();
 					break;
 				case PowerType.AttackRange:
-					aider.GetComponent<CharacterProperty>().BuffAtkRange += pair.Value;
+					aider.GetComponent<BuffList>().ExtraDict[BuffType.AttackRange] += pair.Value;
+					BuffVisualUI(BuffType.AttackRange, pair.Value, bSUI);
+					MapHelper.SetFX(aider,fxBuffRange,4.0f);
+					bCal.UpdateBuffValue();
 					break;
 			}
 		}

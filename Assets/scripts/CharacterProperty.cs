@@ -7,8 +7,7 @@ public class CharacterProperty : MonoBehaviour {
 	public string NameString = "";
 	public Texture2D BigIcon;
 	public Texture2D SmallIcon;
-	public RaceType Race;
-	public Occupation Occupation;
+	
 	public bool Summoner;
 	public int Player = 1;
 	public int InitPlayer = 1;
@@ -26,7 +25,6 @@ public class CharacterProperty : MonoBehaviour {
 	public int BuffCriticalHit = 18;
 	public int BuffSkillRate = 18;
 	public int summonCost = 2;
-	public int activeCost = 2;
 	public int StandByRounds = 2;
 	public int WaitRounds;
 	public bool character = true;
@@ -41,17 +39,20 @@ public class CharacterProperty : MonoBehaviour {
 	public bool Attacked = false;
 	public bool Activated = false;
 	public bool Tower = false;
-	bool playerDead = false;
-	int guiSegX = 30;
-	int guiSegY = 20;
-	int guiSeg = 10;
+	
+
 	public Transform[] soldiers;
-	
-	
+	selection currentSel;
+	DeathFX dFX;
+	Color red = new Color(1.0f,155.0f/255.0f,155.0f/255.0f,1.0f);
+	Color yellow = new Color(1.0f,245.0f/255.0f,90.0f/255.0f,1.0f);
+	float t = 0.0f;
+	float timeToDeath = 2.0f;
 	//bool guiShow;
 	//bool summonList;
 	Vector3 noWhere = new Vector3(0.0f,1000.0f,0.0f);
 	Vector3 screenPos;
+	
 	
 	// Use this for initialization
 	void Start () {
@@ -121,15 +122,15 @@ public class CharacterProperty : MonoBehaviour {
 				transform.Translate(0.0f,4.0f,0.0f);
 			}
 		}
+		
+		currentSel = Camera.mainCamera.GetComponent<selection>();
+		dFX = Camera.mainCamera.GetComponent<DeathFX>();
 	}
 	
 	// Update is called once per frame
 	void Update () {
 		screenPos = Camera.main.WorldToScreenPoint(transform.position);
 		screenPos.y = Screen.height - screenPos.y;
-		if(Hp <= 0){
-			death = true;
-		}
 		if(death){
 			transform.position = noWhere;
 			transform.renderer.enabled=false;
@@ -139,14 +140,44 @@ public class CharacterProperty : MonoBehaviour {
 		}else{
 			TurnFinished = false;
 		}
-		if(TurnFinished && !Tower){
-			if(Player==1){
-				transform.renderer.material.SetColor("_Color",new Color(1.0f,155.0f/255.0f,155.0f/255.0f));
-			}else if(Player==2){
-				transform.renderer.material.SetColor("_Color",new Color(1.0f,245.0f/255.0f,90.0f/255.0f));
+		if(TurnFinished && !Tower && !currentSel.SummonIn && !dFX.StartDie){
+			Color sideCol = Color.white;
+			if(Player==1)
+				sideCol = red;
+			else
+				sideCol = yellow;
+			transform.renderer.material.color = sideCol;
+			List<Transform> models = new List<Transform>();
+			Transform model = transform.FindChild("Models");
+			if(model.childCount>0){
+				for(int i=0; i<model.childCount; i++){
+					if(model.GetChild(i).GetComponent<SkinnedMeshRenderer>()!=null){
+						models.Add(model.GetChild(i));
+					}
+				}
 			}
-		}else if(!TurnFinished && !Tower){
-			transform.renderer.material.SetColor("_Color",new Color(1.0f,1.0f,1.0f));
+			if(models.Count>0){
+				foreach(Transform m in models){
+					m.renderer.material.color = sideCol;
+				}
+			}
+				
+		}else if(!TurnFinished && !Tower && Hp>0){
+			transform.renderer.material.color = Color.white;
+			List<Transform> models = new List<Transform>();
+			Transform model = transform.FindChild("Models");
+			if(model.childCount>0){
+				for(int i=0; i<model.childCount; i++){
+					if(model.GetChild(i).GetComponent<SkinnedMeshRenderer>()!=null){
+						models.Add(model.GetChild(i));
+					}
+				}
+			}
+			if(models.Count>0){
+				foreach(Transform m in models){
+					m.renderer.material.color = Color.white;
+				}
+			}
 		}
 		
 		if(WaitRounds==0){
@@ -188,7 +219,7 @@ public class CharacterProperty : MonoBehaviour {
 		transform.GetComponent<CharacterSelect>().AttackRangeList.Clear();
 		return targetLocations;
 	}
-	
+	/*
 	public IList GetSummonPosition(){
 		IList maps = new List<Transform>(); 
 		CharacterSelect summoner = transform.GetComponent<CharacterSelect>();
@@ -203,6 +234,7 @@ public class CharacterProperty : MonoBehaviour {
 		return maps;
 	}
 	
+	/*
 	public bool criticalHit(){
 		bool hit = false;
 		int realNum = Random.Range(1,100);
@@ -212,57 +244,5 @@ public class CharacterProperty : MonoBehaviour {
 			hit = false;
 		}
 		return hit;
-	}
-	/*
-	void OnGUI(){
-		
-		GUI.skin.box.fontStyle = FontStyle.BoldAndItalic;
-		GUI.skin.box.fontSize = 12;
-		if(!death){
-			GUI.Box(new Rect(screenPos.x-80,screenPos.y+40,150,20), NameString+" "+BuffMoveRange+"/"+BuffAtkRange+"/"+Damage+"/"+Hp);
-		}else if(Summoner && death){
-			Vector3 mapScreenPos = new Vector3(1.0f,1.0f);
-			if(Player==1)
-				mapScreenPos = Camera.main.WorldToScreenPoint(GameObject.Find("unit_start_point_A").transform.position);
-			else if(Player==2)
-				mapScreenPos = Camera.main.WorldToScreenPoint(GameObject.Find("unit_start_point_B").transform.position);
-			mapScreenPos.y = Screen.height - mapScreenPos.y;
-			
-			GUI.Box(new Rect(mapScreenPos.x-80,mapScreenPos.y+40,150,20), "Revive in: "+WaitRounds+"turns");
-		}
-		
-		if(!death){
-			int seg=0;
-			int uSeg=0;
-			CharacterPassive passive = transform.GetComponent<CharacterPassive>();
-			foreach(var pair in passive.PassiveDict){
-				if(pair.Value == true){
-					seg+=1;
-					GUI.Box(new Rect(screenPos.x,screenPos.y+40+20*seg,80,20), pair.Key.ToString());
-				}
-			}
-			foreach(var pair in LastUnStatusCounter){
-				if(pair.Value>0){
-					uSeg+=1;
-					GUI.Box(new Rect(screenPos.x-80,screenPos.y+40+20*uSeg,80,20), pair.Key.ToString());
-				}
-			}
-		}
-	}
-	
-	//summoning soldiers 
-	
-	public void SummonSoldier(Transform soldier){
-		Vector3 summonPos = GetSummonPosition().position;
-		summonPos.y = summonPos.y+1.5f;
-		Transform gf = Instantiate(soldier,summonPos,Quaternion.identity) as Transform;
-		RoundCounter counter = Camera.mainCamera.GetComponent<RoundCounter>();
-		if(Player==1){
-			counter.PlayerAChesses.Add(gf);
-			print(counter.PlayerAChesses[1]);
-		}else if(Player==2){
-			counter.PlayerBChesses.Add(gf);
-		}
 	}*/
-	
 }
