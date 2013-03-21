@@ -6,6 +6,7 @@ using MapUtility;
 using BuffUtility;
 
 public class RoundCounter : MonoBehaviour {
+	bool npcMode;
 	public int roundCounter = 0;
 	public IList AllChesses;
 	public IList PlayerAChesses;
@@ -19,35 +20,72 @@ public class RoundCounter : MonoBehaviour {
 	private bool camMoveMode = false;
 	private Vector3 oldCamPosition;
 	private Vector3 newCamPosition;
-	private const float viewOffsetZ = 30.0f;
+	//private float viewOffsetZ = 30.0f;
+	public Transform MidObject;
+	public Vector3 CamOffest = new Vector3();
 	private int camStep = 0;
 	public Material TerritoryA;
 	public Material TerritoryB;
+	public bool MoveCam;
 	bool checkRound = false;
 	RoundUI rUI;
 	MainUI mUI;
 	MainInfoUI infoUI;
 	selection currentSel;
+	NpcPlayer npc; 
+	public bool SummonerLand;
 	// Use this for initialization
 	void Start () {
 		roundCounter = 1;
-		playerA = GameObject.Find("pSummonerA").transform;
-		playerB = GameObject.Find("pSummonerB").transform;
-		AllChesses = new List<Transform>();
-		PlayerAChesses = new List<Transform>();
-		PlayerBChesses = new List<Transform>();
+		if(!SummonerLand)
+			playerA = GameObject.Find("pSummonerA").transform.GetChild(0).transform;
+		else 
+			playerA = GameObject.Find("pSummonerA").transform;
+		if(!SummonerLand)
+			playerB = GameObject.Find("pSummonerB").transform.GetChild(0).transform;
+		else 
+			playerB = GameObject.Find("pSummonerB").transform;
+		//AllChesses = new List<Transform>();
+		//PlayerAChesses = new List<Transform>();
+		//PlayerBChesses = new List<Transform>();
 		PlayerATerritory = new List<Transform>();
 		PlayerBTerritory = new List<Transform>();
-		PlayerAChesses.Clear();
-		PlayerBChesses.Clear();
+		
+		//PlayerATerritory.Add(GameObject.Find("unit_start_point_A").transform);
+		PlayerATerritory.Add(GameObject.Find("red_tower").transform);
+		//PlayerBTerritory.Add(GameObject.Find("unit_start_point_B").transform);
+		PlayerBTerritory.Add(GameObject.Find("yellow_tower").transform);
+		
+		rUI = transform.GetComponent<RoundUI>();
+		mUI = transform.GetComponent<MainUI>();
+		infoUI = transform.GetComponent<MainInfoUI>();
+		currentSel = transform.GetComponent<selection>();
+		
+		CamOffest = MidObject.position - transform.position;
+		
+		npc = GameObject.Find("NpcPlayer").GetComponent<NpcPlayer>();
+	}
+	
+	public void SetPlayerChesses(){
+		if(!SummonerLand)
+			playerA = GameObject.Find("pSummonerA").transform.GetChild(0).transform;
+		else 
+			playerA = GameObject.Find("pSummonerA").transform;
+		if(!SummonerLand)
+			playerB = GameObject.Find("pSummonerB").transform.GetChild(0).transform;
+		else 
+			playerB = GameObject.Find("pSummonerB").transform;
+		PlayerAChesses = new List<Transform>();
+		PlayerBChesses = new List<Transform>();
+		AllChesses = new List<Transform>();
 		PlayerAChesses.Add(playerA);
 		foreach(Transform gf in playerA.GetComponent<CharacterProperty>().soldiers){
 			Transform gfClone = Instantiate(gf,noWhere,Quaternion.identity) as Transform;
 			gfClone.gameObject.layer = 10;
 			PlayerAChesses.Add(gfClone);
 			gfClone.GetComponent<CharacterProperty>().death = true;
-			gfClone.GetComponent<CharacterProperty>().Player = playerA.GetComponent<CharacterProperty>().Player;
-			gfClone.GetComponent<CharacterProperty>().InitPlayer = playerA.GetComponent<CharacterProperty>().Player;
+			gfClone.GetComponent<CharacterProperty>().Player = 1;
+			gfClone.GetComponent<CharacterProperty>().InitPlayer = 1;
 		}
 		PlayerBChesses.Add(playerB);
 		foreach(Transform gf in playerB.GetComponent<CharacterProperty>().soldiers){
@@ -64,27 +102,26 @@ public class RoundCounter : MonoBehaviour {
 		foreach(Transform chess in PlayerBChesses){
 			AllChesses.Add(chess);
 		}
-		
-		PlayerATerritory.Add(GameObject.Find("unit_start_point_A").transform);
-		PlayerBTerritory.Add(GameObject.Find("unit_start_point_B").transform);
-		
-		rUI = transform.GetComponent<RoundUI>();
-		mUI = transform.GetComponent<MainUI>();
-		infoUI = transform.GetComponent<MainInfoUI>();
-		currentSel = transform.GetComponent<selection>();
 	}
 	
 	void Awake(){
+		if(Network.connections.Length>0){
+			npcMode = false;
+		}else{
+			npcMode = true;
+		}
 		roundCounter = 1;
 	}
 	
 	public void AddTerritory(Transform map, int player){
 		if(player==1){
 			PlayerATerritory.Add(map);
-			networkView.RPC("RPCAddTerritory",RPCMode.Others,map.name,1);
+			if(!npcMode)
+				networkView.RPC("RPCAddTerritory",RPCMode.Others,map.name,1);
 		}else if(player==2){
 			PlayerBTerritory.Add(map);
-			networkView.RPC("RPCAddTerritory",RPCMode.Others,map.name,2);
+			if(!npcMode)
+				networkView.RPC("RPCAddTerritory",RPCMode.Others,map.name,2);
 		}
 		
 	}
@@ -92,10 +129,12 @@ public class RoundCounter : MonoBehaviour {
 	public void RemoveTerritory(Transform map, int player){
 		if(player==1){
 			PlayerATerritory.Remove(map);
-			networkView.RPC("RPCRemoveTerritory",RPCMode.Others,map.name,1);
+			if(!npcMode)
+				networkView.RPC("RPCRemoveTerritory",RPCMode.Others,map.name,1);
 		}else if(player==2){
 			PlayerBTerritory.Remove(map);
-			networkView.RPC("RPCRemoveTerritory",RPCMode.Others,map.name,2);
+			if(!npcMode)
+				networkView.RPC("RPCRemoveTerritory",RPCMode.Others,map.name,2);
 		}
 	}
 	
@@ -245,13 +284,16 @@ public class RoundCounter : MonoBehaviour {
 		camStep+=1;
 		if(camStep==segment){
 			camMoveMode = false;
+			if(currentSel.reviveMode){
+				//currentSel.reviveMode = false;
+				npc.npcReviveMode = false;
+			}
 			camStep = 0;
 		}
 	}
 	
 	bool CheckRound(IList chesses){
 		bool phaseEnd = false;
-		
 		foreach(Transform gf in chesses){
 			if(!gf.GetComponent<CharacterProperty>().death){
 				if(!gf.GetComponent<CharacterProperty>().TurnFinished){
@@ -262,6 +304,7 @@ public class RoundCounter : MonoBehaviour {
 				}
 			}
 		}
+
 		return phaseEnd;
 	}
 	
@@ -286,6 +329,8 @@ public class RoundCounter : MonoBehaviour {
 			gfp.Attacked = false;
 			gfp.Activated = false;
 			gfp.TurnFinished = false;
+			gfp.Damaged = false;
+			gfp.Defensed = false;
 			if(!gfp.death && gfp.AbleRestore){
 				gfp.Hp = gfp.ModifiedDefPow;
 			}
@@ -297,51 +342,57 @@ public class RoundCounter : MonoBehaviour {
 			CharacterProperty cProperty = chess.GetComponent<CharacterProperty>();
 			cProperty.UnStatus = false;
 			List<UnnormalStatus> keys = new List<UnnormalStatus>(cProperty.UnStatusCounter.Keys);
-			foreach(UnnormalStatus key in keys){
-				if(cProperty.UnStatusCounter[key] > 0){
-					cProperty.UnStatus = true;
-					switch(key){
-						case UnnormalStatus.Burned:
-							break;
-						case UnnormalStatus.Chaos:
-							cProperty.Moved = true;
-							cProperty.Activated = true;
-							cProperty.Attacked = true;
-							cProperty.TurnFinished = true;
-							break;
-						case UnnormalStatus.Freezed:
-							cProperty.Moved = true;
-							break;
-						case UnnormalStatus.Poisoned:
-							cProperty.Hp -= 1;
-							break;
-						case UnnormalStatus.Sleeping:
-							break;
-						case UnnormalStatus.Wounded:
-							cProperty.AbleRestore = false;
-							break;
+			if(!cProperty.death){
+				foreach(UnnormalStatus key in keys){
+					if(cProperty.UnStatusCounter[key] > 0){
+						cProperty.UnStatus = true;
+						switch(key){
+							case UnnormalStatus.Burned:
+								break;
+							case UnnormalStatus.Chaos:
+								cProperty.Moved = true;
+								cProperty.Activated = true;
+								cProperty.Attacked = true;
+								cProperty.TurnFinished = true;
+								break;
+							case UnnormalStatus.Freezed:
+								cProperty.Moved = true;
+								break;
+							case UnnormalStatus.Poisoned:
+								cProperty.Hp -= 1;
+								break;
+							case UnnormalStatus.Sleeping:
+								break;
+							case UnnormalStatus.Wounded:
+								cProperty.AbleRestore = false;
+								break;
+						}
+						cProperty.UnStatusCounter[key] -= 1;
+						
+					}else{
+						switch(key){
+							case UnnormalStatus.Burned:
+								break;
+							case UnnormalStatus.Chaos:
+								break;
+							case UnnormalStatus.Freezed:
+								break;
+							case UnnormalStatus.Poisoned:
+								break;
+							case UnnormalStatus.Sleeping:
+								break;
+							case UnnormalStatus.Wounded:
+								cProperty.AbleRestore = true;
+								break;
+						}
 					}
-					cProperty.UnStatusCounter[key] -= 1;
-					
-				}else{
-					switch(key){
-						case UnnormalStatus.Burned:
-							break;
-						case UnnormalStatus.Chaos:
-							break;
-						case UnnormalStatus.Freezed:
-							break;
-						case UnnormalStatus.Poisoned:
-							break;
-						case UnnormalStatus.Sleeping:
-							break;
-						case UnnormalStatus.Wounded:
-							cProperty.AbleRestore = true;
-							break;
+					if(cProperty.LastUnStatusCounter[key] > 0){
+						cProperty.LastUnStatusCounter[key] -= 1;
 					}
 				}
-				if(cProperty.LastUnStatusCounter[key] > 0){
-					cProperty.LastUnStatusCounter[key] -= 1;
+			}else{
+				foreach(UnnormalStatus key in keys){
+					cProperty.UnStatusCounter[key] = 0;
 				}
 			}
 		}
@@ -353,6 +404,38 @@ public class RoundCounter : MonoBehaviour {
 				foreach(BuffType Buff in Enum.GetValues(typeof(BuffType))){
 					gf.GetComponent<BuffList>().ExtraDict[Buff] = 0;
 				}
+			}
+		}
+	}
+	/*
+	void updateASideMaxHp(){
+		foreach(Transform gf in PlayerAChesses){
+			if(!gf.GetComponent<CharacterProperty>().death){
+				gf.GetComponent<CharacterProperty>().MaxHp = gf.GetComponent<CharacterProperty>().Hp;
+			}
+		}
+	}
+	
+	void updateBSideMaxHp(){
+		foreach(Transform gf in PlayerBChesses){
+			if(!gf.GetComponent<CharacterProperty>().death){
+				gf.GetComponent<CharacterProperty>().MaxHp = gf.GetComponent<CharacterProperty>().Hp;
+			}
+		}
+	}
+	*/
+	void initASideExtraBuff(){
+		foreach(Transform gf in PlayerAChesses){
+			foreach(BuffType Buff in Enum.GetValues(typeof(BuffType))){
+				gf.GetComponent<BuffList>().ExtraDict[Buff] = 0;
+			}
+		}
+	}
+	
+	void initBSideExtraBuff(){
+		foreach(Transform gf in PlayerBChesses){
+			foreach(BuffType Buff in Enum.GetValues(typeof(BuffType))){
+				gf.GetComponent<BuffList>().ExtraDict[Buff] = 0;
 			}
 		}
 	}
@@ -400,21 +483,30 @@ public class RoundCounter : MonoBehaviour {
 				}
 			}
 		}else if(player ==2){
-			foreach(Transform chess in PlayerBChesses){
-				if(!chess.GetComponent<CharacterProperty>().death){
-					liveOne = chess;
-					break;
+			if(npc.npcReviveMode){
+				liveOne = playerB;
+			}else{
+				foreach(Transform chess in PlayerBChesses){
+					if(!chess.GetComponent<CharacterProperty>().death){
+						liveOne = chess;
+						break;
+					}
 				}
 			}
 		}
 		if(liveOne != null)
-			newCamPosition = new Vector3(liveOne.position.x, liveOne.position.y, liveOne.position.z-viewOffsetZ);
+			newCamPosition = liveOne.position - CamOffest;
 	}
 	
 	void revivePlayer(Transform player){
 		CharacterProperty property = player.GetComponent<CharacterProperty>();
-		if(property.death && property.Ready)
-			transform.GetComponent<selection>().ReviveCommand(player);
+		if(property.death && property.Ready){
+			currentSel.ReviveCommand(player);
+			if(npcMode && currentSel.player == playerB){
+				npc.ReviveSummoner(player);
+				npc.InMove = true;
+			}
+		}
 	}
 	
 	void updateAllCharactersPowers(){
@@ -439,10 +531,31 @@ public class RoundCounter : MonoBehaviour {
 	}
 	
 	void updatePlaying(){
-		if(Network.peerType == NetworkPeerType.Client){
-			transform.GetComponent<selection>().Playing = transform.GetComponent<selection>().BPlaying;
-		}else if(Network.peerType == NetworkPeerType.Server){
-			transform.GetComponent<selection>().Playing = transform.GetComponent<selection>().APlaying;
+		selection currentSel = transform.GetComponent<selection>();
+		if(!npcMode){
+			if(Network.peerType == NetworkPeerType.Client){
+				currentSel.Playing = currentSel.BPlaying;
+			}else if(Network.peerType == NetworkPeerType.Server){
+				currentSel.Playing = currentSel.APlaying;
+			}
+		}else{
+			if(roundCounter%2 == 1){
+				currentSel.Playing = false;
+				currentSel.NpcPlaying = true;
+				currentSel.player = playerB;
+			}else{
+				currentSel.Playing = true;
+				currentSel.NpcPlaying = false;
+				currentSel.player = playerA;
+			}
+		}
+	}
+	
+	void UpdateNPCplayerList(){
+		if(Network.connections.Length == 0){
+			Transform npcPlayer = GameObject.Find("NpcPlayer").transform;
+			NpcPlayer npc = npcPlayer.GetComponent<NpcPlayer>();
+			npc.InitNPCTurn();
 		}
 	}
 	
@@ -458,6 +571,7 @@ public class RoundCounter : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		if(roundCounter%2 == 1){
+			
 			if(CheckRound(PlayerAChesses)|| checkAllDeath(PlayerAChesses)){
 				if(!checkRound && !currentSel.reviveMode){
 					rUI.SetRoundUI(Color.yellow);
@@ -468,11 +582,11 @@ public class RoundCounter : MonoBehaviour {
 				UpdateLayers();
 				updateWaitRounds();
 				oldCamPosition = transform.position;
-				getNewCamPos(2);
-				camMoveMode = true;
 				playerB.GetComponent<ManaCounter>().Mana+=2;
 				updateUnnormalStatus();
-				updateExtraBuff();
+				//updateExtraBuff();
+				initBSideExtraBuff();
+				//updateASideMaxHp();
 				UpdateChessList();
 				updateRound(PlayerBChesses);
 				updateAllCharactersPowers();
@@ -480,7 +594,10 @@ public class RoundCounter : MonoBehaviour {
 				transform.GetComponent<selection>().APlaying=false;
 				transform.GetComponent<selection>().BPlaying=true;
 				updatePlaying();
+				UpdateNPCplayerList();
 				revivePlayer(playerB);
+				getNewCamPos(2);
+				camMoveMode = true;
 				roundCounter += 1;
 				checkRound = false;
 				rUI.UIfinished = false;
@@ -502,12 +619,13 @@ public class RoundCounter : MonoBehaviour {
 				camMoveMode = true;
 				playerA.GetComponent<ManaCounter>().Mana+=2;
 				updateUnnormalStatus();
-				updateExtraBuff();
+				//updateExtraBuff();
+				initASideExtraBuff();
+				//updateBSideMaxHp();
 				UpdateChessList();
 				updateRound(PlayerAChesses);
 				updateAllCharactersPowers();
 				updatePassive();
-				updatePlaying();
 				transform.GetComponent<selection>().APlaying=true;
 				transform.GetComponent<selection>().BPlaying=false;
 				updatePlaying();
@@ -519,7 +637,7 @@ public class RoundCounter : MonoBehaviour {
 			}
 		}
 		
-		if(camMoveMode){
+		if(camMoveMode && MoveCam){
 			translateMainCam(80);
 		}
 	}

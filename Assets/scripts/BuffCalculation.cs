@@ -75,7 +75,7 @@ namespace BuffUtility{
 				buff = 1;
 			}else if(rate >= 50 && rate < 75){
 				buff = 2;
-			}else if(rate > 75){
+			}else if(rate >= 75){
 				buff = 3;
 			}
 			
@@ -271,7 +271,7 @@ namespace BuffUtility{
 							case BuffType.Defense:
 								if(property.AbleRestore){
 									property.ModifiedDefPow = property.defPower;
-									if(property.Hp == oldDefPower)
+									if(!property.Damaged)
 										property.Hp = property.ModifiedDefPow;
 								}
 								break;
@@ -300,9 +300,12 @@ namespace BuffUtility{
 								break;
 							case BuffType.Defense:
 								if(property.AbleRestore){
-									property.ModifiedDefPow = property.defPower;
-									if(property.Hp == oldDefPower)
+									if(!property.Damaged){
+										property.ModifiedDefPow = property.defPower;
 										property.Hp = property.ModifiedDefPow;
+									}else{
+										property.Hp += GetBuffValue(pair.Key);
+									}
 								}
 								break;
 							case BuffType.MoveRange:
@@ -318,7 +321,7 @@ namespace BuffUtility{
 				property.Damage = property.atkPower;
 				if(property.AbleRestore){
 					property.ModifiedDefPow = property.defPower;
-					if(property.Hp == oldDefPower)
+					if(!property.Damaged)
 						property.Hp = property.ModifiedDefPow;
 				}
 				property.BuffMoveRange = property.moveRange;
@@ -341,8 +344,10 @@ namespace BuffUtility{
 						case BuffType.Defense:
 							if(property.AbleRestore){
 								property.ModifiedDefPow = property.defPower + GetBuffValue(bt);
-								if(property.Hp == oldDefPower)
+								if(!property.Damaged)
 									property.Hp = property.ModifiedDefPow;
+								else
+									property.Hp += GetBuffValue(bt);
 							}
 							break;
 						case BuffType.MoveRange:
@@ -354,11 +359,19 @@ namespace BuffUtility{
 					}
 				}
 			}
+			
 			oldDefPower = property.ModifiedDefPow;
-			property.Damage += buffList.ExtraDict[BuffType.Attack];
+			
 			property.ModifiedDefPow += buffList.ExtraDict[BuffType.Defense];
-			if(property.Hp == oldDefPower)
+			//Debug.Log(Character.name + " oldDefPower= "+oldDefPower);
+			
+			if(!property.Damaged)
 				property.Hp = property.ModifiedDefPow;
+			
+			if(buffList.ExtraDict[BuffType.Attack]>0)
+				//Debug.Log(Character.name + " Fuck you plus!!!!!!!!!!!! " + property.Damage);
+			property.Damage += buffList.ExtraDict[BuffType.Attack];
+			
 			property.BuffMoveRange += buffList.ExtraDict[BuffType.MoveRange];
 			property.BuffAtkRange += buffList.ExtraDict[BuffType.AttackRange];
 			property.BuffCriticalHit += buffList.ExtraDict[BuffType.CriticalHit];

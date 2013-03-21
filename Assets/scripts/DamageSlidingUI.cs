@@ -30,6 +30,7 @@ public class DamageSlidingUI : MonoBehaviour {
 	float diffHeight = 0.0f;
 	public bool FadeInUI = false;
 	bool showUI = false;
+	bool updateInMove = false;
 	float _textAlpha;
 	int delayCounter = 120;
 	DeathFX dFX;
@@ -37,6 +38,7 @@ public class DamageSlidingUI : MonoBehaviour {
 	
 	// Use this for initialization
 	void Awake () {
+		updateInMove = false;
 		UIItems = new List<DamageUI>();
 		smallFloating = new GUIStyle();
 		smallFloating.alignment = TextAnchor.MiddleCenter;
@@ -52,6 +54,12 @@ public class DamageSlidingUI : MonoBehaviour {
 		diffHeight+=movingSpeed;
 		if(_textAlpha>=0.9f){
 			FadeInUI = false;
+			//update npc movement
+			if(updateInMove){
+				Transform npcPlayer = GameObject.Find("NpcPlayer").transform;
+				NpcPlayer npc = npcPlayer.GetComponent<NpcPlayer>();
+				npc.InPause = true;
+			}
 		}
 	}
 	
@@ -72,6 +80,7 @@ public class DamageSlidingUI : MonoBehaviour {
 					rUI.Wait = false;
 				}
 			}
+			
 			UIItems.Clear();
 		}
 	}
@@ -91,6 +100,10 @@ public class DamageSlidingUI : MonoBehaviour {
 			if(showUI){
 				foreach(DamageUI dmg in UIItems){
 					GUI.Box(new Rect(dmg.StartPoint.x,dmg.StartPoint.y-diffHeight,dmg.StartPoint.width,dmg.StartPoint.height),"-"+dmg.Damage.ToString(), smallFloating);
+					if(dmg.Chess.GetComponent<CharacterProperty>().Hp>0)
+						updateInMove = true;
+					else 
+						updateInMove = false;
 				}
 			}
 		}

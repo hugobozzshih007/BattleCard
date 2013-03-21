@@ -20,7 +20,6 @@ public class MainUI : MonoBehaviour {
 	bool skillShow;
 	bool goBack;
 	bool currentCommand;
-	
 	float _mainAlpha;
 	float _subAlpha;
 	
@@ -42,6 +41,9 @@ public class MainUI : MonoBehaviour {
 	InfoUI infoUI;
 	NumIconVault numIcon;
 	MainInfoUI chessUI;
+	InitStage init; 
+	
+	public bool InTutorial, InSecondTutor;
 	
 	// Use this for initialization
 	void Start () {
@@ -66,6 +68,8 @@ public class MainUI : MonoBehaviour {
 		numIcon = this.GetComponent<NumIconVault>();
 		infoUI = this.GetComponent<InfoUI>();
 		chessUI = this.GetComponent<MainInfoUI>();
+		InSecondTutor = false;
+		init = GameObject.Find("InitStage").transform.GetComponent<InitStage>();
 	}
 	
 	void fadeInMain(){
@@ -102,7 +106,7 @@ public class MainUI : MonoBehaviour {
 				MainGuiFade = true;
 		}
 	}
-	
+	/*
 	bool attackable(Transform chess){
 		MoveCharacter mc = transform.GetComponent<MoveCharacter>();
 		bool able = false;
@@ -114,7 +118,7 @@ public class MainUI : MonoBehaviour {
 		}
 		return able;
 	}
-	
+	*/
 	// Update is called once per frame
 	void Update () {
 		mousePos.x = Input.mousePosition.x;
@@ -170,6 +174,20 @@ public class MainUI : MonoBehaviour {
 		GUI.Label(infoRect,sProperty.info,subStyle);
 	}
 	
+	public void DefenseCmd(Transform chess){
+		CharacterProperty chessProperty = chess.GetComponent<CharacterProperty>();
+		chessProperty.Attacked = true;
+		chessProperty.Moved = true;
+		chessProperty.Defensed = true;
+		//extending territory
+		currentSelect.defenseCommand(chess);
+		//update buff calculation and map material
+		currentSelect.updateTerritoryMat();
+		//currentSelect.updateAllCharactersPowers();
+		currentSelect.DefenseNetwork();
+		TurnFinished(chess);
+	}
+	
 	void TurnFinished(Transform chess){
 		CharacterProperty cp = chess.GetComponent<CharacterProperty>();
 		if(cp.Moved && cp.Activated && cp.Attacked)
@@ -207,18 +225,22 @@ public class MainUI : MonoBehaviour {
 					moveShow = true;
 					currentSelect.moveCommand(CurrentChess);
 					currentSelect.MoveCommandNetwork();
-					
+					if(InTutorial){
+						init.ShowMoveCmd = false;
+						GameObject.Find("InitStage").transform.GetComponent<Tutorial>().AfterMove();
+						init.ShowMap = true;
+					}
 				}
 				GUI.enabled = true;
 				//roll over move button
-				if(!chessProperty.Moved){
+				if(!chessProperty.Moved && !InTutorial){
 					if(posMoveBt.Contains(mousePos)){
 						GUI.DrawTexture(posMoveBt,MoveTex);
 						GUI.Label(new Rect(btSize+leftMargin+5,topMargin+16,100,30),"move", mainStyle); 
 					}
 				}
 				// summon button
-				if(!chessProperty.Summoner)
+				if(!chessProperty.Summoner || init.stage==1)
 					GUI.enabled = false;
 				else
 					GUI.enabled = true;
@@ -230,14 +252,14 @@ public class MainUI : MonoBehaviour {
 				}
 				GUI.enabled = true;
 				//roll over summon button
-				if(chessProperty.Summoner){
+				if(chessProperty.Summoner && init.stage!=1){
 					if(posSummonBt.Contains(mousePos)){
 						GUI.DrawTexture(posSummonBt,SummonTex);
 						GUI.Label(new Rect(btSize+leftMargin+5,topMargin+segment+16,100,30),"summon", mainStyle); 
 					}
 				}
 				// Attack button
-				if(chessProperty.Attacked || !attackable(CurrentChess))
+				if(chessProperty.Attacked || !MapHelper.Attackable(CurrentChess))
 					GUI.enabled = false;
 				else
 					GUI.enabled = true;
@@ -248,17 +270,20 @@ public class MainUI : MonoBehaviour {
 					attackShow = true;
 					currentSelect.attackCommand(CurrentChess);
 					currentSelect.AttackCommandNetwork();
+					if(InSecondTutor){
+						init.ShowAtk = false;
+					}
 				}
 				GUI.enabled = true;
 				//roll over attack button
-				if(!chessProperty.Attacked && attackable(CurrentChess)){
+				if(!chessProperty.Attacked && MapHelper.Attackable(CurrentChess)){
 					if(posAttackBt.Contains(mousePos)){
 						GUI.DrawTexture(posAttackBt,AttackTex);
 						GUI.Label(new Rect(btSize+leftMargin+5,topMargin+segment*2+16,100,30),"attack", mainStyle); 
 					}
 				}
 				// skill button
-				if(chessProperty.Activated)
+				if(chessProperty.Activated || init.stage==1)
 					GUI.enabled = false;
 				else
 					GUI.enabled = true;
@@ -269,7 +294,7 @@ public class MainUI : MonoBehaviour {
 				}
 				GUI.enabled = true;
 				//roll over skill button
-				if(!chessProperty.Activated){
+				if(!chessProperty.Activated && init.stage!=1){
 					if(posSkillBt.Contains(mousePos)){
 						GUI.DrawTexture(posSkillBt,SkillTex);
 						GUI.Label(new Rect(btSize+leftMargin+5,topMargin+segment*3+16,100,30),"skill", mainStyle); 
@@ -277,21 +302,18 @@ public class MainUI : MonoBehaviour {
 				}
 				//Defense button
 				
-				if(chessProperty.Attacked)
+				if(chessProperty.Attacked || init.ShowBuff || InSecondTutor)
 					GUI.enabled = false;
 				else
 					GUI.enabled = true;
 				
 				if(GUI.Button(posDefenseBt, DefenseTex)){
-					chessProperty.Attacked = true;
-					chessProperty.Moved = true;
-					//extending territory
-					currentSelect.defenseCommand(CurrentChess);
-					//update buff calculation and map material
-					currentSelect.updateTerritoryMat();
-					currentSelect.updateAllCharactersPowers();
-					currentSelect.DefenseNetwork();
-					TurnFinished(CurrentChess);
+					DefenseCmd(CurrentChess);
+					if(init.ShowDef){
+						init.ShowDef = false;
+						InTutorial = false;
+						InSecondTutor = true;
+					}
 				}
 				GUI.enabled = true;
 				//roll over defense button
@@ -302,6 +324,11 @@ public class MainUI : MonoBehaviour {
 						}
 				}
 				// End turn button
+				if(InTutorial)
+					GUI.enabled = false;
+				else 
+					GUI.enabled = true;
+				
 				if(GUI.Button(posEndTurnBt, EndTurnTex)){
 					MainGuiFade = false;
 					//SubGuiFade = true;
@@ -313,11 +340,17 @@ public class MainUI : MonoBehaviour {
 					currentSelect.MoveToLayer(CurrentChess,10);
 					currentSelect.EndTurnNetwork();
 				}
+				
+				GUI.enabled = true;
+				
 				//roll over end turn button
+				if(!InTutorial){
 					if(posEndTurnBt.Contains(mousePos)){
 						GUI.DrawTexture(posEndTurnBt,EndTurnTex);
 						GUI.Label(new Rect(btSize+leftMargin+5,topMargin+segment*5+13,100,30),"end turn", mainStyle); 
-					}	
+					}
+				}
+				
 			}
 		}
 		GUI.color = new Color(1.0f,1.0f,1.0f,_subAlpha);

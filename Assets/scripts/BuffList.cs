@@ -9,7 +9,7 @@ public class BuffList : MonoBehaviour {
 	public Dictionary<BuffType, bool> AddBuffDict;
 	public Dictionary<BuffType, bool> DeBuffDict;
 	public Dictionary<BuffType, int> ExtraDict;
-	
+	Transform papa; 
 	// Use this for initialization
 	void Start () {
 		AddBuffDict = new Dictionary<BuffType, bool>();
@@ -26,11 +26,12 @@ public class BuffList : MonoBehaviour {
 			}
 		}
 		if(deBuff.Length>0){
-			foreach(BuffType bt in addBuff){
+			foreach(BuffType bt in deBuff){
 				DeBuffDict[bt] = true;
 			}
 		}
 		ExtraDict = new Dictionary<BuffType, int>();
+		papa = transform;
 		foreach(BuffType Buff in Enum.GetValues(typeof(BuffType))){
 			ExtraDict.Add(Buff, 0);
 		}

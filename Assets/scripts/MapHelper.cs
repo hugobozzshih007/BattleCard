@@ -1,11 +1,85 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace MapUtility{
 	public class MapHelper
 	{
 		public MapHelper(){
+		}
+		
+		public static IList GetFarestMaps(Transform chess, IList maps){
+			IList cMapList = new List<Transform>();
+			if(maps.Count>0){
+				Dictionary<Transform, int> sortDict = new Dictionary<Transform, int>();
+				foreach(Transform loc in maps){
+					float dis = Vector3.Distance(loc.transform.position, chess.transform.position);
+					int disInt = Mathf.RoundToInt(dis);
+					sortDict.Add(loc,disInt);
+				}
+				var sortedDict = (from entry in sortDict orderby entry.Value descending select entry).ToDictionary(pair => pair.Key, pair => pair.Value);
+				int farest = sortedDict.Values.ElementAt(0);
+				//Debug.Log("nearest = "+nearest);
+				foreach(KeyValuePair<Transform,int> entry in sortedDict){
+					if(entry.Value == farest){
+						cMapList.Add(entry.Key);
+					}
+				}
+			}
+			return cMapList;  
+		}
+		
+		public static IList GetClosestMaps(Transform chess, IList maps){
+			IList cMapList = new List<Transform>();
+			if(maps.Count>0){
+				Dictionary<Transform, int> sortDict = new Dictionary<Transform, int>();
+				foreach(Transform loc in maps){
+					float dis = Vector3.Distance(loc.transform.position, chess.transform.position);
+					int disInt = Mathf.RoundToInt(dis);
+					sortDict.Add(loc,disInt);
+				}
+				var sortedDict = (from entry in sortDict orderby entry.Value ascending select entry).ToDictionary(pair => pair.Key, pair => pair.Value);
+				int nearest = sortedDict.Values.ElementAt(0);
+				//Debug.Log("nearest = "+nearest);
+				foreach(KeyValuePair<Transform,int> entry in sortedDict){
+					if(entry.Value == nearest){
+						cMapList.Add(entry.Key);
+					}
+				}
+			}
+			return cMapList;  
+		}
+		
+		public static Transform GetClosestMap(Transform chess, IList maps){
+			Transform theMap = null;
+			if(maps.Count>0){
+				Dictionary<float,Transform> sortDict = new Dictionary<float, Transform>();
+				foreach(Transform loc in maps){
+					float dis = Vector3.Distance(loc.transform.position, chess.transform.position);
+					if(!sortDict.ContainsKey(dis))
+						sortDict.Add(dis, loc);
+				}
+				var list = sortDict.Keys.ToList();
+				list.Sort();
+				theMap = sortDict[list[0]];
+			}else{
+				theMap = null; 
+				Debug.Log("There is nothing in the list");
+			}
+			return theMap;
+		}
+		
+		public static bool Attackable(Transform chess){
+			MoveCharacter mc = Camera.main.GetComponent<MoveCharacter>();
+			bool able = false;
+			if(!mc.MoveMode){
+				AttackCalculation atc = new AttackCalculation(chess);
+				able = (atc.GetAttableTarget(atc.Attacker).Count>0);
+			}else{
+				able = false;
+			}
+			return able;
 		}
 		
 		public static void SetFX(Transform chess, Transform fx, float duration){

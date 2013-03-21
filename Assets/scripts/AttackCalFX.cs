@@ -15,16 +15,13 @@ public class AttackCalFX : MonoBehaviour {
 	CharacterSelect attackerSelect, targetSelect;
 	DamageSlidingUI sUI;
 	DeathFX dFX;
-	bool turnedHead = false;
+	
 	bool wait = false;
-	float t = 0.0f;
-	float s = 0.0f;
-	float timeToTurn = 0.5f;
-	Quaternion oldRotation;
+	
 	MainUI mUI;
 	MainInfoUI chessUI;
 	CommonFX cFX;
-	selection currentSel;
+	
 	FightBack fb;
 	// Use this for initialization
 	void Start () {
@@ -33,12 +30,12 @@ public class AttackCalFX : MonoBehaviour {
 		fb = transform.GetComponent<FightBack>();
 		chessUI = transform.GetComponent<MainInfoUI>();
 		cFX =  transform.GetComponent<CommonFX>();
-		currentSel = transform.GetComponent<selection>();
+		//currentSel = transform.GetComponent<selection>();
 	}
 	
 	public void SetAttackSequence(Transform attacker, Transform targetMap){
 		Attacker = attacker;
-		CriticalHit = false;
+		//CriticalHit = false;
 		attackerProperty = Attacker.GetComponent<CharacterProperty>();
 		attackerSelect = Attacker.GetComponent<CharacterSelect>();
 		attackerLocation = attackerSelect.getMapPosition();
@@ -46,10 +43,13 @@ public class AttackCalFX : MonoBehaviour {
 		Target = MapHelper.GetMapOccupiedObj(targetLocation);
 		targetProperty = Target.GetComponent<CharacterProperty>();
 		targetSelect = Target.GetComponent<CharacterSelect>();
-		oldRotation = Attacker.transform.rotation;
-		//mUI.MainGuiFade = false;
-		//mUI.SubGuiFade = true;
-		turnedHead = true;
+		
+		UpdateAttackResult(AttackType.physical);
+		Vector3 pos = new Vector3(Target.transform.position.x,Target.transform.position.y,Target.transform.position.z);
+		Transform blood = Instantiate(cFX.NormalAttack,pos,Quaternion.identity) as Transform;
+		Destroy(GameObject.Find(blood.name).gameObject,3.0f);
+		mUI.MainGuiFade = true;
+		mUI.SubGuiFade = false;	
 	}
 	
 	public bool Attackable(Transform atk, Transform newTarget){
@@ -127,27 +127,10 @@ public class AttackCalFX : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if(turnedHead){
-			t+= Time.deltaTime/timeToTurn;
-			Vector3 relativePos = Target.transform.position - Attacker.transform.position;
-			Quaternion rotation = Quaternion.LookRotation(relativePos);
-			Attacker.transform.rotation = Quaternion.Lerp(oldRotation, rotation, t);
-			float angle = Quaternion.Angle(Attacker.transform.rotation, rotation);
-			if(angle<1.0f){
-				t = 0.0f;
-				turnedHead = false;
-				UpdateAttackResult(AttackType.physical);
-				Vector3 pos = new Vector3(Target.transform.position.x,Target.transform.position.y,Target.transform.position.z);
-				Transform blood = Instantiate(cFX.NormalAttack,pos,Quaternion.identity) as Transform;
-				Destroy(GameObject.Find(blood.name).gameObject,3.0f);
-				mUI.MainGuiFade = true;
-				mUI.SubGuiFade = false;	
-			}
-		}
 	}
 	
+	
 	public void UpdateAttackResult(AttackType mode){
-		
 		dFX = Camera.mainCamera.GetComponent<DeathFX>();
 		if(mode == AttackType.physical){
 			if(Attacker.GetComponent<CharacterPassive>().PassiveDict[PassiveType.SuddenDeath]){
@@ -156,10 +139,11 @@ public class AttackCalFX : MonoBehaviour {
 				}
 				else{
 					targetProperty.Hp -= attackerProperty.Damage;
+					targetProperty.Damaged = true;
 					ShowDamageUI(Target, attackerProperty.Damage, Attacker);
 				}
 				
-			}else if(Attacker.GetComponent<CharacterPassive>().PassiveDict[PassiveType.MultiArrow]){
+			}/*else if(Attacker.GetComponent<CharacterPassive>().PassiveDict[PassiveType.MultiArrow]){
 				IList targetList = new List<Transform>();
 				foreach(Transform unit in GetAttackableTarget(Attacker)){
 					targetList.Add(MapHelper.GetMapOccupiedObj(unit));
@@ -189,12 +173,14 @@ public class AttackCalFX : MonoBehaviour {
 					}
 				}
 				
-			}else if(CriticalHit){
+			}*/else if(CriticalHit){
 				targetProperty.Hp -= attackerProperty.Damage*2;
+				targetProperty.Damaged = true;
 				ShowDamageUI(Target, attackerProperty.Damage*2, Attacker);
 				Debug.Log("Critical Hit!");
 			}else{
 				targetProperty.Hp -= attackerProperty.Damage;
+				targetProperty.Damaged = true;
 				ShowDamageUI(Target, attackerProperty.Damage, Attacker);
 			}
 			
@@ -206,9 +192,12 @@ public class AttackCalFX : MonoBehaviour {
 		}else if(mode == AttackType.magical){
 			if(CriticalHit){
 				targetProperty.Hp -= attackerProperty.Damage*2;
+				targetProperty.Damaged = true;
 				Debug.Log("Critical Hit!");
 			}else{
+				print("damage!!");
 				targetProperty.Hp -= attackerProperty.Damage;
+				targetProperty.Damaged = true;
 				ShowDamageUI(Target, attackerProperty.Damage, Attacker);
 			}
 		}

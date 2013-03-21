@@ -43,10 +43,10 @@ public class MoveCharacter : MonoBehaviour {
 			Vector3 relativePos = target - Chess.transform.position;
 			Quaternion rotation = Quaternion.LookRotation(relativePos);
 			Chess.transform.rotation = Quaternion.Lerp(OldRotation, rotation, r);
-			networkView.RPC("RPCRotateCharacter",RPCMode.Others, Chess.name, OldRotation, rotation, r);
+			//networkView.RPC("RPCRotateCharacter",RPCMode.Others, Chess.name, OldRotation, rotation, r);
 			Vector3 plannedPos = Vector3.Lerp(startPosition, target, t);
         	Chess.transform.position = Vector3.Lerp(fowardPos,plannedPos, 0.01f);
-			networkView.RPC("RPCMoveCharacter",RPCMode.Others,Chess.name,fowardPos,plannedPos,0.01f);
+			//networkView.RPC("RPCMoveCharacter",RPCMode.Others,Chess.name,fowardPos,plannedPos,0.01f);
 			float d = Vector3.Distance(Chess.transform.position,target);
 			if(d<=0.05f){
 				Step-=1;
@@ -67,21 +67,35 @@ public class MoveCharacter : MonoBehaviour {
 			s+=Time.deltaTime/timeToRotate;
 			Vector3 relativePos = tower.transform.position - Chess.transform.position;
 			Quaternion rotation = Quaternion.LookRotation(relativePos);
-			Chess.transform.rotation = Quaternion.Lerp(OldRotation, rotation, s);
-			networkView.RPC("RPCRotateCharacter",RPCMode.Others, Chess.name, OldRotation, rotation, s);
-			float angle = Quaternion.Angle(Chess.transform.rotation, rotation);
-			if(angle<1.0f){
+			float yAngle = Mathf.LerpAngle(OldRotation.eulerAngles.y, rotation.eulerAngles.y, s);
+			Chess.transform.rotation = Quaternion.Euler(new Vector3(OldRotation.eulerAngles.x, yAngle, OldRotation.eulerAngles.z));
+			//networkView.RPC("RPCRotateCharacter",RPCMode.Others, Chess.name, OldRotation, rotation, s);
+			//float angle = Quaternion.Angle(Chess.transform.rotation, rotation);
+			float angle = Mathf.Abs(rotation.eulerAngles.y - yAngle);
+			if(Mathf.RoundToInt(angle) == 360){
+				angle -= 360.0f;
+				angle = Mathf.Abs(angle);
+			}
+			if(angle<=1.0f){
 				s=0;
 				facingTower=false;
 				mUI.MainGuiFade = true;
 				mUI.SubGuiFade = false;
 				MoveMode = false;
 				Chess.GetComponent<CharacterProperty>().Moved = true;
-				networkView.RPC("RPCUpdateChessMoved", RPCMode.Others,Chess.name,true);
+				//networkView.RPC("RPCUpdateChessMoved", RPCMode.Others,Chess.name,true);
 				currentSelect.updateAllCharactersPowers();
 				if(chessModel.GetComponent<AnimVault>()!=null){
 					//chessModel.GetComponent<AnimVault>().CurrentState = AnimVault.AnimState.idle;
 					currentSelect.AnimStateNetWork(Chess, AnimVault.AnimState.idle);
+				}
+				if(!currentSelect.Playing){
+					Transform npc = GameObject.Find("NpcPlayer").transform;
+					NpcPlayer npcPlayer = npc.GetComponent<NpcPlayer>();
+					npcPlayer.InPause = true;
+				}
+				if(mUI.InTutorial){
+					GameObject.Find("InitStage").GetComponent<InitStage>().ShowBuff = true;
 				}
 			}
 		}

@@ -67,10 +67,14 @@ public class MainInfoUI : MonoBehaviour {
 	}
 	
 	void Awake(){
-		if(Network.peerType == NetworkPeerType.Server){
+		if(Network.connections.Length>0){
+			if(Network.peerType == NetworkPeerType.Server){
+				playerSide = 1;
+			}else if(Network.peerType == NetworkPeerType.Client){
+				playerSide = 2;
+			}
+		}else{
 			playerSide = 1;
-		}else if(Network.peerType == NetworkPeerType.Client){
-			playerSide = 2;
 		}
 		
 	}

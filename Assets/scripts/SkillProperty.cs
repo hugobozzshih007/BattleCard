@@ -3,7 +3,9 @@ using System.Collections;
 using MapUtility;
 
 public class SkillProperty : MonoBehaviour{
-	
+	public SkillType SType;
+	public PowerType Mode;
+	public int ModeValue;
 	public int SkillCost;
 	public int SkillRate; 
 	public string SkillName;

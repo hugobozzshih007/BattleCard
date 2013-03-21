@@ -16,4 +16,5 @@ public enum PowerType {
 	Critical,
 	MoveRange,
 	AttackRange,
+	Passive,
 }

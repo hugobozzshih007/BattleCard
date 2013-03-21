@@ -1,29 +1,19 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\scripts\Animations\AttackEvent.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\scripts\PlayerData\PillarData.cs">
     <Files>
-      <File FileName="Assets\scripts\selection.cs" Line="748" Column="14" />
-      <File FileName="Assets\scripts\Animations\AnimVault.cs" Line="22" Column="32" />
-      <File FileName="Assets\scripts\MoveCharacter.cs" Line="97" Column="6" />
-      <File FileName="Assets\scripts\MainUI.cs" Line="1" Column="1" />
-      <File FileName="Assets\scripts\Animations\AttackEvent.cs" Line="7" Column="27" />
-      <File FileName="Assets\scripts\AttackCalFX.cs" Line="243" Column="7" />
-      <File FileName="Assets\scripts\FightBack.cs" Line="19" Column="31" />
+      <File FileName="Assets\scripts\selection.cs" Line="1" Column="1" />
+      <File FileName="Assets\scripts\AI\NpcPlayer.cs" Line="18" Column="25" />
+      <File FileName="Assets\scripts\TeamEditor\InitTeamEditor.cs" Line="9" Column="19" />
+      <File FileName="Assets\scripts\TeamEditor\TeamLayout.cs" Line="181" Column="3" />
+      <File FileName="Assets\scripts\PlayerData\GuardianStorage.cs" Line="12" Column="17" />
+      <File FileName="Assets\scripts\SummonLand\PlaceSummoner.cs" Line="15" Column="46" />
+      <File FileName="Assets\scripts\SummonLand\SetTeam.cs" Line="30" Column="5" />
+      <File FileName="Assets\scripts\Tutorial\ShowSummoner.cs" Line="16" Column="69" />
+      <File FileName="Assets\scripts\StatusUI.cs" Line="26" Column="46" />
+      <File FileName="Assets\scripts\PlayerData\PillarData.cs" Line="21" Column="77" />
     </Files>
     <Pads>
-      <Pad Id="ProjectPad">
-        <State expanded="True">
-          <Node name="Assembly-CSharp" expanded="True">
-            <Node name="Assets" expanded="True">
-              <Node name="scripts" expanded="True">
-                <Node name="Animations" expanded="True">
-                  <Node name="AttackEvent.cs" selected="True" />
-                </Node>
-              </Node>
-            </Node>
-          </Node>
-        </State>
-      </Pad>
       <Pad Id="ClassPad">
         <State expanded="True" selected="True" />
       </Pad>

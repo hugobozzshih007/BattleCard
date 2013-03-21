@@ -7,7 +7,9 @@ public class CharacterProperty : MonoBehaviour {
 	public string NameString = "";
 	public Texture2D BigIcon;
 	public Texture2D SmallIcon;
-	
+	public Texture2D GuardianIcon;
+	public Transform DisplayModel;
+	public bool LeadingCharacter; 
 	public bool Summoner;
 	public int Player = 1;
 	public int InitPlayer = 1;
@@ -18,6 +20,7 @@ public class CharacterProperty : MonoBehaviour {
 	public int CriticalhitChance = 18;
 	public int SkillRate = 18;
 	public int ModifiedDefPow;
+	public int MaxHp;
 	public int Damage;
 	public int Hp;
 	public int BuffAtkRange;
@@ -30,6 +33,7 @@ public class CharacterProperty : MonoBehaviour {
 	public bool character = true;
 	public bool UnStatus = false;
 	public bool AbleRestore = true;
+	public bool Damaged = false;
 	public Dictionary<UnnormalStatus, int> UnStatusCounter;
 	public Dictionary<UnnormalStatus, int> LastUnStatusCounter;
 	public bool death;
@@ -38,6 +42,7 @@ public class CharacterProperty : MonoBehaviour {
 	public bool Moved = false;
 	public bool Attacked = false;
 	public bool Activated = false;
+	public bool Defensed = false;
 	public bool Tower = false;
 	
 
@@ -99,12 +104,12 @@ public class CharacterProperty : MonoBehaviour {
 		else
 			WaitRounds = StandByRounds;
 		
-		if(Summoner){
+		if(Summoner || LeadingCharacter){
 			Ready = true;
 			death = false;
 			WaitRounds = 0;
 		}
-		
+		/*
 		if(!Tower){
 			if(Player==1){
 				transform.position = GameObject.Find("unit_start_point_A").transform.position;
@@ -121,26 +126,32 @@ public class CharacterProperty : MonoBehaviour {
 				transform.position = GameObject.Find("yellow_tower").transform.position;
 				transform.Translate(0.0f,4.0f,0.0f);
 			}
-		}
+		}*/
 		
 		currentSel = Camera.mainCamera.GetComponent<selection>();
 		dFX = Camera.mainCamera.GetComponent<DeathFX>();
+		
 	}
-	
+	void Awake(){
+		
+	}
 	// Update is called once per frame
 	void Update () {
 		screenPos = Camera.main.WorldToScreenPoint(transform.position);
 		screenPos.y = Screen.height - screenPos.y;
+		
 		if(death){
 			transform.position = noWhere;
 			transform.renderer.enabled=false;
+			Damaged = false;
 		}
 		if(Moved && Attacked && Activated){
 			TurnFinished = true;
 		}else{
 			TurnFinished = false;
 		}
-		if(TurnFinished && !Tower && !currentSel.SummonIn && !dFX.StartDie){
+		
+		if(TurnFinished && !Tower && !currentSel.SummonIn /*&& !dFX.StartDie*/){
 			Color sideCol = Color.white;
 			if(Player==1)
 				sideCol = red;

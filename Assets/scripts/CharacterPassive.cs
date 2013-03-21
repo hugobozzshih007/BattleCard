@@ -91,6 +91,19 @@ public class CharacterPassive : MonoBehaviour {
 				cp.Ready = false;
 				cp.WaitRounds = cp.StandByRounds;
 				r = 0.0f;
+				transform.position = new Vector3(0.0f,1000.0f,0.0f);
+				transform.renderer.enabled=false;
+				
+				if(Network.connections.Length==0){
+					Transform npcPlayer = GameObject.Find("NpcPlayer").transform;
+					NpcPlayer npc = npcPlayer.GetComponent<NpcPlayer>();
+					npc.InPause = true;
+				}
+				
+				//for turtorial
+				if(mUI.InSecondTutor){
+					GameObject.Find("InitStage").transform.GetComponent<InitStage>().ShowFinal = true;
+				}
 			}
 		}
 	}

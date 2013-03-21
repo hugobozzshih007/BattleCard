@@ -17,7 +17,7 @@ class ScreenOverlay extends PostEffectsBase {
 	
 	public var blendMode : OverlayBlendMode = OverlayBlendMode.Overlay;
 	public var intensity : float = 1.0f;
-	public var texture : RenderTexture;
+	public var texture : Texture2D;
 			
 	public var overlayShader : Shader;
 	
