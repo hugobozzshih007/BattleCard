@@ -119,12 +119,12 @@ public class NcDuplicator : NcEffectBehaviour
 			// Remove Dup
 			NcDuplicator durCom = m_ClonObject.GetComponent<NcDuplicator>();
 			if (durCom != null)
-				DestroyImmediate(durCom);
+				Destroy(durCom);
 
 			// Remove NcDelayActive
 			NcDelayActive delCom = m_ClonObject.GetComponent<NcDelayActive>();
 			if (delCom != null)
-				DestroyImmediate(delCom);
+				Destroy(delCom);
 
 			// this ----------------
 			// remove OtherComponent

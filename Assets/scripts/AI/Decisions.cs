@@ -61,6 +61,8 @@ public class Decisions : MonoBehaviour {
 				}
 			}
 		}
+		if(chessProperty.Tower)
+			uiCmds = UICommands.none;
 		return uiCmds;
 	}
 	
@@ -114,7 +116,8 @@ public class Decisions : MonoBehaviour {
 		}else{
 			print("what a fuck, it's not second move");
 		}
-		
+		if(chessP.Tower)
+			uiCmds = UICommands.none;
 		return uiCmds;
 	}
 	
@@ -150,6 +153,8 @@ public class Decisions : MonoBehaviour {
 				}
 			}	
 		}
+		if(chessP.Tower)
+			uiCmds = UICommands.none;
 		return uiCmds;
 	}
 	
@@ -324,6 +329,10 @@ public class Decisions : MonoBehaviour {
 		Transform currentPos = chess.GetComponent<CharacterSelect>().getMapPosition();
 		Transform[] closestPos = currentPos.GetComponent<Identy>().neighbor;
 		
+		int ran = Random.Range(0, pPos.Length-1);
+		
+		summonPos = pPos[ran];
+		/*
 		IEnumerable<Transform> bothPos = pPos.Intersect(closestPos);
 		IList interSect = new List<Transform>();
 		if(bothPos.ToArray().Length>0){
@@ -349,7 +358,7 @@ public class Decisions : MonoBehaviour {
 				summonPos = MapHelper.GetClosestMap(chess, pPosList);
 			}
 		}
-		
+		*/
 		return summonPos;
 	}
 	

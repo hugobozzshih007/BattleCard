@@ -6,9 +6,9 @@ public class RoundUI : MonoBehaviour {
 	public Texture2D RedRound, YelRound;
 	Texture2D showRound; 
 	public bool StartUI = false;
-	public bool UIfinished = false;
+	public bool UIfinished = true;
 	public bool Wait = false;
-	bool showUI, inDelay;
+	public bool showUI, inDelay;
 	bool FadeInUI;
 	bool runUI = false;
 	float _Alpha = 0.0f;
@@ -20,8 +20,9 @@ public class RoundUI : MonoBehaviour {
 	float diffWidth = 0.0f; 
 	int delayCounter = 120;
 	float t = 0.0f;
-	
-	
+	StatusMachine sMachine;
+	SystemSound sSound;
+	bool soundPlayed = false;
 	// Use this for initialization
 	void Start () {
 		rUI = new GUIStyle();
@@ -32,6 +33,8 @@ public class RoundUI : MonoBehaviour {
 		mid2NDRect = new Rect(midRect.x +50.0f, midRect.y, midRect.width, midRect.height);
 		endRect = new Rect(Screen.width+RedRound.width/2.0f, startRect.height,startRect.width,startRect.height);
 		inDelay = false;
+		sSound = GameObject.Find("SystemSoundB").GetComponent<SystemSound>();
+		sMachine = GameObject.Find("StatusMachine").GetComponent<StatusMachine>();
 	}
 	
 	public void SetRoundUI(Color side){
@@ -42,6 +45,13 @@ public class RoundUI : MonoBehaviour {
 		runUI = true; 
 		FadeInUI = true;
 		UIfinished = false;
+	}
+	
+	void PlayVoice(){
+		if(showRound == RedRound)
+			sSound.PlaySound(SysSoundFx.RoundPlayer);
+		else
+			sSound.PlaySound(SysSoundFx.RoundComputer);
 	}
 	
 	void FadeIn(){
@@ -61,6 +71,10 @@ public class RoundUI : MonoBehaviour {
 	
 	void FadeOut(){
 		if(inDelay){
+			if(!soundPlayed){
+				PlayVoice();
+				soundPlayed = true;
+			}
 			t+=Time.deltaTime/timeToDelay;
 			_Alpha = 1.0f;
 			float diff = Mathf.Lerp(midRect.x, mid2NDRect.x, t);
@@ -83,6 +97,8 @@ public class RoundUI : MonoBehaviour {
 				runUI = false;
 				UIfinished = true;
 				t = 0.0f;
+				sMachine.InGame = true;
+				soundPlayed = false;
 			}
 		}
 	}

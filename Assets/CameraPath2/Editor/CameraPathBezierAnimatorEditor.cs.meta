@@ -1,0 +1,20 @@
+fileFormatVersion: 2
+guid: ac048efed7f644a00a34b9174d9d3ac5
+labels:
+- animation
+- camera
+- animator
+- cam
+- path
+- spline
+- cutscene
+- fly
+- flyby
+- flyover
+- animating
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 

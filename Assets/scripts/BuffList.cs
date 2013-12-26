@@ -6,17 +6,15 @@ using System;
 public class BuffList : MonoBehaviour {
 	public BuffType[] addBuff;
 	public BuffType[] deBuff;
-	public Dictionary<BuffType, bool> AddBuffDict;
-	public Dictionary<BuffType, bool> DeBuffDict;
-	public Dictionary<BuffType, int> ExtraDict;
+	public Dictionary<BuffType, bool> AddBuffDict = new Dictionary<BuffType, bool>();
+	public Dictionary<BuffType, bool> DeBuffDict = new Dictionary<BuffType, bool>();
+	public Dictionary<BuffType, int> ExtraDict =  new Dictionary<BuffType, int>();
 	Transform papa; 
 	// Use this for initialization
 	void Start () {
-		AddBuffDict = new Dictionary<BuffType, bool>();
 		foreach(BuffType Buff in Enum.GetValues(typeof(BuffType))){
 			AddBuffDict.Add(Buff, false);
 		}
-		DeBuffDict = new Dictionary<BuffType, bool>();
 		foreach(BuffType Buff in Enum.GetValues(typeof(BuffType))){
 			DeBuffDict.Add(Buff, false);
 		}
@@ -30,7 +28,6 @@ public class BuffList : MonoBehaviour {
 				DeBuffDict[bt] = true;
 			}
 		}
-		ExtraDict = new Dictionary<BuffType, int>();
 		papa = transform;
 		foreach(BuffType Buff in Enum.GetValues(typeof(BuffType))){
 			ExtraDict.Add(Buff, 0);
@@ -51,6 +48,30 @@ public class BuffList : MonoBehaviour {
 			deBuffs.Add(bf);
 		}
 		return deBuffs;
+	}
+	
+	public bool CheckBuff(BuffType buff){
+		bool getBuff = false;
+		foreach(BuffType b in addBuff){
+			if(buff == b){
+				getBuff = true;
+				break;
+			}
+		}
+		
+		return getBuff; 
+	}
+	
+	public bool CheckDeBuff(BuffType buff){
+		bool getBuff = false;
+		foreach(BuffType b in deBuff){
+			if(buff == b){
+				getBuff = true;
+				break;
+			}
+		}
+		
+		return getBuff; 
 	}
 	
 	// Update is called once per frame

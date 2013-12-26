@@ -6,7 +6,7 @@ using BuffUtility;
 
 public class Leadership : MonoBehaviour, CommonSkill {
 	
-	Transform aider, fxBuffAtk, fxBuffDef;
+	Transform aider, fxBuffAtk, fxBuffDef,fxBuffHp;
 	public PowerType[] Mode;
 	public int[] Value;
 	public Dictionary<PowerType, int> PowerList;
@@ -20,6 +20,7 @@ public class Leadership : MonoBehaviour, CommonSkill {
 		}
 		fxBuffAtk = Camera.mainCamera.GetComponent<CommonFX>().BuffAtk;
 		fxBuffDef = Camera.mainCamera.GetComponent<CommonFX>().BuffDef;
+		fxBuffHp = Camera.mainCamera.GetComponent<CommonFX>().BuffHp;
 	}
 	
 	public void InsertSelection (Transform map)
@@ -29,12 +30,23 @@ public class Leadership : MonoBehaviour, CommonSkill {
 	
 	public IList GetSelectionRange ()
 	{
-		throw new System.NotImplementedException ();
+		IList atkList = new List<Transform>();
+		Transform localMap = aider.GetComponent<CharacterSelect>().getMapPosition();
+		Transform[] aidMaps = localMap.GetComponent<Identy>().neighbor;
+		foreach(Transform unit in aidMaps){
+			if((unit!=null) && MapHelper.IsMapOccupied(unit)){
+				Transform character = MapHelper.GetMapOccupiedObj(unit);
+				if(character.GetComponent<CharacterProperty>().Player == aider.GetComponent<CharacterProperty>().Player){
+					atkList.Add(character.GetComponent<CharacterSelect>().getMapPosition());
+				}
+			}
+		}
+		return atkList;
 	}
 	
 	public void Execute ()
 	{
-		BuffSlidingUI bSUI = Camera.mainCamera.GetComponent<BuffSlidingUI>();
+		//BuffSlidingUI bSUI = Camera.mainCamera.GetComponent<BuffSlidingUI>();
 		IList atkList = new List<Transform>();
 		Transform localMap = aider.GetComponent<CharacterSelect>().getMapPosition();
 		Transform[] attackableMaps = localMap.GetComponent<Identy>().neighbor;
@@ -57,12 +69,13 @@ public class Leadership : MonoBehaviour, CommonSkill {
 				Dictionary<BuffType,int> dict = new Dictionary<BuffType, int>();
 				dict.Add(BuffType.Defense, 1);
 				dict.Add(BuffType.Attack, 1);
-				BuffUI bUI = new BuffUI(target,dict);
-				bSUI.UIItems.Add(bUI);
+				BuffSlidingFX targetBFX = target.GetComponent<BuffSlidingFX>();
+				targetBFX.ActiveBuffSlidingFX(dict);
 				MapHelper.SetFX(target,fxBuffAtk,4.0f);
-				MapHelper.SetFX(target,fxBuffDef,4.0f);
+				MapHelper.SetFX(target,fxBuffHp,4.0f);
 			}
 		}
-		bSUI.FadeInUI = true;
+		Camera.mainCamera.GetComponent<MainInfoUI>().StopSkillRender = true;
+		//bSUI.FadeInUI = true;
 	}
 }

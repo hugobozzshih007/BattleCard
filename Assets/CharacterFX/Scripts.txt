@@ -1,0 +1,14 @@
+Instructions for using the Controller Scripts.
+
+The controller scripts were created to allow you to control the transitions (stone to flesh, etc) on Characters that consist of multiple game objects. The controller script will control it's namesake transition - ie, the StoneController will control the Stone transition. To use the controller, place it on a parent gameobject of your character, and leave the objects array empty. This will cause the controller to find all the objects of the appropriate type on the current and child game objects.  If you need finer control, you can manually assign the specific effect objects.
+
+For example, if you have a character that consists of 2 objects (a body and a gun), in this hierarchy:
+
+   Character
+   |
+   +--Body
+   +--Gun
+
+You would place a StoneController on the parent game object, and place a Stone component on the body and gun objects. Then, at runtime, you would modify the StoneController instead of the individual Stone components.
+
+

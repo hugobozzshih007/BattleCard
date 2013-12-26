@@ -140,112 +140,6 @@ namespace BuffUtility{
 			else if(usage == BuffUsage.Decrease)
 				buffValue = -buffValue;
 			
-			/*
-			switch(type){
-				case(BuffType.Attack):
-					if(playerSide==1){
-						if(usage == BuffUsage.Intensify)
-							buffValue = ((float)rnd.PlayerATerritory.Count/mapUnitNum)*2*Mathf.Pow((float)property.atkPower,0.1f);
-						else if(usage == BuffUsage.Decrease)
-							buffValue = -((float)rnd.PlayerATerritory.Count/mapUnitNum)*2*Mathf.Pow((float)property.atkPower,0.1f);
-						else
-							buffValue = 0.0f;
-					}else if(playerSide==2){
-						if(usage == BuffUsage.Intensify)
-							buffValue = ((float)rnd.PlayerBTerritory.Count/mapUnitNum)*2*Mathf.Pow((float)property.atkPower,0.1f);
-						else if(usage == BuffUsage.Decrease)
-							buffValue = -((float)rnd.PlayerBTerritory.Count/mapUnitNum)*2*Mathf.Pow((float)property.atkPower,0.1f);
-						else
-							buffValue = 0.0f;
-					}	
-					break;
-				case(BuffType.AttackRange):
-					if(playerSide==1){
-						if(usage == BuffUsage.Intensify)
-							buffValue = ((float)rnd.PlayerATerritory.Count/mapUnitNum)*2*Mathf.Pow((float)property.atkRange,0.1f);
-						else if(usage == BuffUsage.Decrease)
-							buffValue = -((float)rnd.PlayerATerritory.Count/mapUnitNum)*2*Mathf.Pow((float)property.atkRange,0.1f);
-						else
-							buffValue = 0.0f;
-					}else if(playerSide==2){
-						if(usage == BuffUsage.Intensify)
-							buffValue = ((float)rnd.PlayerBTerritory.Count/mapUnitNum)*2*Mathf.Pow((float)property.atkRange,0.1f);
-						else if(usage == BuffUsage.Decrease)
-							buffValue = -((float)rnd.PlayerBTerritory.Count/mapUnitNum)*2*Mathf.Pow((float)property.atkRange,0.1f);
-						else
-							buffValue = 0.0f;
-					}	
-					break;
-				case(BuffType.CriticalHit):
-					if(playerSide==1){
-						if(usage == BuffUsage.Intensify)
-							buffValue = Mathf.Pow((float)rnd.PlayerATerritory.Count/mapUnitNum*10.0f,0.2f)*(float)property.CriticalhitChance;
-						else if(usage == BuffUsage.Decrease)
-							buffValue = -Mathf.Pow((float)rnd.PlayerATerritory.Count/mapUnitNum*10.0f,0.2f)*(float)property.CriticalhitChance;
-						else
-							buffValue = 0.0f;
-					}else if(playerSide==2){
-						if(usage == BuffUsage.Intensify)
-							buffValue = Mathf.Pow((float)rnd.PlayerBTerritory.Count/mapUnitNum*10.0f,0.2f)*(float)property.CriticalhitChance;
-						else if(usage == BuffUsage.Decrease)
-							buffValue = -Mathf.Pow((float)rnd.PlayerBTerritory.Count/mapUnitNum*10.0f,0.2f)*(float)property.CriticalhitChance;
-						else
-							buffValue = 0.0f;
-					}	
-					break;
-				case(BuffType.Defense):
-					if(playerSide==1){
-						if(usage == BuffUsage.Intensify)
-							buffValue = ((float)rnd.PlayerATerritory.Count/mapUnitNum)*2*Mathf.Pow((float)property.defPower,0.1f);
-						else if(usage == BuffUsage.Decrease)
-							buffValue = -((float)rnd.PlayerATerritory.Count/mapUnitNum)*2*Mathf.Pow((float)property.defPower,0.1f);
-						else
-							buffValue = 0.0f;
-					}else if(playerSide==2){
-						if(usage == BuffUsage.Intensify)
-							buffValue = ((float)rnd.PlayerBTerritory.Count/mapUnitNum)*2*Mathf.Pow((float)property.defPower,0.1f);
-						else if(usage == BuffUsage.Decrease)
-							buffValue = -((float)rnd.PlayerBTerritory.Count/mapUnitNum)*2*Mathf.Pow((float)property.defPower,0.1f);
-						else
-							buffValue = 0.0f;
-					}	
-					break;
-				case(BuffType.MoveRange):
-					if(playerSide==1){
-						if(usage == BuffUsage.Intensify)
-							buffValue = ((float)rnd.PlayerATerritory.Count/mapUnitNum)*2*Mathf.Pow((float)property.moveRange,0.1f);
-						else if(usage == BuffUsage.Decrease)
-							buffValue = -((float)rnd.PlayerATerritory.Count/mapUnitNum)*2*Mathf.Pow((float)property.moveRange,0.1f);
-						else
-							buffValue = 0.0f;
-					}else if(playerSide==2){
-						if(usage == BuffUsage.Intensify)
-							buffValue = ((float)rnd.PlayerBTerritory.Count/mapUnitNum)*2*Mathf.Pow((float)property.moveRange,0.1f);
-						else if(usage == BuffUsage.Decrease)
-							buffValue = -((float)rnd.PlayerBTerritory.Count/mapUnitNum)*2*Mathf.Pow((float)property.moveRange,0.1f);
-						else
-							buffValue = 0.0f;
-					}	
-					break;
-				case(BuffType.SkillRate):
-					if(playerSide==1){
-						if(usage == BuffUsage.Intensify)
-							buffValue = Mathf.Pow((float)rnd.PlayerATerritory.Count/mapUnitNum*10.0f,0.2f)*(float)property.SkillRate;
-						else if(usage == BuffUsage.Decrease)
-							buffValue = -Mathf.Pow((float)rnd.PlayerATerritory.Count/mapUnitNum*10.0f,0.2f)*(float)property.SkillRate;
-						else
-							buffValue = 0.0f;
-					}else if(playerSide==2){
-						if(usage == BuffUsage.Intensify)
-							buffValue = Mathf.Pow((float)rnd.PlayerATerritory.Count/mapUnitNum*10.0f,0.2f)*(float)property.SkillRate;
-						else if(usage == BuffUsage.Decrease)
-							buffValue = -Mathf.Pow((float)rnd.PlayerATerritory.Count/mapUnitNum*10.0f,0.2f)*(float)property.SkillRate;
-						else
-							buffValue = 0.0f;
-					}	
-					break;
-			}
-			*/
 			return buffValue;
 		}
 		
@@ -269,11 +163,7 @@ namespace BuffUtility{
 								property.BuffCriticalHit = property.CriticalhitChance;
 								break;
 							case BuffType.Defense:
-								if(property.AbleRestore){
-									property.ModifiedDefPow = property.defPower;
-									if(!property.Damaged)
-										property.Hp = property.ModifiedDefPow;
-								}
+								property.ModifiedDefPow = property.defPower;
 								break;
 							case BuffType.MoveRange:
 								property.BuffMoveRange = property.moveRange;
@@ -299,14 +189,7 @@ namespace BuffUtility{
 								property.BuffCriticalHit = property.CriticalhitChance;
 								break;
 							case BuffType.Defense:
-								if(property.AbleRestore){
-									if(!property.Damaged){
-										property.ModifiedDefPow = property.defPower;
-										property.Hp = property.ModifiedDefPow;
-									}else{
-										property.Hp += GetBuffValue(pair.Key);
-									}
-								}
+								property.ModifiedDefPow = property.defPower;
 								break;
 							case BuffType.MoveRange:
 								property.BuffMoveRange = property.moveRange;
@@ -319,11 +202,7 @@ namespace BuffUtility{
 				}
 			}else{
 				property.Damage = property.atkPower;
-				if(property.AbleRestore){
-					property.ModifiedDefPow = property.defPower;
-					if(!property.Damaged)
-						property.Hp = property.ModifiedDefPow;
-				}
+				property.ModifiedDefPow = property.defPower;
 				property.BuffMoveRange = property.moveRange;
 				property.BuffAtkRange = property.atkRange;
 				property.BuffCriticalHit = property.CriticalhitChance;
@@ -342,13 +221,7 @@ namespace BuffUtility{
 							property.BuffCriticalHit = property.CriticalhitChance + GetBuffValue(bt);
 							break;
 						case BuffType.Defense:
-							if(property.AbleRestore){
-								property.ModifiedDefPow = property.defPower + GetBuffValue(bt);
-								if(!property.Damaged)
-									property.Hp = property.ModifiedDefPow;
-								else
-									property.Hp += GetBuffValue(bt);
-							}
+							property.ModifiedDefPow = property.defPower + GetBuffValue(bt);
 							break;
 						case BuffType.MoveRange:
 							property.BuffMoveRange = property.moveRange + GetBuffValue(bt);
@@ -365,9 +238,6 @@ namespace BuffUtility{
 			property.ModifiedDefPow += buffList.ExtraDict[BuffType.Defense];
 			//Debug.Log(Character.name + " oldDefPower= "+oldDefPower);
 			
-			if(!property.Damaged)
-				property.Hp = property.ModifiedDefPow;
-			
 			if(buffList.ExtraDict[BuffType.Attack]>0)
 				//Debug.Log(Character.name + " Fuck you plus!!!!!!!!!!!! " + property.Damage);
 			property.Damage += buffList.ExtraDict[BuffType.Attack];
@@ -377,19 +247,25 @@ namespace BuffUtility{
 			property.BuffCriticalHit += buffList.ExtraDict[BuffType.CriticalHit];
 			property.BuffSkillRate += buffList.ExtraDict[BuffType.SkillRate];
 			
-			if(property.Hp < 1)
-				property.Hp = 1;
+			if(property.ModifiedDefPow < 0)
+				property.ModifiedDefPow = 0;
 			if(property.BuffSkillRate < 0)
 				property.BuffSkillRate = 0;
 			if(property.BuffCriticalHit < 0)
 				property.BuffCriticalHit = 0;
 			if(property.Damage < 0)
 				property.Damage = 0;
-			if(property.BuffMoveRange < 1)
-				property.BuffMoveRange = 1;
+			if(!property.Tower){
+				if(property.BuffMoveRange < 1)
+					property.BuffMoveRange = 1;
+			}else{
+				property.BuffMoveRange = 0;
+			}
 			if(property.BuffAtkRange < 1)
 				property.BuffAtkRange = 1;
-				
+			
+			if(!property.AbleDef)
+				property.ModifiedDefPow = 0;
 		}
 	}
 }

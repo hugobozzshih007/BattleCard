@@ -13,7 +13,7 @@ public class AttackCalFX : MonoBehaviour {
 	Transform targetLocation;
 	CharacterProperty attackerProperty, targetProperty;
 	CharacterSelect attackerSelect, targetSelect;
-	DamageSlidingUI sUI;
+	//DamageSlidingUI sUI;
 	DeathFX dFX;
 	
 	bool wait = false;
@@ -23,13 +23,15 @@ public class AttackCalFX : MonoBehaviour {
 	CommonFX cFX;
 	
 	FightBack fb;
+	
+	StatusMachine sMachine; 
 	// Use this for initialization
 	void Start () {
 		mUI = transform.GetComponent<MainUI>();
-		sUI = transform.GetComponent<DamageSlidingUI>();
 		fb = transform.GetComponent<FightBack>();
 		chessUI = transform.GetComponent<MainInfoUI>();
 		cFX =  transform.GetComponent<CommonFX>();
+		sMachine = GameObject.Find("StatusMachine").GetComponent<StatusMachine>();
 		//currentSel = transform.GetComponent<selection>();
 	}
 	
@@ -46,10 +48,14 @@ public class AttackCalFX : MonoBehaviour {
 		
 		UpdateAttackResult(AttackType.physical);
 		Vector3 pos = new Vector3(Target.transform.position.x,Target.transform.position.y,Target.transform.position.z);
-		Transform blood = Instantiate(cFX.NormalAttack,pos,Quaternion.identity) as Transform;
-		Destroy(GameObject.Find(blood.name).gameObject,3.0f);
-		mUI.MainGuiFade = true;
-		mUI.SubGuiFade = false;	
+		GameObject blood = Instantiate(cFX.NormalAttack,pos,Quaternion.identity) as GameObject;
+		Destroy(blood,3.0f);
+		if(!sMachine.TutorialMode){
+			chessUI.Talking = false;
+			chessUI.TalkingRight = false;
+		}
+		//mUI.MainGuiFade = true;
+		//mUI.SubGuiFade = false;	
 	}
 	
 	public bool Attackable(Transform atk, Transform newTarget){
@@ -86,12 +92,13 @@ public class AttackCalFX : MonoBehaviour {
 		IList ableTargets = new List<Transform>();
 		IList targets = new List<Transform>();
 		targets = attacker.GetComponent<CharacterProperty>().GetAttackPosition();
-		bool flyHitable = MapHelper.CheckPassive(PassiveType.FlyingHit, attacker)|| MapHelper.CheckPassive(PassiveType.Flying, attacker);
+		bool RengeAtker = MapHelper.CheckPassive(PassiveType.FlyingHit, attacker);
+		bool flyAtker = MapHelper.CheckPassive(PassiveType.Flying, attacker);
 		foreach(Transform map in targets){
 			Transform enemy = MapHelper.GetMapOccupiedObj(map);
 			bool flyable = MapHelper.CheckPassive(PassiveType.Flying, enemy);
 			
-			if(!flyHitable){
+			if(!RengeAtker && !flyAtker){
 				if(!flyable)
 					ableTargets.Add(map);
 			}else{
@@ -100,6 +107,27 @@ public class AttackCalFX : MonoBehaviour {
 		}
 		return ableTargets;
 	}
+	
+	public IList GetAttackableTarget(Transform root, Transform attacker){
+		updateMapSteps();
+		IList ableTargets = new List<Transform>();
+		IList targets = new List<Transform>();
+		targets = attacker.GetComponent<CharacterProperty>().GetAttackPosition(root);
+		bool RengeAtker = MapHelper.CheckPassive(PassiveType.FlyingHit, attacker);
+		bool flyAtker = MapHelper.CheckPassive(PassiveType.Flying, attacker);
+		foreach(Transform map in targets){
+			Transform enemy = MapHelper.GetMapOccupiedObj(map);
+			bool flyable = MapHelper.CheckPassive(PassiveType.Flying, enemy);
+			if(!RengeAtker && !flyAtker){
+				if(!flyable)
+					ableTargets.Add(map);
+			}else{
+				ableTargets.Add(map);
+			}
+		}
+		return ableTargets;
+	}
+	
 	
 	void updateMapSteps(){
 		Transform allMap = GameObject.Find("Maps").transform;
@@ -121,70 +149,55 @@ public class AttackCalFX : MonoBehaviour {
 	}
 	
 	void ShowDamageUI(Transform target,int damage, Transform atk){
-		DamageUI dUI = new DamageUI(target,damage, atk);
-		sUI.UIItems.Add(dUI);
+		DamageSlidingFX targetSFX = target.GetComponent<DamageSlidingFX>();
+		targetSFX.ActivateSlidingFX(atk, damage);
 	}
 	
 	// Update is called once per frame
 	void Update () {
 	}
-	
+	int GetTrueDamage(float damage, int def){
+		int newDamage = Mathf.RoundToInt(damage);
+		int trueDamage = (newDamage - def);
+		if(trueDamage < 0)
+			trueDamage = 0; 
+		return trueDamage;
+	}
 	
 	public void UpdateAttackResult(AttackType mode){
 		dFX = Camera.mainCamera.GetComponent<DeathFX>();
 		if(mode == AttackType.physical){
 			if(Attacker.GetComponent<CharacterPassive>().PassiveDict[PassiveType.SuddenDeath]){
 				if(!targetProperty.Tower && MapHelper.Success(10)){
-					targetProperty.Hp = 0;
+					targetProperty.Hp = 1;
+					ShowDamageUI(Target, targetProperty.MaxHp-1, Attacker);
 				}
 				else{
-					targetProperty.Hp -= attackerProperty.Damage;
+					int trueDamage = GetTrueDamage((float)attackerProperty.Damage, targetProperty.ModifiedDefPow);
+					targetProperty.Hp -= trueDamage;
+					Target.GetComponent<BuffList>().ExtraDict[BuffType.Defense] = 0;
 					targetProperty.Damaged = true;
-					ShowDamageUI(Target, attackerProperty.Damage, Attacker);
+					ShowDamageUI(Target, trueDamage, Attacker);
 				}
 				
-			}/*else if(Attacker.GetComponent<CharacterPassive>().PassiveDict[PassiveType.MultiArrow]){
-				IList targetList = new List<Transform>();
-				foreach(Transform unit in GetAttackableTarget(Attacker)){
-					targetList.Add(MapHelper.GetMapOccupiedObj(unit));
-				}
-				if(targetList.Contains(Target))
-					targetList.Remove(Target);
-				if(CriticalHit){
-					targetProperty.Hp -= attackerProperty.Damage*2;
-					ShowDamageUI(Target, attackerProperty.Damage*2, Attacker);
-					Debug.Log("Critical Hit!");
-				}else{
-					targetProperty.Hp -= attackerProperty.Damage;
-					ShowDamageUI(Target, attackerProperty.Damage, Attacker);
-				}
-				
-				Transform[] tArray = new Transform[targetList.Count];
-				targetList.CopyTo(tArray,0);
-				if(tArray.Length > 1){
-					for(int i=0;i<2;i++){
-						tArray[i].GetComponent<CharacterProperty>().Hp -= 1;
-						ShowDamageUI(tArray[i], 1, Attacker);
-					}
-				}else if(tArray.Length < 2){
-					for(int i=0;i<tArray.Length;i++){
-						tArray[i].GetComponent<CharacterProperty>().Hp -= 1;
-						ShowDamageUI(tArray[i], 1, Attacker);
-					}
-				}
-				
-			}*/else if(CriticalHit){
-				targetProperty.Hp -= attackerProperty.Damage*2;
+			}else if(CriticalHit){
+				int trueDamage = GetTrueDamage((float)attackerProperty.Damage*1.5f,targetProperty.ModifiedDefPow);
+				targetProperty.Hp -= trueDamage;
+				Target.GetComponent<BuffList>().ExtraDict[BuffType.Defense] = 0;
 				targetProperty.Damaged = true;
-				ShowDamageUI(Target, attackerProperty.Damage*2, Attacker);
+				ShowDamageUI(Target, trueDamage, Attacker);
 				Debug.Log("Critical Hit!");
 			}else{
-				targetProperty.Hp -= attackerProperty.Damage;
+				int trueDamage = GetTrueDamage((float)attackerProperty.Damage, targetProperty.ModifiedDefPow);
+				targetProperty.Hp -= trueDamage;
+				Target.GetComponent<BuffList>().ExtraDict[BuffType.Defense] = 0;
 				targetProperty.Damaged = true;
-				ShowDamageUI(Target, attackerProperty.Damage, Attacker);
+				ShowDamageUI(Target, trueDamage, Attacker);
 			}
 			
 			if(Attacker.GetComponent<CharacterPassive>().PassiveDict[PassiveType.WoundBite]){
+				targetProperty.AbleDef = false;
+				targetProperty.ModifiedDefPow = 0;
 				targetProperty.UnStatusCounter[UnnormalStatus.Wounded] = 1;
 				targetProperty.LastUnStatusCounter[UnnormalStatus.Wounded] = 2;
 			}
@@ -192,13 +205,16 @@ public class AttackCalFX : MonoBehaviour {
 		}else if(mode == AttackType.magical){
 			if(CriticalHit){
 				targetProperty.Hp -= attackerProperty.Damage*2;
+				Target.GetComponent<BuffList>().ExtraDict[BuffType.Defense] = 0;
 				targetProperty.Damaged = true;
 				Debug.Log("Critical Hit!");
 			}else{
 				print("damage!!");
-				targetProperty.Hp -= attackerProperty.Damage;
+				int trueDamage = GetTrueDamage((float)attackerProperty.Damage, targetProperty.ModifiedDefPow);
+				targetProperty.Hp -= trueDamage;
+				Target.GetComponent<BuffList>().ExtraDict[BuffType.Defense] = 0;
 				targetProperty.Damaged = true;
-				ShowDamageUI(Target, attackerProperty.Damage, Attacker);
+				ShowDamageUI(Target, trueDamage, Attacker);
 			}
 		}
 		/*
@@ -214,29 +230,41 @@ public class AttackCalFX : MonoBehaviour {
 		}
 		
 		if(targetProperty.Hp<=0){
-			if(!targetProperty.Tower){
+			targetProperty.Hp = 0;
+			
 				//dFX.SetDeathSequence(Target);
 				//targetProperty.Ready = false;
 				//targetProperty.WaitRounds = targetProperty.StandByRounds;
 				chessUI.DelayFadeOut = true;
 				targetProperty.Attacked = true;
+				//cancel attack buff
+				Target.GetComponent<BuffList>().ExtraDict[BuffType.Attack] = 0;
+				Target.GetComponent<BuffList>().ExtraDict[BuffType.CriticalHit] = 0;
+				targetProperty.CmdTimes -= 1;
+				mUI.TurnFinished(Target, false);
 				if(chessUI.playerSide ==1)
 					chessUI.MainFadeIn = false;
 				else
 					chessUI.TargetFadeIn = false;
-			}else{
-				targetProperty.death = true;
-			}
+		
 		}else{
 			if(fightBack){
 				fb.SetFightBack(Target,Attacker);
 				targetProperty.Attacked = true;
+				//cancel attack buff
+				Target.GetComponent<BuffList>().ExtraDict[BuffType.Attack] = 0;
+				Target.GetComponent<BuffList>().ExtraDict[BuffType.CriticalHit] = 0;
+				targetProperty.CmdTimes -= 1;
+				mUI.TurnFinished(Target, false);
+			}else{
+				sMachine.InBusy = false;
 			}
 		}
 		attackerProperty.Attacked = true;
-		sUI.FadeInUI = true;
+		//cancel attack buff
+		Attacker.GetComponent<BuffList>().ExtraDict[BuffType.Attack] = 0;
+		Attacker.GetComponent<BuffList>().ExtraDict[BuffType.CriticalHit] = 0;
+		attackerProperty.CmdTimes -= 1;
+		mUI.TurnFinished(Attacker, false);
 	}
-	
-	
-	
 }

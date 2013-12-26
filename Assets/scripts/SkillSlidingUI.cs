@@ -30,20 +30,22 @@ public class SkillSlidingUI : MonoBehaviour {
 	public bool FadeInUI = false;
 	bool showUI = false;
 	float _textAlpha;
-	int delayCounter = 120;
-	
+	int delayCounter;
+	public int DCounter = 40;
 	const string MsgSuccess = "Succeed!";
 	const string MsgFail = "Failed!";
-	
+	StatusMachine sMachine;
 	
 	// Use this for initialization
 	void Start () {
 		UIItems = new List<SkillUI>();
 		smallFloating = new GUIStyle();
 		smallFloating.alignment = TextAnchor.MiddleCenter;
-		smallFloating.normal.textColor = Color.red;
+		smallFloating.normal.textColor = Color.yellow;
 		smallFloating.font = UIFont;
-		smallFloating.fontSize = 16;
+		smallFloating.fontSize = 24;
+		delayCounter = DCounter;
+		sMachine = GameObject.Find("StatusMachine").transform.GetComponent<StatusMachine>();
 	}
 	
 	void FadeIn(){
@@ -60,9 +62,14 @@ public class SkillSlidingUI : MonoBehaviour {
 		diffHeight+=movingSpeed;
 		if(delayCounter<=0)
 			_textAlpha = Mathf.Lerp(_textAlpha,0,Time.deltaTime*5); 
+		
+		if(_textAlpha <= 0.3f && showUI){
+			sMachine.InBusy = false;
+		}
+		
 		if(_textAlpha <= 0.1f){
 			showUI = false;
-			delayCounter = 120;
+			delayCounter = DCounter;
 			diffHeight = 0.0f;
 			UIItems.Clear();
 		}
@@ -82,10 +89,7 @@ public class SkillSlidingUI : MonoBehaviour {
 		if(UIItems.Count>0){
 			if(showUI){
 				foreach(SkillUI skill in UIItems){
-					if(skill.Success)
-						GUI.Box(new Rect(skill.StartPoint.x,skill.StartPoint.y-diffHeight,skill.StartPoint.width,skill.StartPoint.height),MsgSuccess+" "+skill.Msg, smallFloating);
-					else
-						GUI.Box(new Rect(skill.StartPoint.x,skill.StartPoint.y-diffHeight,skill.StartPoint.width,skill.StartPoint.height),MsgFail+" "+skill.Msg, smallFloating);
+					GUI.Box(new Rect(skill.StartPoint.x,skill.StartPoint.y-diffHeight,skill.StartPoint.width,skill.StartPoint.height),skill.Msg, smallFloating);
 				}
 			}
 		}

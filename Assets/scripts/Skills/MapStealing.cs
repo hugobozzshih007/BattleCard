@@ -39,7 +39,7 @@ public class MapStealing : MonoBehaviour, CommonSkill {
 	
 	public void Execute(){
 		sUI = Camera.mainCamera.GetComponent<SkillSlidingUI>();
-		if(transform.GetComponent<SkillProperty>().PassSkillRate){
+		
 			Player = transform.parent.parent.GetComponent<CharacterProperty>().Player;
 			if(selectedMap!=null){
 				if(Player == 1){
@@ -51,15 +51,13 @@ public class MapStealing : MonoBehaviour, CommonSkill {
 					mapStorage.PlayerATerritory.Remove(selectedMap);
 					print("Stealed playerA's map!");
 				}
+				SystemSound sSound = GameObject.Find("SystemSound").transform.GetComponent<SystemSound>();
+				sSound.PlaySound(SysSoundFx.Defense);
 			}
 			SkillUI sui = new SkillUI(selectedMap, true, "map stealed");
 			sUI.UIItems.Add(sui);
+			GameObject.Find("StatusMachine").GetComponent<StatusMachine>().InBusy = false;
 			sUI.FadeInUI = true;
-		}else{
-			SkillUI sui = new SkillUI(transform.parent.parent, false, "");
-			sUI.UIItems.Add(sui);
-			sUI.FadeInUI = true;
-			print("Stealed nothing!");
-		}
+		
 	}
 }

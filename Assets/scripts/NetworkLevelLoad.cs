@@ -3,7 +3,7 @@ using System.Collections;
 
 public class NetworkLevelLoad : MonoBehaviour {
 	
-	public string SupportedNetworkLevels = "Summon Land";
+	public string SupportedNetworkLevels = "summon_land";
 	public string disconnectedLevel = "opening";
 	
 	private int lastLevelPrefix = 0;

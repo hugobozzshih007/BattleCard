@@ -12,7 +12,7 @@ public class BuffInfoUI : MonoBehaviour {
 	InfoUI iconVault;
 	RoundCounter rc;
 	MainInfoUI mainInfoUI;
-	
+	StatusMachine sMachine;
 	// Use this for initialization
 	void Start () {
 		territoryStart = new Rect(Screen.width-350.0f, 6.0f, 28.0f, 28.0f);
@@ -20,7 +20,7 @@ public class BuffInfoUI : MonoBehaviour {
 		iconVault = transform.GetComponent<InfoUI>();
 		rc = transform.GetComponent<RoundCounter>();
 		mainInfoUI = transform.GetComponent<MainInfoUI>();
-		
+		sMachine = GameObject.Find("StatusMachine").transform.GetComponent<StatusMachine>();
 		numberStyle[0] = new GUIStyle();
 		numberStyle[1] = new GUIStyle();
 		numberStyle[0].font = Number;
@@ -29,6 +29,16 @@ public class BuffInfoUI : MonoBehaviour {
 		numberStyle[1].normal.textColor = new Color(0.8f,0.8f,0.8f,1.0f);
 		numberStyle[0].fontSize = 24;
 		numberStyle[1].fontSize = 20;
+	}
+	
+	public int GetTerritoryPersent(int side){
+		int rate = 0;
+		if(side == 1){
+			rate = Mathf.RoundToInt((float)rc.PlayerATerritory.Count /(float)allMaps*100.0f);
+		}else if(side == 2){
+			rate = Mathf.RoundToInt((float)rc.PlayerBTerritory.Count /(float)allMaps*100.0f);
+		}
+		return rate;
 	}
 	
 	void DoBuffInfo(){
@@ -69,6 +79,7 @@ public class BuffInfoUI : MonoBehaviour {
 	
 	void OnGUI(){
 		//Territory GUI 
-		DoBuffInfo();
+		if(sMachine.InitGame)
+			DoBuffInfo();
 	}
 }

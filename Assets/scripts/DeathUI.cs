@@ -16,10 +16,8 @@ public struct DeathUI{
 		Transform map = cSelect.getMapPosition();
 		FxPos = new Vector3(map.transform.position.x,map.transform.position.y+0.1f,map.transform.position.z);
 		Transform fx = Object.Instantiate(cFX.DeadOut,FxPos,Quaternion.identity) as Transform;
-		Color col = Chess.renderer.material.color;
-		MapHelper.SetObjTransparent(Chess,col,1.0f);
 		Object.Destroy(GameObject.Find(fx.name).gameObject, 3.0f);
-		Chess.GetComponent<CharacterPassive>().StartDie = true;
+		Chess.GetComponent<SummonFX>().ActivateDying();
 		//Debug.Log("EatShit");
 	}
 }

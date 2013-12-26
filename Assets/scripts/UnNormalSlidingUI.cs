@@ -26,12 +26,15 @@ public class UnNormalSlidingUI : MonoBehaviour {
 	public bool FadeInUI = false;
 	bool showUI = false;
 	float _textAlpha;
-	int delayCounter = 160;
+	public int DCounter = 40;
+	int delayCounter;
 	int seg = 20;
 	RoundCounter rc;
+	StatusMachine sMachine; 
 	
 	// Use this for initialization
-	void Awake () {
+	void Start () {
+		sMachine = GameObject.Find("StatusMachine").transform.GetComponent<StatusMachine>();
 		UIItems = new List<UnNormalUI>();
 		smallFloating = new GUIStyle();
 		smallFloating.alignment = TextAnchor.MiddleCenter;
@@ -39,6 +42,7 @@ public class UnNormalSlidingUI : MonoBehaviour {
 		smallFloating.font = UIFont;
 		smallFloating.fontSize = 18;
 		rc = transform.GetComponent<RoundCounter>();
+		delayCounter = DCounter;
 	}
 	
 	void FadeIn(){
@@ -57,7 +61,7 @@ public class UnNormalSlidingUI : MonoBehaviour {
 			_textAlpha = Mathf.Lerp(_textAlpha,0,Time.deltaTime*5); 
 		if(_textAlpha <= 0.1f){
 			showUI = false;
-			delayCounter = 120;
+			delayCounter = DCounter;
 			diffHeight = 0.0f;
 			FadeInUI = true;
 		}
@@ -74,21 +78,23 @@ public class UnNormalSlidingUI : MonoBehaviour {
 	void OnGUI(){
 		GUI.color = new Color(1.0f,1.0f,1.0f,_textAlpha);
 		GUI.backgroundColor = Color.clear;
-		foreach(Transform gf in rc.AllChesses){
-			if(!gf.GetComponent<CharacterProperty>().death){
-				UnNormalUI unUI = new UnNormalUI(gf);
-				UIItems.Add(unUI);
-			}
-		}
-		foreach(UnNormalUI unUI in UIItems){
-			int uSeg = 0;
-			foreach(var pair in unUI.Cp.LastUnStatusCounter){
-				if(pair.Value>0){
-					GUI.Box(new Rect(unUI.StartPoint.x,unUI.StartPoint.y-seg*uSeg-diffHeight,unUI.StartPoint.width,unUI.StartPoint.height), pair.Key.ToString(),smallFloating);
-					uSeg+=1;
+		if(sMachine.InitGame){
+			foreach(Transform gf in rc.AllChesses){
+				if(!gf.GetComponent<CharacterProperty>().death){
+					UnNormalUI unUI = new UnNormalUI(gf);
+					UIItems.Add(unUI);
 				}
 			}
+			foreach(UnNormalUI unUI in UIItems){
+				int uSeg = 0;
+				foreach(var pair in unUI.Cp.LastUnStatusCounter){
+					if(pair.Value>0){
+						GUI.Box(new Rect(unUI.StartPoint.x,unUI.StartPoint.y-seg*uSeg-diffHeight,unUI.StartPoint.width,unUI.StartPoint.height), pair.Key.ToString(),smallFloating);
+						uSeg+=1;
+					}
+				}
+			}
+			UIItems.Clear();
 		}
-		UIItems.Clear();
 	}
 }

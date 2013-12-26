@@ -20,6 +20,8 @@ public class FightBack : MonoBehaviour {
 		if(attackable){
 			turningHead.SetTurnHeadSequence(Attacker, target.GetComponent<CharacterSelect>().getMapPosition(),true,true,false);
 			print("really fight back");
+		}else{
+			GameObject.Find("StatusMachine").GetComponent<StatusMachine>().InBusy = false;
 		}
 	}
 	

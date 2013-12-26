@@ -6,6 +6,7 @@ public enum BuffType
 	Defense,
 	AttackRange,
 	MoveRange,
+	Hp,
 	CriticalHit,
 	SkillRate,
 }

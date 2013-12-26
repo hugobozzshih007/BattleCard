@@ -12,6 +12,7 @@ public class PillarData : MonoBehaviour {
 	Vector3 screenPos;
 	Vector2 butRect = new Vector2(66.5f, 21.0f);
 	Rect removeRect;
+	SystemSound sSoundClick;
 	// Use this for initialization
 	void Start () {
 		guardian = null; 
@@ -21,6 +22,12 @@ public class PillarData : MonoBehaviour {
 		removeRect = new Rect(screenPos.x-butRect.x/1.75f, screenPos.y-butRect.y*5.0f, butRect.x, butRect.y);
 		editor = GameObject.Find("GUILayout").transform.GetComponent<TeamLayout>();
 		removeBut = editor.RemoveBut;
+		sSoundClick = GameObject.Find("SystemSoundClick").GetComponent<SystemSound>();
+		//temp for demo
+		if(LeadingPillar){
+			Transform newChess = Instantiate(Display_Model, transform.position, Quaternion.identity) as Transform;
+			newChess.Translate(new Vector3(0.0f,1.5f,0.0f));
+		}
 	}
 	
 	public void PlaceGuardian(GuardianUIData gf, Transform display){
@@ -48,6 +55,7 @@ public class PillarData : MonoBehaviour {
 		GUI.backgroundColor = Color.clear;
 		if(WithGuardian){
 			if(GUI.Button(removeRect, removeBut)){
+				sSoundClick.PlaySound(SysSoundFx.CommandClick);
 				editor.RemovePillarGF(transform);
 				WithGuardian = false;
 			}

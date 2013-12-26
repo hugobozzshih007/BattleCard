@@ -11,9 +11,10 @@ public class MoveCharacter : MonoBehaviour {
 	Transform[] pathList;
 	Vector3 startPosition;
    	Vector3 target;
-	const float timeToReach = 0.8f;
-	const float timeToRotate = 0.3f;
-	float accl = 0.018f;
+	const float timeToReach = 0.6f;
+	const float timeToRotate = 0.2f;
+	float accl = 0.1f;
+	float blendRate = 0.022f;
 	float s, t,r;
 	int Step = 0;
 	int init = 0;
@@ -22,10 +23,12 @@ public class MoveCharacter : MonoBehaviour {
 	selection currentSelect;
 	CharacterPassive cPass;
 	MainUI mUI;
+	FollowCam fCam;
 	// Use this for initialization
 	void Start () {
 		currentSelect = transform.GetComponent<selection>();
 		mUI = transform.GetComponent<MainUI>();
+		fCam = transform.GetComponent<FollowCam>();
 	}
 	
 	// Update is called once per frame
@@ -35,18 +38,25 @@ public class MoveCharacter : MonoBehaviour {
 			mUI.SubGuiFade = true;
 			t += Time.deltaTime/timeToReach;
 			r += Time.deltaTime/timeToRotate;
-			Vector3 fowardPos = Chess.transform.forward*accl+Chess.transform.position;
+			//Vector3 fowardPos = Chess.transform.forward*accl+Chess.transform.position;
+			Vector3 plannedPos = new Vector3();
+			Vector3 currentPos = Chess.transform.position;
+			
+			Vector3 relativePos = target - currentPos;
+			Quaternion rotation = Quaternion.LookRotation(relativePos);
+			float yAngle = Mathf.LerpAngle(OldRotation.eulerAngles.y, rotation.eulerAngles.y, r);
+			Chess.transform.rotation = Quaternion.Euler(new Vector3(OldRotation.eulerAngles.x, yAngle, OldRotation.eulerAngles.z));
 			
 			if(cPass.PassiveDict[PassiveType.Flying]){
-				
+				plannedPos = Vector3.Lerp(startPosition, target, t);
+			}else{
+				plannedPos = Vector3.Lerp(startPosition, target, t);
 			}
-			Vector3 relativePos = target - Chess.transform.position;
-			Quaternion rotation = Quaternion.LookRotation(relativePos);
-			Chess.transform.rotation = Quaternion.Lerp(OldRotation, rotation, r);
-			//networkView.RPC("RPCRotateCharacter",RPCMode.Others, Chess.name, OldRotation, rotation, r);
-			Vector3 plannedPos = Vector3.Lerp(startPosition, target, t);
-        	Chess.transform.position = Vector3.Lerp(fowardPos,plannedPos, 0.01f);
-			//networkView.RPC("RPCMoveCharacter",RPCMode.Others,Chess.name,fowardPos,plannedPos,0.01f);
+			
+        	//Chess.transform.position = Vector3.Lerp(fowardPos,plannedPos, blendRate);
+			Chess.transform.position = plannedPos;
+			fCam.CamFollowMe(Chess);
+			
 			float d = Vector3.Distance(Chess.transform.position,target);
 			if(d<=0.05f){
 				Step-=1;
@@ -79,10 +89,12 @@ public class MoveCharacter : MonoBehaviour {
 			if(angle<=1.0f){
 				s=0;
 				facingTower=false;
-				mUI.MainGuiFade = true;
-				mUI.SubGuiFade = false;
+				if(!currentSelect.NpcPlaying)
+					currentSelect.CancelCmds();
 				MoveMode = false;
 				Chess.GetComponent<CharacterProperty>().Moved = true;
+				Chess.GetComponent<CharacterProperty>().CmdTimes -= 1;
+				mUI.TurnFinished(Chess, false);
 				//networkView.RPC("RPCUpdateChessMoved", RPCMode.Others,Chess.name,true);
 				currentSelect.updateAllCharactersPowers();
 				if(chessModel.GetComponent<AnimVault>()!=null){
@@ -97,6 +109,10 @@ public class MoveCharacter : MonoBehaviour {
 				if(mUI.InTutorial){
 					GameObject.Find("InitStage").GetComponent<InitStage>().ShowBuff = true;
 				}
+				//set machine free
+				GameObject.Find("StatusMachine").GetComponent<StatusMachine>().InBusy = false;
+				//cancel move extra buff
+				Chess.GetComponent<BuffList>().ExtraDict[BuffType.MoveRange] = 0;
 			}
 		}
 		
@@ -105,6 +121,8 @@ public class MoveCharacter : MonoBehaviour {
 	public void SetSteps(Transform chess, IList t){
 		Chess = chess;
 		tower = GetClosetChess(Chess);
+		if(tower == null)
+			tower = chess;
 		cPass = Chess.GetComponent<CharacterPassive>();
 		chessModel = chess.FindChild("Models");
 		if(chessModel.GetComponent<AnimVault>()!=null){
@@ -118,6 +136,7 @@ public class MoveCharacter : MonoBehaviour {
 		if(Step>0){
 			SetDestination();
 		}
+		fCam.timeSeg = 0.0f;
 	}
 	
 	public Transform GetClosetChess(Transform chess){
@@ -145,11 +164,6 @@ public class MoveCharacter : MonoBehaviour {
 			var list = sortDict.Keys.ToList();
 			list.Sort();
 			target = sortDict[list[0]];
-		}else{
-			if(chess.GetComponent<CharacterProperty>().Player==1)
-				target = GameObject.Find("yellow-tower").transform;
-			else
-				target = GameObject.Find("red-tower").transform;
 		}
 		
 		return target;

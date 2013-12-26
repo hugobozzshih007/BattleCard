@@ -33,9 +33,8 @@ public class GainSelfPowerAndPassive : MonoBehaviour, CommonSkill {
 	void BuffVisualUI(BuffType type, int val, BuffSlidingUI bSUI){
 		Dictionary<BuffType,int> dict = new Dictionary<BuffType, int>();
 		dict.Add(type, val);
-		BuffUI bUI = new BuffUI(aider,dict);
-		bSUI.UIItems.Add(bUI);
-		bSUI.FadeInUI = true;
+		BuffSlidingFX aiderBFX = aider.GetComponent<BuffSlidingFX>();
+		aiderBFX.ActiveBuffSlidingFX(dict);
 	}
 	
 	public void InsertSelection (Transform map)
@@ -45,7 +44,9 @@ public class GainSelfPowerAndPassive : MonoBehaviour, CommonSkill {
 	
 	public IList GetSelectionRange ()
 	{
-		throw new System.NotImplementedException ();
+		IList selList = new List<Transform>();
+		selList.Add(aider.GetComponent<CharacterSelect>().getMapPosition());
+		return selList;
 	}
 	
 	public void Execute ()

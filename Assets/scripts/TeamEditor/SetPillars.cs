@@ -14,10 +14,15 @@ public class SetPillars : MonoBehaviour {
 			ChangeMaterials(transform.GetChild(i), DarkPillar);
 			transform.GetChild(i).collider.enabled = false;
 		}
+		if(gfStorage.GFs.Length > transform.childCount){
+			pillarNum = transform.childCount;
+		}
 		for(int i=0; i<pillarNum; i++){
 			ChangeMaterials(transform.GetChild(i), BrightPillar);
 			transform.GetChild(i).collider.enabled = true;
 		}
+		//temp
+		transform.GetChild(0).collider.enabled = false;
 	}
 	
 	void ChangeMaterials(Transform chess, Material mat){

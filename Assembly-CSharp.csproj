@@ -12,13 +12,14 @@
 	<AssemblyName>Assembly-CSharp</AssemblyName>
 	<TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
 	<FileAlignment>512</FileAlignment>
+	<BaseDirectory>Assets</BaseDirectory>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
 	<DebugSymbols>true</DebugSymbols>
 	<DebugType>full</DebugType>
 	<Optimize>false</Optimize>
 	<OutputPath>Temp\bin\Debug\</OutputPath>
-	<DefineConstants>DEBUG;TRACE;UNITY_3_5_5;UNITY_3_5;UNITY_EDITOR;ENABLE_PROFILER;UNITY_WEBPLAYER;ENABLE_GENERICS;ENABLE_DUCK_TYPING;ENABLE_TERRAIN;ENABLE_MOVIES;ENABLE_WEBCAM;ENABLE_MICROPHONE;ENABLE_NETWORK;ENABLE_CLOTH;ENABLE_WWW;ENABLE_SUBSTANCE</DefineConstants>
+	<DefineConstants>DEBUG;TRACE;UNITY_STANDALONE_WIN;ENABLE_MICROPHONE;ENABLE_TEXTUREID_MAP;ENABLE_AUDIO_FMOD;UNITY_STANDALONE;ENABLE_MONO;ENABLE_SPRITES;ENABLE_TERRAIN;ENABLE_GENERICS;ENABLE_SUBSTANCE;INCLUDE_WP8SUPPORT;ENABLE_MOVIES;ENABLE_WWW;ENABLE_IMAGEEFFECTS;ENABLE_WEBCAM;INCLUDE_METROSUPPORT;RENDER_SOFTWARE_CURSOR;ENABLE_NETWORK;ENABLE_PHYSICS;ENABLE_CACHING;ENABLE_CLOTH;ENABLE_2D_PHYSICS;ENABLE_SHADOWS;ENABLE_AUDIO;ENABLE_NAVMESH_CARVING;ENABLE_DUCK_TYPING;ENABLE_SINGLE_INSTANCE_BUILD_SETTING;UNITY_4_3_1;UNITY_4_3;DEVELOPMENT_BUILD;ENABLE_PROFILER;UNITY_EDITOR;UNITY_EDITOR_OSX;UNITY_TEAM_LICENSE</DefineConstants>
 	<ErrorReport>prompt</ErrorReport>
 	<WarningLevel>4</WarningLevel>
 	<NoWarn>0169</NoWarn>
@@ -36,14 +37,33 @@
 	<Reference Include="System" />
     <Reference Include="System.XML" />
 	<Reference Include="System.Core" />
+	<Reference Include="System.Xml.Linq" />
 	<Reference Include="UnityEngine">
-	  <HintPath>C:/Program Files (x86)/Unity/Editor/Data/Managed/UnityEngine.dll</HintPath>
+	  <HintPath>/Applications/Unity/Unity.app/Contents/Frameworks/Managed/UnityEngine.dll</HintPath>
 	</Reference>
 	<Reference Include="UnityEditor">
-	  <HintPath>C:/Program Files (x86)/Unity/Editor/Data/Managed/UnityEditor.dll</HintPath>
+	  <HintPath>/Applications/Unity/Unity.app/Contents/Frameworks/Managed/UnityEditor.dll</HintPath>
 	</Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\CameraPath2\Scripts\CameraPathBezier.cs" />
+     <Compile Include="Assets\CameraPath2\Scripts\CameraPathBezierAnimator.cs" />
+     <Compile Include="Assets\CameraPath2\Scripts\CameraPathBezierControlPoint.cs" />
+     <Compile Include="Assets\CameraPath2\Scripts\CameraPathEvent.cs" />
+     <Compile Include="Assets\CameraPath2\Scripts\ExternalControlExample.cs" />
+     <Compile Include="Assets\CameraPath2\Scripts\SimpleEventListener.cs" />
+     <Compile Include="Assets\CameraPath2\Scripts\SimplePathControl.cs" />
+     <Compile Include="Assets\CharacterFX\SampleScene\BeamGui.cs" />
+     <Compile Include="Assets\CharacterFX\SampleScene\OrbitViewer.cs" />
+     <Compile Include="Assets\CharacterFX\SampleScene\SimpleRotate.cs" />
+     <Compile Include="Assets\CharacterFX\Scripts\Beam.cs" />
+     <Compile Include="Assets\CharacterFX\Scripts\BeamController.cs" />
+     <Compile Include="Assets\CharacterFX\Scripts\CustomColors.cs" />
+     <Compile Include="Assets\CharacterFX\Scripts\CustomColorsController.cs" />
+     <Compile Include="Assets\CharacterFX\Scripts\Hologram.cs" />
+     <Compile Include="Assets\CharacterFX\Scripts\Stone.cs" />
+     <Compile Include="Assets\CharacterFX\Scripts\StoneController.cs" />
+     <Compile Include="Assets\Gem Shader\Example\GemSpawner.cs" />
      <Compile Include="Assets\IGSoft_Resources\Scripts\NcEffect\Common\EffectScriptSample.cs" />
      <Compile Include="Assets\IGSoft_Resources\Scripts\NcEffect\Common\NcDetachObject.cs" />
      <Compile Include="Assets\IGSoft_Resources\Scripts\NcEffect\Common\NcDisableDelayActive.cs" />
@@ -201,14 +221,37 @@
      <Compile Include="Assets\NGUI\Scripts\UI\UITiledSprite.cs" />
      <Compile Include="Assets\NGUI\Scripts\UI\UITooltip.cs" />
      <Compile Include="Assets\NGUI\Scripts\UI\UIViewport.cs" />
+     <Compile Include="Assets\Top Down\tools scripts\AttachCamera.cs" />
+     <Compile Include="Assets\Top Down\tools scripts\MovementScript.cs" />
+     <Compile Include="Assets\Top Down\tools scripts\TerrainRand.cs" />
+     <Compile Include="Assets\Top Down\tools scripts\desaturate\Image Based\DesaturateEffect.cs" />
      <Compile Include="Assets\scripts\AI\AIMoveStore.cs" />
+     <Compile Include="Assets\scripts\AI\CalculateTactics.cs" />
+     <Compile Include="Assets\scripts\AI\CharacterTactics.cs" />
+     <Compile Include="Assets\scripts\AI\CommonSkillTP.cs" />
      <Compile Include="Assets\scripts\AI\Decisions.cs" />
      <Compile Include="Assets\scripts\AI\EnumCommand.cs" />
+     <Compile Include="Assets\scripts\AI\FollowCam.cs" />
      <Compile Include="Assets\scripts\AI\NpcPlayer.cs" />
+     <Compile Include="Assets\scripts\AI\PreVision.cs" />
+     <Compile Include="Assets\scripts\AI\TP_AddCmd.cs" />
+     <Compile Include="Assets\scripts\AI\TP_AidOthers.cs" />
+     <Compile Include="Assets\scripts\AI\TP_AidSelf.cs" />
+     <Compile Include="Assets\scripts\AI\TP_BombAttack.cs" />
+     <Compile Include="Assets\scripts\AI\TP_CtrlSteal.cs" />
+     <Compile Include="Assets\scripts\AI\TP_DarkBall.cs" />
+     <Compile Include="Assets\scripts\AI\TP_LeaderShip.cs" />
+     <Compile Include="Assets\scripts\AI\TP_MultiArrow.cs" />
+     <Compile Include="Assets\scripts\Animations\ActStealControl.cs" />
      <Compile Include="Assets\scripts\Animations\AnimVault.cs" />
      <Compile Include="Assets\scripts\Animations\AttackEvent.cs" />
+     <Compile Include="Assets\scripts\Animations\DarkBallFX.cs" />
+     <Compile Include="Assets\scripts\Animations\FireBombFX.cs" />
      <Compile Include="Assets\scripts\Animations\MoleArcherSkillFX.cs" />
+     <Compile Include="Assets\scripts\Animations\SRunningEvet.cs" />
      <Compile Include="Assets\scripts\Animations\ShowArrow.cs" />
+     <Compile Include="Assets\scripts\Animations\ShowFlamingArrow.cs" />
+     <Compile Include="Assets\scripts\Animations\TimerLoop.cs" />
      <Compile Include="Assets\scripts\Animations\TurnHead.cs" />
      <Compile Include="Assets\scripts\Animations\firingArrow.cs" />
      <Compile Include="Assets\scripts\AttackCalFX.cs" />
@@ -222,25 +265,38 @@
      <Compile Include="Assets\scripts\CharacterPassive.cs" />
      <Compile Include="Assets\scripts\CharacterProperty.cs" />
      <Compile Include="Assets\scripts\CharacterSelect.cs" />
+     <Compile Include="Assets\scripts\ClipCursorScript.cs" />
      <Compile Include="Assets\scripts\CommandType.cs" />
      <Compile Include="Assets\scripts\CommonFX.cs" />
      <Compile Include="Assets\scripts\CommonSkill.cs" />
      <Compile Include="Assets\scripts\ConnectMasterServer.cs" />
+     <Compile Include="Assets\scripts\Cover\DemoUI.cs" />
      <Compile Include="Assets\scripts\DamageSlidingUI.cs" />
      <Compile Include="Assets\scripts\DeathFX.cs" />
      <Compile Include="Assets\scripts\DeathUI.cs" />
      <Compile Include="Assets\scripts\Display_scene\AwardTitle.cs" />
+     <Compile Include="Assets\scripts\Display_scene\DisplayCircular.cs" />
      <Compile Include="Assets\scripts\Display_scene\FadeOut.cs" />
      <Compile Include="Assets\scripts\Display_scene\FogSetting.cs" />
      <Compile Include="Assets\scripts\Display_scene\HUDFPS.cs" />
      <Compile Include="Assets\scripts\Display_scene\InsertCharacter.cs" />
      <Compile Include="Assets\scripts\Display_scene\KeepAward.cs" />
      <Compile Include="Assets\scripts\Display_scene\RotateModel.cs" />
+     <Compile Include="Assets\scripts\FX\ActivateSkillFX.cs" />
+     <Compile Include="Assets\scripts\FX\BuffSlidingFX.cs" />
+     <Compile Include="Assets\scripts\FX\DamageSlidingFX.cs" />
+     <Compile Include="Assets\scripts\FX\EdgeShowUp.cs" />
+     <Compile Include="Assets\scripts\FX\HealthCircleEffect.cs" />
+     <Compile Include="Assets\scripts\FX\RandomSounds.cs" />
+     <Compile Include="Assets\scripts\FX\SkillCDBarEffect.cs" />
+     <Compile Include="Assets\scripts\FX\SummonFX.cs" />
      <Compile Include="Assets\scripts\FadeTexture.cs" />
      <Compile Include="Assets\scripts\FightBack.cs" />
      <Compile Include="Assets\scripts\GUItest.cs" />
      <Compile Include="Assets\scripts\Identy.cs" />
      <Compile Include="Assets\scripts\InfoUI.cs" />
+     <Compile Include="Assets\scripts\LoadingFadeIn.cs" />
+     <Compile Include="Assets\scripts\LoadingScreen.cs" />
      <Compile Include="Assets\scripts\MainInfoUI.cs" />
      <Compile Include="Assets\scripts\MainUI.cs" />
      <Compile Include="Assets\scripts\ManaCounter.cs" />
@@ -254,9 +310,15 @@
      <Compile Include="Assets\scripts\PlayerData\GuardianStorage.cs" />
      <Compile Include="Assets\scripts\PlayerData\PillarData.cs" />
      <Compile Include="Assets\scripts\PlayerData\SkillStorage.cs" />
+     <Compile Include="Assets\scripts\PointCalculation.cs" />
+     <Compile Include="Assets\scripts\Prizes\AquirePrize.cs" />
+     <Compile Include="Assets\scripts\Prizes\PlacePrizes.cs" />
+     <Compile Include="Assets\scripts\Prizes\PrizeStorage.cs" />
+     <Compile Include="Assets\scripts\ProceduralControl.cs" />
      <Compile Include="Assets\scripts\RaceType.cs" />
      <Compile Include="Assets\scripts\RoundCounter.cs" />
      <Compile Include="Assets\scripts\RoundUI.cs" />
+     <Compile Include="Assets\scripts\SelfDestroy.cs" />
      <Compile Include="Assets\scripts\SixGonRays.cs" />
      <Compile Include="Assets\scripts\SkillProperty.cs" />
      <Compile Include="Assets\scripts\SkillSets.cs" />
@@ -264,6 +326,7 @@
      <Compile Include="Assets\scripts\Skills\BombAttack.cs" />
      <Compile Include="Assets\scripts\Skills\ChaosAid.cs" />
      <Compile Include="Assets\scripts\Skills\CtrlStealing.cs" />
+     <Compile Include="Assets\scripts\Skills\DarkBallAttack.cs" />
      <Compile Include="Assets\scripts\Skills\GainPassive.cs" />
      <Compile Include="Assets\scripts\Skills\GainPower.cs" />
      <Compile Include="Assets\scripts\Skills\GainSelfPassive.cs" />
@@ -280,48 +343,84 @@
      <Compile Include="Assets\scripts\Skills\Suicide.cs" />
      <Compile Include="Assets\scripts\Skills\WingBroken.cs" />
      <Compile Include="Assets\scripts\SkillsProperty.cs" />
+     <Compile Include="Assets\scripts\Sound\AnimSoundFX.cs" />
+     <Compile Include="Assets\scripts\Sound\BGMusic.cs" />
+     <Compile Include="Assets\scripts\Sound\SystemSound.cs" />
+     <Compile Include="Assets\scripts\StatusMachine.cs" />
      <Compile Include="Assets\scripts\StatusUI.cs" />
+     <Compile Include="Assets\scripts\SummonLand\EndSummonland.cs" />
      <Compile Include="Assets\scripts\SummonLand\PlaceSummoner.cs" />
      <Compile Include="Assets\scripts\SummonLand\SetTeam.cs" />
      <Compile Include="Assets\scripts\SummonLand\SetTeamTemp.cs" />
+     <Compile Include="Assets\scripts\SummonUI.cs" />
+     <Compile Include="Assets\scripts\TalkingContent.cs" />
      <Compile Include="Assets\scripts\TeamEditor\InitTeamEditor.cs" />
      <Compile Include="Assets\scripts\TeamEditor\SetPillars.cs" />
      <Compile Include="Assets\scripts\TeamEditor\TeamLayout.cs" />
+     <Compile Include="Assets\scripts\TimeOut.cs" />
      <Compile Include="Assets\scripts\Tower.cs" />
+     <Compile Include="Assets\scripts\Tutorial\ArrowUI.cs" />
      <Compile Include="Assets\scripts\Tutorial\EndStage.cs" />
      <Compile Include="Assets\scripts\Tutorial\InitStage.cs" />
+     <Compile Include="Assets\scripts\Tutorial\InitTutor.cs" />
      <Compile Include="Assets\scripts\Tutorial\ShowSummoner.cs" />
+     <Compile Include="Assets\scripts\Tutorial\StageLayout.cs" />
+     <Compile Include="Assets\scripts\Tutorial\StageSelection.cs" />
+     <Compile Include="Assets\scripts\Tutorial\TutorStageA.cs" />
+     <Compile Include="Assets\scripts\Tutorial\TutorStageB.cs" />
+     <Compile Include="Assets\scripts\Tutorial\TutorStageC.cs" />
+     <Compile Include="Assets\scripts\Tutorial\TutorStageD.cs" />
+     <Compile Include="Assets\scripts\Tutorial\TutorStageE.cs" />
      <Compile Include="Assets\scripts\Tutorial\Tutorial.cs" />
      <Compile Include="Assets\scripts\UnNormalSlidingUI.cs" />
      <Compile Include="Assets\scripts\UnnormalStatus.cs" />
+     <Compile Include="Assets\scripts\VFX\PlaneShadows.cs" />
+     <Compile Include="Assets\scripts\WinningUI.cs" />
+     <Compile Include="Assets\scripts\big_map\Basic_UI.cs" />
+     <Compile Include="Assets\scripts\big_map\StageStates.cs" />
+     <Compile Include="Assets\scripts\big_map\SwitchStages.cs" />
+     <Compile Include="Assets\scripts\big_map\UICamControl.cs" />
      <Compile Include="Assets\scripts\debug.cs" />
      <Compile Include="Assets\scripts\selection.cs" />
      <Compile Include="Assets\scripts\tools\DraggableGUIElement.cs" />
-     <Compile Include="Assets\scripts\tools\EditorObjExporter.cs" />
      <Compile Include="Assets\scripts\tools\MeshMerger.cs" />
+     <Compile Include="Assets\vertexLitShader Package\demoscene\Standard Assets\Character Controllers\Sources\Scripts\MouseLook.cs" />
      <None Include="Assets\NGUI\Resources\Shaders\Depth.shader" />
      <None Include="Assets\Standard Assets\Projectors\Guidelines.txt" />
      <None Include="Assets\IGSoft_Resources\ToolResources\EffectShader\FXMaker_Mask Alpha Blended.shader" />
+     <None Include="Assets\Standard Assets\Glass Refraction (Pro Only)\Sources\Shaders\Glass-Stained-BumpDistort.shader" />
      <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\_BloomAndFlares\BlendOneOne.shader" />
      <None Include="Assets\IGSoft_Resources\ToolResources\EffectShader\FXMaker_Mask Cutout.shader" />
+     <None Include="Assets\CharacterFX\Shaders\StatueDiffuse.shader" />
      <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\NoiseEffectShaderRGB.shader" />
+     <None Include="Assets\shaders\image\SphereEffectX.shader" />
      <None Include="Assets\Standard Assets\Toon Shading\Sources\Shaders\Toony-Basic.shader" />
+     <None Include="Assets\shaders\alpha_map_flag2.shader" />
      <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\_DepthOfField\SeparableWeightedBlurDof34.shader" />
+     <None Include="Assets\CharacterFX\Shaders\CharShaderblw.shader" />
      <None Include="Assets\Standard Assets\Projectors\Sources\Shaders\Projector Multiply.shader" />
      <None Include="Assets\NGUI\Examples\Atlases\Wooden\Arimo20.txt" />
      <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\ShowAlphaChannel.shader" />
      <None Include="Assets\NGUI\Examples\Atlases\Wooden\Arimo14.txt" />
      <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\GlowConeTap.shader" />
      <None Include="Assets\IGSoft_Resources\ToolResources\EffectShader\FXMaker_Mask Additive Tint.shader" />
+     <None Include="Assets\shaders\weed.shader" />
+     <None Include="Assets\shaders\Gray_scale_blending_sea_color.shader" />
+     <None Include="Assets\CameraPath2\readme.txt" />
      <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\SunShaftsComposite.shader" />
      <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\ColorCorrectionCurves.shader" />
+     <None Include="Assets\Standard Assets\seaFoamCoast\foamShader.shader" />
      <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\_Antialiasing\NFAA.shader" />
      <None Include="Assets\NGUI\Resources\Shaders\Unlit - Masked Colored.shader" />
+     <None Include="Assets\shaders\RimLight.shader" />
      <None Include="Assets\NGUI\Examples\Atlases\Wooden\Arimo18.txt" />
      <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\_BloomAndFlares\VignetteShader.shader" />
      <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\_DepthOfField\DepthOfFieldScatter.shader" />
+     <None Include="Assets\shaders\Terrain_blending.shader" />
+     <None Include="Assets\CharacterFX\Shaders\StatueBmp.shader" />
      <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\MotionBlur.shader" />
      <None Include="Assets\Standard Assets\Particles\Sources\Shaders\Particle Alpha Blend (Queue +100).shader" />
+     <None Include="Assets\Top Down\tools scripts\TriPlanarTerrain\Shaders\triPlanarTerrain.shader" />
      <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\GlowCompose.shader" />
      <None Include="Assets\shaders\alpha_map_illum2.shader" />
      <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\Contrast Stretch\MinMaxReduction.shader" />
@@ -331,23 +430,45 @@
      <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\ContrastComposite.shader" />
      <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\_Antialiasing\FXAAPreset3.shader" />
      <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\FisheyeShader.shader" />
+     <None Include="Assets\Standard Assets\seaFoamCoast\ReflFix.shader" />
+     <None Include="Assets\shaders\Gray_scale_blending.shader" />
      <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\Contrast Stretch\Apply.shader" />
+     <None Include="Assets\Standard Assets\Water (Pro Only)\Water4\Sources\Shaders\FX-SimpleWater4.shader" />
+     <None Include="Assets\CharacterFX\Shaders\ghost_diffuse.shader" />
+     <None Include="Assets\Standard Assets\Skyboxes\_skybox info.txt" />
      <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\frag_ao.cginc" />
+     <None Include="Assets\shaders\Gray_scale_diffuse.shader" />
      <None Include="Assets\IGSoft_Resources\ToolResources\EffectShader\FXMaker_Mask Additive.shader" />
      <None Include="Assets\NGUI\Resources\Shaders\Unlit - Transparent Colored (AlphaClip).shader" />
+     <None Include="Assets\CharacterFX\Shaders\Hologram.shader" />
+     <None Include="Assets\shaders\Glass.shader" />
+     <None Include="Assets\shaders\Cutout_CullOff.shader" />
+     <None Include="Assets\shaders\Gray_scale_softEdge.shader" />
+     <None Include="Assets\shaders\PlaneShadows.shader" />
      <None Include="Assets\NGUI\Examples\Atlases\Fantasy\Fantasy Font - Normal.txt" />
+     <None Include="Assets\CharacterFX\Shaders\disintegrate.shader" />
+     <None Include="Assets\shaders\Gray_scale_cutout_bump.shader" />
+     <None Include="Assets\CharacterFX\Scripts.txt" />
      <None Include="Assets\NGUI\Examples\Atlases\Refractive\Refractive Font - Normal.txt" />
+     <None Include="Assets\Top Down\tools scripts\TriPlanarTerrain\Shaders\triPlanarTerrainAddPass.shader" />
      <None Include="Assets\IGSoft_Tools\Readme\Contact.txt" />
      <None Include="Assets\Standard Assets\Toon Shading\Sources\Shaders\Toony-BasicOutline.shader" />
+     <None Include="Assets\shaders\BlendingTextures.shader" />
      <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\_DepthOfField\DepthOfField34.shader" />
      <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\_DepthOfField\TiltShift.shader" />
+     <None Include="Assets\Product\Shaders\Glass Reflective.shader" />
+     <None Include="Assets\Standard Assets\seaFoamCoast\foamShaderGlow.shader" />
+     <None Include="Assets\shaders\underwater.shader" />
      <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\SSAOShader.shader" />
      <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\ConvertDepth.shader" />
      <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\ColorCorrectionCurvesSimple.shader" />
      <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\NoiseEffectShaderYUV.shader" />
      <None Include="Assets\Standard Assets\Projectors\Sources\Shaders\Projector Light.shader" />
+     <None Include="Assets\shaders\BlendingTexture_alpha.shader" />
+     <None Include="Assets\shaders\BlendingTextures_rgba.shader" />
      <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\GlowEffectDownsample.shader" />
      <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\CreaseApply.shader" />
+     <None Include="Assets\Standard Assets\Water (Basic)\Sources\Shaders\FX-Water Simple.shader" />
      <None Include="Assets\IGSoft_Tools\Readme\Fx Maker Version.txt" />
      <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\ChromaticAberrationShader.shader" />
      <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\GlobalFog.shader" />
@@ -363,23 +484,33 @@
      <None Include="Assets\NGUI\Resources\Shaders\Unlit - Transparent Colored Overlay.shader" />
      <None Include="Assets\IGSoft_Tools\FXMaker\ToolScript\Temp\grayShader.shader" />
      <None Include="Assets\IGSoft_Tools\FXMaker\ToolResource\UnityShader\FXMakerGrayscaleEffect.shader" />
+     <None Include="Assets\shaders\bluwhale.shader" />
      <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\_BloomAndFlares\SeparableBlurPlus.shader" />
      <None Include="Assets\shaders\alpha_map_illum.shader" />
+     <None Include="Assets\CharacterFX\Shaders\CharShaderbump.shader" />
      <None Include="Assets\NGUI\Examples\Other\English.txt" />
      <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\_BloomAndFlares\MultiPassHollywoodFlares.shader" />
      <None Include="Assets\shaders\image\EdgeDetectNormals.shader" />
+     <None Include="Assets\shaders\SoftGlow.shader" />
      <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\BlurEffectConeTaps.shader" />
+     <None Include="Assets\shaders\Tutorial_Ground.shader" />
+     <None Include="Assets\Standard Assets\Water (Pro Only)\Sources\Shaders\FX-Water.shader" />
+     <None Include="Assets\shaders\image\CDBarEffectX.shader" />
      <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\_Antialiasing\DLAA.shader" />
+     <None Include="Assets\shaders\dark_magic_ball.shader" />
      <None Include="Assets\NGUI\Resources\Shaders\Unlit - Transparent Colored (Packed).shader" />
      <None Include="Assets\shaders\image\BlackToneEffect.shader" />
      <None Include="Assets\shaders\outline.shader" />
      <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\_DepthOfField\SeparableBlur.shader" />
+     <None Include="Assets\CharacterFX\Shaders\CharShader.shader" />
      <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\ColorCorrectionEffect.shader" />
      <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\GrayscaleEffect.shader" />
      <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\SepiaToneEffect.shader" />
      <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\TwirlEffect.shader" />
      <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\VortexEffect.shader" />
+     <None Include="Assets\birchTreePackage\birch trees Assets\readme_Trees.txt" />
      <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\Contrast Stretch\Adaptation.shader" />
+     <None Include="Assets\CharacterFX\Readme.txt" />
      <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\NoiseAndGrain.shader" />
      <None Include="Assets\shaders\alpha_map_Flag.shader" />
      <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\VignettingShader.shader" />
@@ -387,23 +518,34 @@
      <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\_BloomAndFlares\BrightPassFilter.shader" />
      <None Include="Assets\NGUI\Resources\Shaders\Unlit - Additive Colored.shader" />
      <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\_Antialiasing\FXAA2.shader" />
+     <None Include="Assets\CharacterFX\Shaders\disintegrate_nmp.shader" />
      <None Include="Assets\NGUI\Examples\Atlases\Refractive\Refractive Font - Header.txt" />
      <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\_BloomAndFlares\LensFlareCreate.shader" />
      <None Include="Assets\NGUI\Examples\Shaders\Refractive.shader" />
      <None Include="Assets\IGSoft_Tools\FXMaker\ToolResource\EditorShader\LineColoredBlended.shader" />
+     <None Include="Assets\Top Down\tools scripts\desaturate\Image Based\DesaturateEffect.shader" />
      <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\EdgeDetectNormals.shader" />
+     <None Include="Assets\Fantasy House Kit\Readme.txt" />
      <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\PrepareSunShaftsBlur.shader" />
      <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\_BloomAndFlares\Blend.shader" />
      <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\BlendModesOverlay.shader" />
+     <None Include="Assets\Standard Assets\Water (Pro Only)\Water4\Sources\Shaders\WaterInclude.cginc" />
+     <None Include="Assets\shaders\Opacity.shader" />
+     <None Include="Assets\Standard Assets\Water (Pro Only)\Water4\Sources\Shaders\FX-Water4.shader" />
      <None Include="Assets\NGUI\Examples\Atlases\SciFi\SciFi Font - Normal.txt" />
      <None Include="Assets\IGSoft_Resources\ToolResources\EffectShader\FXMaker_Mask Alpha Blended Tint.shader" />
      <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\SimpleClear.shader" />
      <None Include="Assets\NGUI\Resources\Shaders\Unlit - Transparent Colored (SoftClip).shader" />
+     <None Include="Assets\Product\README.txt.txt" />
+     <None Include="Assets\Gem Shader\diamond shader.shader" />
      <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\_Antialiasing\FXAA3Console.shader" />
      <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\EdgeDetectX.shader" />
      <None Include="Assets\IGSoft_Tools\FXMaker\ToolResource\EditorShader\LineBackground.shader" />
+     <None Include="Assets\shaders\Simple_Glass.shader" />
+     <None Include="Assets\CharacterFX\Shaders\ghost.shader" />
+     <None Include="Assets\Top Down\!Readme.txt" />
      <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\_Antialiasing\FXAAPreset2.shader" />
- <Reference Include="NGUI">
+ <Reference Include="Assets\NGUI\DLLs\NGUI">
  <HintPath>Assets\NGUI\DLLs\NGUI.dll</HintPath>
  </Reference>
   </ItemGroup>

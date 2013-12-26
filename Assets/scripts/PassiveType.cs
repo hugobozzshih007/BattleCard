@@ -6,6 +6,7 @@ public enum PassiveType
 	Diving,
 	Flying,
 	FlyingHit,
+	Leader,
 	InvisibleInWoods,
 	WoundBite,
 	SuddenDeath,

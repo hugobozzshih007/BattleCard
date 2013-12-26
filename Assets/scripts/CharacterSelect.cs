@@ -5,20 +5,19 @@ using System.Linq;
 using MapUtility;
 
 public class CharacterSelect : MonoBehaviour {
-	public IList MoveRangeList;
-	public IList AttackRangeList;
+	public IList MoveRangeList = new List<Transform>();
+	public IList AttackRangeList = new List<Transform>();
 	private SixGonRays unit;
 	public Material originalMat;
 	public Material rollOver;
 	public Material closeBy;
 	private float castLength = 20.0f;
 	public bool selectedMode = false;
+	public AudioClip[] Voice_select = new AudioClip[4]; 
+	public AudioClip Angry_voice_select; 
 	CharacterProperty thisProperty;
 	// Use this for initialization
 	void Start () {
-		MoveRangeList =  new List<Transform>();
-		AttackRangeList = new List<Transform>();
-		
 		MoveRangeList.Clear();
 		AttackRangeList.Clear();
 		thisProperty = this.GetComponent<CharacterProperty>();

@@ -2,25 +2,35 @@ using UnityEngine;
 using System.Collections;
 using MapUtility;
 using System.Collections.Generic;
+using System.Linq;
 
 public class NpcPlayer : MonoBehaviour {
 	selection CurrentSel;
 	Decisions decisions;
 	RoundCounter CurrentRC;
-	Transform currentInMove; 
+	public Transform currentInMove; 
 	Transform lastInMove; 
 	public bool InMove, InPause;
 	bool NpcPlaying; 
 	Vector3 oldCamPosition, newCamPosition;
-	int camStep = 0;
-	bool camMoveMode = false;
+	public bool NpcSummonCam = false;
 	const float viewOffsetZ = 30.0f;
-	const int pauseTime = 500;
+	float pauseTime = 0.0f;
 	int count = 0;
-	IList playerBList, firstPhaseList, secondPhaseList, thirdPhaseList;
-	bool firstPhase, secondPhase, thirdPhase;
+	IList playerBList, firstPhaseList, GFs;
+	bool initPhase, firstPhase, secondPhase, thirdPhase, endPhase, summonPhase;
 	public bool npcReviveMode = false;
 	public bool MoveCam;
+	IList currentCmdList = new List<NpcCommands>();
+	CalculateTactics calTactic;
+	int next = 0;
+	int nextGF = 0;
+	float camSeg = 0.0f;
+	FollowCam fCam;
+	EndSummonland endGame;
+	MainInfoUI chessUI;
+	StatusMachine sMachine;
+	float interSeg = 0.0f;
 	// Use this for initialization
 	void Start () {
 		InMove = false;
@@ -30,76 +40,213 @@ public class NpcPlayer : MonoBehaviour {
 		CurrentRC = Camera.main.GetComponent<RoundCounter>();
 		playerBList = new List<Transform>();
 		firstPhaseList = new List<Transform>();
-		secondPhaseList = new List<Transform>();
-		thirdPhaseList = new List<Transform>();
+		
+		GFs = new List<Transform>();
+		endGame = GameObject.Find("EndStage").transform.GetComponent<EndSummonland>();
+		calTactic = transform.GetComponent<CalculateTactics>();
+		initPhase = firstPhase = secondPhase = thirdPhase = endPhase = summonPhase = false;
+		fCam = Camera.mainCamera.GetComponent<FollowCam>();
+		chessUI = Camera.main.GetComponent<MainInfoUI>();
+		sMachine = GameObject.Find("StatusMachine").GetComponent<StatusMachine>();
+	}
+	
+	public void InsertNewGf(Transform gf){
+		if(gf!=null && !gf.GetComponent<CharacterProperty>().death)
+			firstPhaseList.Add(gf);
 	}
 	
 	public void InitNPCTurn(){
 		playerBList.Clear();
-		firstPhase = true;
-		secondPhase = false;
+		firstPhaseList.Clear();
+		GFs.Clear();
+		initPhase = true;
 		foreach(Transform chess in CurrentRC.PlayerBChesses){
 			if(!chess.GetComponent<CharacterProperty>().death){
 				playerBList.Add(chess);
 			}
 		}
 		foreach(Transform chess in playerBList){
-			if(chess!=CurrentRC.playerB)
+			if(!chess.GetComponent<CharacterProperty>().Tower)
 				firstPhaseList.Add(chess);
 		}
-		if(playerBList.Contains(CurrentRC.playerB)){
-			firstPhaseList.Add(CurrentRC.playerB);
-		}
-		
+		GFs = calTactic.GetSummonGF(2);
+		next = 0;
+		nextGF = 0;
+		NpcSummonCam = false;
 	}
 	
-	IList InitSecondPhase(){
-		secondPhase = true;
-		IList secondList = new List<Transform>();
+	IList GetTotalCommands(Transform gf){
+		CharacterProperty gfP = gf.GetComponent<CharacterProperty>();
+		IList cmdList = new List<NpcCommands>();
+		IList tacticPoint = new List<TacticPoint>();
+		tacticPoint = calTactic.GetTactic(gf, gfP.Attacked, gfP.CmdTimes);
 		
-		foreach(Transform chess in playerBList){
-			if(!chess.GetComponent<CharacterProperty>().death && chess!=CurrentRC.playerB){
-				secondList.Add(chess);
+		foreach(TacticPoint tp in tacticPoint){
+			IList cmds = GetCommandList(tp);
+			foreach(NpcCommands npcCmd in cmds){
+				cmdList.Add(npcCmd);
 			}
 		}
-		if(playerBList.Contains(CurrentRC.playerB)){
-			secondList.Add(CurrentRC.playerB);
+		if(cmdList.Count>3){
+			NpcCommands first = (NpcCommands)cmdList[0];
+			NpcCommands third = (NpcCommands)cmdList[2];
+			if(first.MapUnit == third.MapUnit && third.Command == UICommands.Move)
+				cmdList.RemoveAt(2);
 		}
 		
-		return secondList;
+		return cmdList;
 	}
 	
-	IList InitThirdPhase(){
-		thirdPhase = true;
-		IList thirdList = new List<Transform>();
+	
+	IList GetCommandList(TacticPoint tp){
+		IList commands = new List<NpcCommands>();
+		CmdMode cmd = CmdMode.None;
+		//anyalize map first, if map is the map us local -> Do 
+		// if map is in the first range -> move and do  
+		// if map is in the second range -> move and move and do 
+		IList firstMoveRange = calTactic.GetFirstSteps(tp.Owner, null);
+		IList secondMoveRange = calTactic.GetMaxSteps(tp.Owner, null);
+		IList thirdMoveRange = calTactic.GetThirdSteps(tp.Owner, null);
+		Transform localMap = tp.Owner.GetComponent<CharacterSelect>().getMapPosition();
 		
-		foreach(Transform chess in playerBList){
-			if(!chess.GetComponent<CharacterProperty>().death && chess!=CurrentRC.playerB){
-				thirdList.Add(chess);
-			}
+		//first tp
+		if(tp.MapUnit == localMap && tp.Tactic != Tactics.none){
+			cmd = CmdMode.Do;  
+		}else if(firstMoveRange.Contains(tp.MapUnit) && tp.Tactic != Tactics.none){
+			cmd = CmdMode.Move_and_Do;
+		}else if(secondMoveRange.Contains(tp.MapUnit) && tp.Tactic != Tactics.none){
+			cmd = CmdMode.Move_and_Move_and_Do;
+		}else if(thirdMoveRange.Contains(tp.MapUnit) && tp.Tactic == Tactics.none){
+			cmd = CmdMode.Move_and_Move_and_Move;
+		}else if(firstMoveRange.Contains(tp.MapUnit) && tp.Tactic == Tactics.none){
+			cmd = CmdMode.Move;
 		}
 		
-		if(playerBList.Contains(CurrentRC.playerB)){
-			thirdList.Add(CurrentRC.playerB);
+		switch(cmd){
+			case CmdMode.Do:
+				UICommands newCmd = TranslateTactic(tp.Tactic);
+				NpcCommands npcCmd = new NpcCommands(newCmd,tp.MapUnit,tp.Target);
+				commands.Add(npcCmd);
+				break; 
+			case CmdMode.Move_and_Do:
+				NpcCommands npcMoveCmd = new NpcCommands(UICommands.Move, tp.MapUnit);
+				commands.Add(npcMoveCmd);
+				UICommands newDoCmd = TranslateTactic(tp.Tactic);
+				NpcCommands npcDoCmd = new NpcCommands(newDoCmd, tp.MapUnit, tp.Target);
+				commands.Add(npcDoCmd);
+				break;
+			case CmdMode.Move_and_Move_and_Do:
+				//find first move location 
+				Transform midMap = GetMidLocation(tp.Owner, tp.MapUnit);
+				NpcCommands firstMoveCmd = new NpcCommands(UICommands.Move, midMap);
+				commands.Add(firstMoveCmd);
+				NpcCommands secondMoveCmd = new NpcCommands(UICommands.Move, tp.MapUnit);
+				commands.Add(secondMoveCmd);
+				UICommands finalCmd = TranslateTactic(tp.Tactic); 
+				NpcCommands thirdCmd = new NpcCommands(finalCmd, tp.MapUnit, tp.Target);
+				commands.Add(thirdCmd);
+				break;
+			case CmdMode.Move:
+				NpcCommands onlyMoveCmd = new NpcCommands(UICommands.Move, tp.MapUnit);
+				Transform newDest = PreVision.GetDirectionMap(tp.Owner);
+				if(newDest!=null){
+					onlyMoveCmd.MapUnit = newDest;
+				}
+				commands.Add(onlyMoveCmd);
+				break;
+			case CmdMode.Move_and_Move_and_Move:
+				//find second move location
+				Transform secondMidMap = GetSecondMidLocation(tp.Owner, tp.MapUnit);
+				//find first move location
+				Transform firstMidMap = GetMidLocation(tp.Owner, secondMidMap);
+				NpcCommands fstMoveCmd = new NpcCommands(UICommands.Move, firstMidMap);
+				commands.Add(fstMoveCmd);
+				NpcCommands sndMoveCmd = new NpcCommands(UICommands.Move, secondMidMap);
+				commands.Add(sndMoveCmd);
+				NpcCommands trdMoveCmd = new NpcCommands(UICommands.Move, tp.MapUnit);
+				commands.Add(trdMoveCmd);
+				break;
+			default:
+				break;
 		}
-		
-		return thirdList;
+		return commands; 
 	}
 	
-	void Awake(){
+	UICommands TranslateTactic(Tactics t){
+		UICommands cmd = UICommands.none;
+		switch(t){
+			case Tactics.Melee_Attack:
+				cmd = UICommands.Attack;
+				break;
+			case Tactics.Range_Attack:
+				cmd = UICommands.Attack;
+				break;
+			case Tactics.Expend:
+				cmd = UICommands.Defense;
+				break;
+			case Tactics.none:
+				cmd = UICommands.Defense;
+				break;
+			default:
+				cmd = UICommands.Skill;
+				break;
+		}
+		return cmd;
 	}
 	
-	void SelectCharacter(Transform chess){
-		
+	Transform GetMidLocation(Transform gf, Transform finalDest){
+		Transform midLocal = null;
+		IList initFirstStep = calTactic.GetFirstSteps(gf, null);
+		IList newFirstSetp = calTactic.GetFirstSteps(gf, finalDest);
+		IList interSectList = new List<Transform>();
+		foreach(Transform m in newFirstSetp){
+			if(initFirstStep.Contains(m))
+				interSectList.Add(m);
+		}
+		if(interSectList.Count>0)
+			midLocal = interSectList[0] as Transform;
+		else{ 
+			midLocal = null;
+			print("fuck! I cannot find a way to there");
+		}
+		return midLocal;
 	}
 	
-	bool MoveCommand(Transform chess){
+	
+	Transform GetSecondMidLocation(Transform gf, Transform finalDest){
+		Transform midLocal = null;
+		IList initSecondStep = calTactic.GetMaxSteps(gf, null);
+		IList newSecondSetp = calTactic.GetFirstSteps(gf, finalDest);
+		IList interSectList = new List<Transform>();
+		foreach(Transform m in newSecondSetp){
+			if(initSecondStep.Contains(m))
+				interSectList.Add(m);
+		}
+		if(interSectList.Count>0)
+			midLocal = interSectList[0] as Transform;
+		else{ 
+			midLocal = null;
+			print("fuck! I cannot find a way to there");
+		}
+		return midLocal;
+	}
+	
+	bool MoveCommand(Transform chess, Transform dest){
 		bool moveable = false;
 		CharacterSelect chessSelect = chess.GetComponent<CharacterSelect>();
 		CharacterProperty chessProperty = chess.GetComponent<CharacterProperty>();
 		Transform localUnit = chessSelect.getMapPosition();
 		IList pathList = new List<Transform>();
-		Transform sel = decisions.GetMoveTarget(chess);
+		Transform sel = dest;
+		//check if dest is in move range
+		CurrentSel.updateMapSteps();
+		chessSelect.MoveRangeList.Clear();
+		chessSelect.findMoveRange(localUnit, 0, chessProperty.BuffMoveRange);
+		bool possibleDest = chessSelect.MoveRangeList.Contains(dest);
+		chessSelect.MoveRangeList.Clear();
+		//if not in move range give it a new dest
+		if(!possibleDest)
+			sel = PreVision.GetDirectionMap(chess);
 		if(sel!=null){
 			pathList = chessSelect.FindPathList(localUnit,CurrentSel.GetSteps(localUnit,sel),sel);
 			MoveCharacter mc = Camera.main.GetComponent<MoveCharacter>();
@@ -109,13 +256,19 @@ public class NpcPlayer : MonoBehaviour {
 		}else{
 			moveable = false;
 		}
+		//set machine busy
+		sMachine.InBusy = true;
 		return moveable;
 	}
 	
-	bool AttackCommand(Transform chess){
+	bool AttackCommand(Transform chess, Transform target){
 		bool attackable = false;
+		oldCamPosition = Camera.mainCamera.transform.position;
+		Vector3 centerPos = MapHelper.GetCenterPos(chess,target);
+		newCamPosition = centerPos - CurrentRC.CamOffest;
+		NpcSummonCam = true;
 		chess.GetComponent<CharacterSelect>().AttackRangeList.Clear();
-		Transform sel = decisions.GetAttackTarget(chess);
+		Transform sel = target.GetComponent<CharacterSelect>().getMapPosition();
 		if(sel!=null){
 			AttackCalFX attackerCal = Camera.main.GetComponent<AttackCalFX>();
 			bool critiq = attackerCal.CalcriticalHit(chess,AttackType.physical);
@@ -125,43 +278,74 @@ public class NpcPlayer : MonoBehaviour {
 		}else{
 			attackable = false;
 		}
+		//set machine busy
+		sMachine.InBusy = true;
 		
+		chessUI.InsertTargetChess(target); 
+		chessUI.TargetFadeIn = true;
 		return attackable;
 	}
 	
 	bool DefenseCommand(Transform chess){
-		bool defable = false;
-		if(!chess.GetComponent<CharacterProperty>().Attacked){
-			MainUI mUI = Camera.main.GetComponent<MainUI>();
-			mUI.DefenseCmd(chess);
-		}
+		bool defable = true;
+		MainUI mUI = Camera.main.GetComponent<MainUI>();
+		mUI.DefenseCmd(chess);
+		chessUI.TargetFadeIn = false;
+		oldCamPosition = Camera.mainCamera.transform.position;
+		newCamPosition = chess.transform.position -CurrentRC.CamOffest;
+		NpcSummonCam = true;
 		return defable;
 	}
 	
-	bool SkillCommand(Transform chess){
+	bool SkillCommand(Transform chess, Transform target){
 		bool skillable = false;
-		Transform theSkill = decisions.GetSkill(chess);
-		if(theSkill!=null){
-			theSkill.GetComponent<SkillProperty>().ActivateSkill();
-			CurrentRC.playerB.GetComponent<ManaCounter>().Mana -= theSkill.GetComponent<SkillProperty>().SkillCost;
+		Transform skill = chess.FindChild("Skills").GetChild(0);
+		if(!skill.GetComponent<SkillProperty>().NeedToSelect){
+			//skill.GetComponent<SkillProperty>().GetRealSkillRate();
+			//skill.GetComponent<SkillProperty>().PassSkillRate = MapHelper.Success(skill.GetComponent<SkillProperty>().SkillRate);
+			skill.GetComponent<SkillProperty>().ActivateSkill();
+			CurrentSel.AnimStateNetWork(chess,AnimVault.AnimState.skill);
+			chess.GetComponent<CharacterProperty>().Activated = true;
+			skill.GetComponent<SkillProperty>().DefaultCDRounds();
+			chess.GetComponent<CharacterProperty>().CmdTimes -= 1;
+			oldCamPosition = Camera.mainCamera.transform.position;
+			newCamPosition = chess.transform.position - CurrentRC.CamOffest;
+			NpcSummonCam = true;
+			sMachine.InBusy = true;
 		}else{
-			skillable = false;
+			CommonSkill cSkill = skill.GetComponent(skill.GetComponent<SkillProperty>().ScriptName) as CommonSkill;
+			cSkill.InsertSelection(target);
+			cSkill.Execute();
+			skill.GetComponent<SkillProperty>().DefaultCDRounds();
+			CurrentSel.AnimStateNetWork(chess,AnimVault.AnimState.skill);
+			sMachine.InBusy = true;
+			chess.GetComponent<CharacterProperty>().CmdTimes -= 1;
+			oldCamPosition = Camera.mainCamera.transform.position;
+			Vector3 centerPos = MapHelper.GetCenterPos(chess,target);
+			newCamPosition = centerPos - CurrentRC.CamOffest;
+			NpcSummonCam = true;
 		}
-		return skillable;
+		
+		chessUI.TargetFadeIn = false;
+		return true;
 	}
 	
-	bool SummonCommand(Transform chess){
+	bool SummonCommand(Transform chess, Transform gf){
 		bool summoned = false;
-		Transform gf = decisions.GetSummonGF(chess);
-		Transform map = decisions.GetSummonPosition(chess);
+		//Transform gf = decisions.GetSummonGF(chess);
+		Transform map = calTactic.GetSummonPosition(chess);
 		if(gf!=null && map!=null){
 			CurrentSel.currentGF = gf;
 			CurrentSel.SummonTrueCmd(chess, gf, map);
 			summoned = true;
+			oldCamPosition = Camera.mainCamera.transform.position;
+			newCamPosition = gf.position - CurrentRC.CamOffest;
+			NpcSummonCam = true;
+		}else{
+			NpcSummonCam = false;
+			summoned = false;
 		}
-		oldCamPosition = Camera.mainCamera.transform.position;
-		newCamPosition = CurrentRC.playerB.transform.position - CurrentRC.CamOffest;
-		camMoveMode = true;
+		chessUI.TargetFadeIn = false;
 		return summoned;
 	}
 	
@@ -171,34 +355,36 @@ public class NpcPlayer : MonoBehaviour {
 		chessProperty.Moved = true;
 		chessProperty.Activated = true;
 		chessProperty.Attacked = true;
+		chessProperty.CmdTimes = 0;
 		chessProperty.TurnFinished = true;
+		chessUI.TargetFadeIn = false;
+		chessUI.MainFadeIn = false;
+		//NpcSummonCam = false;
 		return finished;
 	}
 	
-	bool ExcuteCommand(UICommands cmd, Transform chess){
+	bool ExcuteCommand(Transform chess, NpcCommands npcCmd){
 		bool excuted = false;
-		switch(cmd){
+		switch(npcCmd.Command){
 			case UICommands.Attack:
-				excuted = AttackCommand(chess);
+				excuted = AttackCommand(chess, npcCmd.Target);
 				break;
 			case UICommands.Defense:
 				excuted = DefenseCommand(chess);
 				break;
 			case UICommands.Move:
-				excuted = MoveCommand(chess);
+				excuted = MoveCommand(chess, npcCmd.MapUnit);
 				break;
 			case UICommands.Skill:
-				excuted = SkillCommand(chess);
+				excuted = SkillCommand(chess, npcCmd.Target);
 				break;
 			case UICommands.Turnfinished:
 				excuted = FinishCommand(chess);
 				break;
 			case UICommands.Summon:
-				excuted = SummonCommand(chess);
+				//excuted = SummonCommand(chess);
 				break;
 			case UICommands.none:
-				if(!chess.GetComponent<CharacterProperty>().Defensed || !chess.GetComponent<CharacterProperty>().Attacked)
-					excuted = DefenseCommand(chess);
 				break;
 		}
 		return excuted;
@@ -211,138 +397,287 @@ public class NpcPlayer : MonoBehaviour {
 			CurrentSel.SummonTrueCmd(masterChess, masterChess, map);
 			npcReviveMode = true;
 			CurrentSel.reviveMode = false;
+			sMachine.InBusy = true;
+			oldCamPosition = Camera.main.transform.position;
+			newCamPosition = map.position - CurrentRC.CamOffest;
+			NpcSummonCam = true;
 			//masterChess.GetComponent<CharacterProperty>().TurnFinished = true;
 		}
+		
+		pauseTime = 100;
 	}
 	
 	public void ShowSelection(Transform chess, bool showUp){
 		if(showUp){
 			chess.gameObject.layer = 11;
 			CurrentSel.MoveToLayer(chess,11);
+			chessUI.InsertChess(chess);
+			chessUI.MainFadeIn = true;
+			chessUI.Critical = false;
 		}else{
 			chess.gameObject.layer = 10;
 			CurrentSel.MoveToLayer(chess,10);
+			chessUI.MainFadeIn = false;
+			chessUI.TargetFadeIn = false;
+		}
+	}
+	
+	
+	
+	Transform GetCurrentInMove(){
+		Dictionary<Transform, int> sortDict = new Dictionary<Transform, int>();
+		IList gfsOnField = new List<Transform>();
+		Transform inMove = null;
+		foreach(Transform gf in CurrentRC.PlayerBChesses){
+			CharacterProperty gfp = gf.GetComponent<CharacterProperty>();
+			if(!gfp.death && gfp.CmdTimes>0 && !gfp.Tower){
+				gfsOnField.Add(gf);
+			}
+		}
+		if(gfsOnField.Count>0){
+			foreach(Transform gf in gfsOnField){
+				CharacterProperty gfP = gf.GetComponent<CharacterProperty>();
+				IList tacticPoint = new List<TacticPoint>();
+				tacticPoint = calTactic.GetTactic(gf, gfP.Attacked, gfP.CmdTimes);
+				int totalPoint = 0;
+				if(tacticPoint.Count>1){
+					foreach(TacticPoint tp in tacticPoint){
+						totalPoint += tp.Point;
+					}
+					
+				}else{
+					TacticPoint tp = (TacticPoint)tacticPoint[0];
+					totalPoint = tp.Point;
+				}
+				totalPoint = Mathf.RoundToInt((float)totalPoint /(float)tacticPoint.Count);
+				sortDict.Add(gf, totalPoint);
+			}
+			var sortedDict = (from entry in sortDict orderby entry.Value descending select entry).ToDictionary(pair => pair.Key, pair => pair.Value);
+			inMove =(Transform)sortedDict.First().Key;  
+		}
+		
+		return inMove; 
+	}
+	
+	void InitStep(){
+		if(initPhase && !sMachine.InBusy && firstPhaseList.Count>0 && !InPause){
+			InPause = false;
+			//Debug.Log("NPC: Initial Step");
+			chessUI.TargetFadeIn = false;
+			lastInMove = currentInMove;
+			
+			if(lastInMove!=null)
+				ShowSelection(lastInMove, false);
+			
+			currentInMove = GetCurrentInMove();
+			
+			if(currentInMove!=null){
+				//Get all cmds
+				currentCmdList.Clear();
+				currentCmdList = GetTotalCommands(currentInMove);
+				foreach(NpcCommands npcCmd in currentCmdList){
+					Debug.Log(currentInMove.name + ": " + npcCmd.Command);
+				}
+				ShowSelection(currentInMove, true);
+				
+				initPhase = false;
+				firstPhase = true;
+				NpcSummonCam = false;
+			}else{
+				endPhase = true;
+			}
 		}
 	}
 	
 	void FirstStep(){
-		if(firstPhase && !InMove && firstPhaseList.Count>0){
-			//get chesses
-			InPause = false;
-			Transform currentSel = firstPhaseList[0] as Transform;
-			if(!currentSel.GetComponent<CharacterProperty>().TurnFinished){
-				currentInMove = currentSel;  
-				ShowSelection(currentInMove, true);
-				//doing commands 
-				UICommands firstCmd = decisions.GetFirstCommand(currentSel);
-				print("1st: "+currentSel+": "+firstCmd);
-				InMove = ExcuteCommand(firstCmd, currentSel);
-				if(firstCmd == UICommands.Defense)
-					InPause = true;
-			}
-			firstPhaseList.RemoveAt(0);
-			if(firstPhaseList.Count==0){
-				firstPhaseList.Clear();
+		if(firstPhase && !sMachine.InBusy && currentInMove!=null && !InPause){
+			if(currentCmdList.Count>0){
+				NpcCommands firstCmd = (NpcCommands)currentCmdList[0];
+				ExcuteCommand(currentInMove, firstCmd);
+				if(firstCmd.Command == UICommands.Defense)
+					SetPause(2.0f);
+				if(calTactic.GetSummonGF(3).Count>0 && currentInMove.GetComponent<CharacterProperty>().Summoner){
+					GFs.Clear(); 
+					GFs = calTactic.GetSummonGF(3);
+					nextGF = 0;
+					summonPhase = true; 
+				}else{
+					secondPhase = true;
+				}
 				firstPhase = false;
-				secondPhaseList = InitSecondPhase();
+				//Debug.Log("NPC:"+ currentInMove.name +" 1st Step");
 			}
-		}else if(firstPhaseList.Count==0){
-			firstPhaseList.Clear();
-			firstPhase = false;
 		}
 	}
 	
 	void SecondStep(){
-		if(secondPhase && !InMove && secondPhaseList.Count>0){
+		if(secondPhase && !sMachine.InBusy && currentInMove!=null && !InPause){
 			InPause = false;
-			Transform currentSel = secondPhaseList[0] as Transform;
-			if(!currentSel.GetComponent<CharacterProperty>().TurnFinished){
-				currentInMove = currentSel;  
-				ShowSelection(currentInMove, true);
-				UICommands secondCmd = decisions.GetSecondCommand(currentSel);
-				print("2nd: "+currentSel+": "+secondCmd);
-				InMove = ExcuteCommand(secondCmd, currentSel);
-				if(secondCmd == UICommands.Defense)
-					InPause = true;
-			}
-			secondPhaseList.RemoveAt(0);
-			if(secondPhaseList.Count==0){
-				secondPhaseList.Clear();
+			if(!CheckDeath(currentInMove) && currentCmdList.Count>1){
+				NpcCommands secondCmd = (NpcCommands)currentCmdList[1];
+				ExcuteCommand(currentInMove, secondCmd);
+				if(secondCmd.Command == UICommands.Defense)
+					SetPause(2.0f);
 				secondPhase = false;
-				thirdPhaseList = InitThirdPhase();
+				thirdPhase = true;
+				//Debug.Log("NPC:"+ currentInMove.name +" 2nd Step");
+			}else{
+				if(GetCurrentInMove()!=null){
+					secondPhase = false;
+					initPhase = true;
+				}else{
+					endPhase = true;
+				}
 			}
-		}else if(secondPhaseList.Count==0){
-			secondPhaseList.Clear();
-			secondPhase = false;
+		}
+	}
+	
+	void SummonPhase(){
+		if(summonPhase && !sMachine.InBusy && currentInMove!=null && !CheckDeath(currentInMove)&& !InPause){
+			//Debug.Log("NPC: Summon Step");
+			Transform newGF = (Transform)GFs[nextGF];
+			sMachine.InBusy = SummonCommand(currentInMove, newGF);
+			if(nextGF<(GFs.Count-1))
+				nextGF += 1;
+			else{
+				summonPhase = false;
+				secondPhase = true;
+			}
 		}
 	}
 	
 	void ThirdStep(){
-		if(thirdPhase && !InMove && thirdPhaseList.Count>0){
+		if(thirdPhase && !sMachine.InBusy && currentInMove!=null && !InPause){
 			InPause = false;
-			Transform currentSel = thirdPhaseList[0] as Transform;
-			if(!currentSel.GetComponent<CharacterProperty>().TurnFinished){
-				currentInMove = currentSel;  
-				ShowSelection(currentInMove, true);
-				UICommands thirdCmd = decisions.GetThirdCommand(currentSel);
-				print("3rd: "+currentSel+": "+thirdCmd);
-				InMove = ExcuteCommand(thirdCmd, currentSel);
-				if(thirdCmd == UICommands.Defense)
-					InMove = false;
-			}
-			thirdPhaseList.RemoveAt(0);
-			if(thirdPhaseList.Count==0){
-				thirdPhaseList.Clear();
+			if(currentCmdList.Count>2 && !CheckDeath(currentInMove)){
+				IList liveList = new List<Transform>();
+				foreach(Transform gf in CurrentRC.PlayerBChesses){
+					if(!gf.GetComponent<CharacterProperty>().death)
+						liveList.Add(gf);
+				}
+				if(liveList.Count > firstPhaseList.Count){
+					fCam.timeSeg = 0.0f;
+					fCam.CamFollowMe(currentInMove);
+				}
+				NpcCommands thirdCmd = (NpcCommands)currentCmdList[2];
+				ExcuteCommand(currentInMove, thirdCmd);
+				if(thirdCmd.Command == UICommands.Defense)
+					SetPause(2.0f);
 				thirdPhase = false;
+				//Debug.Log("NPC:"+ currentInMove.name +" 3rd Step");
+				if(GetCurrentInMove()!=null){
+					thirdPhase = false;
+					initPhase = true;
+				}else{
+					endPhase = true;
+				}
+			}else{
+				if(GetCurrentInMove()!=null){
+					thirdPhase = false;
+					initPhase = true;
+				}else{
+					endPhase = true;
+				}
 			}
-		}else if(thirdPhaseList.Count==0){
-				thirdPhaseList.Clear();
-				thirdPhase = false;
 		}
 	}
+	
+	bool CheckDeath(Transform chess){
+		return chess.GetComponent<CharacterProperty>().death;  
+	}
+	
 	
 	void EndStep(){
-		if(!firstPhase && !secondPhase && !thirdPhase && !InMove){
+		if(endPhase && !sMachine.InBusy && !InPause && currentInMove!=null){
+			//Debug.Log("NPC: End Step");
+			InPause = false;
 			foreach(Transform chess in playerBList){
-				ExcuteCommand(UICommands.Turnfinished, chess);
+				//NpcCommands endCmd = new NpcCommands(UICommands.Turnfinished, null);
+				//ExcuteCommand(chess,endCmd);
+				if(!chess.GetComponent<CharacterProperty>().death){
+					ShowSelection(chess, false);
+					chess.GetComponent<CharacterProperty>().TurnFinished = true;
+					chess.GetComponent<CharacterProperty>().CmdTimes = 0;
+				}
 			}
+			endPhase = false;
+			initPhase = false;
+			thirdPhase = false;
+			summonPhase = false;
+			secondPhase = false;
+			ShowSelection(currentInMove, false);
 		}
 	}
 	
-	void translateMainCam(int segment){
-		float segX = (oldCamPosition.x-newCamPosition.x)/segment;
-		float segZ = (oldCamPosition.z-newCamPosition.z)/segment;
-		Transform camObj = Camera.mainCamera.transform;
-		camObj.position = new Vector3(camObj.position.x-segX,camObj.position.y,camObj.position.z-segZ);
-		camStep+=1;
-		if(camStep==segment){
-			camMoveMode = false;
-			camStep = 0;
+	void translateMainCam(float timeToReach){
+		camSeg+= Time.deltaTime/timeToReach;
+		Vector3 newPos = Vector3.Lerp(oldCamPosition, newCamPosition, camSeg);
+		Camera.main.transform.position = newPos;
+		float d = Vector3.Distance(Camera.main.transform.position, newCamPosition);
+		if(d<0.001f){
+			NpcSummonCam = false;
+			camSeg = 0.0f;
 		}
+	}
+	
+	public void SetPause(float duration){
+		InPause = true;  
+		pauseTime = duration;
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		if(CurrentSel.NpcPlaying){
+		if(CurrentSel.NpcPlaying && sMachine.InitGame){
 			if(InPause){
-				count++;
-				if(count>=pauseTime){
-					count = 0;
+				interSeg += Time.deltaTime/pauseTime;
+				if(interSeg >= 0.9f){
+					interSeg = 0.0f;
 					InPause = false;
-					InMove = false;
 				}
 			}
+			/*
 			if(!InMove && currentInMove!=null){
 				//print("current AI: "+currentInMove);
 				lastInMove = currentInMove;
 				ShowSelection(lastInMove, false);
 			}
+			*/
+			InitStep();
 			FirstStep();
 			SecondStep();
+			SummonPhase();
 			ThirdStep();
 			EndStep();
 		}
-		if(camMoveMode && MoveCam)
-			translateMainCam(120);
+		if(NpcSummonCam && MoveCam)
+			translateMainCam(0.4f);
 	}
+}
+
+
+public struct NpcCommands{
+	public UICommands Command;
+	public Transform Target; 
+	public Transform MapUnit; 
+	
+	public NpcCommands(UICommands cmd, Transform map){
+		Command = cmd; 
+		MapUnit = map;
+		Target = null;
+	}
+	
+	public NpcCommands(UICommands cmd, Transform map, Transform target){
+		Command = cmd; 
+		MapUnit = map; 
+		Target = target;
+	}
+}
+
+public enum CmdMode{
+	Move_and_Do,
+	Do,
+	Move_and_Move_and_Do,
+	Move_and_Move_and_Move,
+	Move, 
+	None,
 }

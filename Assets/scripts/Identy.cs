@@ -8,15 +8,27 @@ public class Identy : MonoBehaviour {
 	public bool summoner;
 	public bool River;
 	public bool Trees;
-	public bool Grass;
-	public bool Flag;
-	public bool StartPoint;
+	public int FixedSide = 3; 
+	public bool PrizeRed = false;
+	public bool PrizeYel = false;
 	public Transform[] neighbor;
-	public Material originalMat; 
+	public Material originalMat, PrizeMatRed, PrizeMatYel; 
 	public int step = 0;
 	public IDictionary neighbors;
+	public Transform Prize = null;
 	private bool test = true;
-	public Transform ShowMap; 
+	//public Transform ShowMap; 
+	
+	void Start(){
+		if(PrizeRed){
+			transform.renderer.material = PrizeMatRed;
+		}else if(MapUnit){
+			transform.renderer.material = originalMat;
+		}else if(PrizeYel){
+			transform.renderer.material = PrizeMatYel;
+		}
+	}
+	
 	void getStructure(){
 		neighbor = new Transform[6];
 		neighbors = new Dictionary<string,Transform>(6);
@@ -44,7 +56,7 @@ public class Identy : MonoBehaviour {
 		neighbors.Add("BotLeft",neighbor[4]);
 		neighbors.Add("TopLeft",neighbor[5]);
 		
-		ShowMap = GetRealMap(transform);
+		//ShowMap = GetRealMap(transform);
 	}
 	
 	

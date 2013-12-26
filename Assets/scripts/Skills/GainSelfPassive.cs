@@ -21,7 +21,9 @@ public class GainSelfPassive : MonoBehaviour, CommonSkill {
 	
 	public IList GetSelectionRange ()
 	{
-		throw new System.NotImplementedException ();
+		IList selList = new List<Transform>();
+		selList.Add(aider.GetComponent<CharacterSelect>().getMapPosition());
+		return selList;
 	}
 	
 	public void Execute ()

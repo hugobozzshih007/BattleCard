@@ -6,7 +6,7 @@ public class CommonFX : MonoBehaviour {
 	public Transform SummonIn;
 	public Transform DeadOut;
 	public Transform NormalAttack;
-	public Transform BuffAtk, BuffDef, BuffRange, BuffMove, BuffSkill, BuffCritiq; 
+	public Transform BuffAtk, BuffDef, BuffRange, BuffMove, BuffSkill, BuffCritiq, BuffHp, BuffLeader; 
 	
 	
 	// Use this for initialization

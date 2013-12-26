@@ -4,14 +4,22 @@ using MapUtility;
 
 public class ShowArrow : MonoBehaviour {
 	public Rigidbody TrueArrow;
+	public int ChildNumA, ChildNumB, ChildNumC;
+	public string StartObjName; 
+	public int ArrowNum;
 	bool fightBackMode = false;
 	bool critiqHit = false;
+	Transform startCenter;
 	Transform arrow;
 	Transform target;
 	Transform attacker;
 	// Use this for initialization
 	void Start () {
-		arrow = transform.GetChild(0);
+		arrow = transform.GetChild(ArrowNum);
+		startCenter = MapHelper.FindAnyChildren(transform, StartObjName);
+		if(startCenter==null){
+			startCenter = transform.GetChild(ChildNumA).GetChild(ChildNumB).GetChild(ChildNumC);
+		}
 		attacker = transform.parent;
 	}
 	
@@ -30,10 +38,10 @@ public class ShowArrow : MonoBehaviour {
 	}
 	
 	void LunchArrow(){
-		bool skillAct = MapHelper.CheckPassive(PassiveType.MultiArrow,attacker);
+		bool skillAct = MapHelper.CheckAddedPassive(PassiveType.MultiArrow,attacker);
 		Vector3 relativePos = target.position - attacker.position;
 		Quaternion rotation = Quaternion.LookRotation(relativePos);
-		Transform starting_center = transform.GetChild(3).GetChild(2).GetChild(1);
+		Transform starting_center = startCenter;
 		Rigidbody insArrow = Instantiate(TrueArrow,starting_center.position,rotation) as Rigidbody;
 		//print("angle: " + transform.parent.rotation);
 		insArrow.gameObject.layer = 16;
@@ -65,6 +73,8 @@ public class ShowArrow : MonoBehaviour {
 			
 			Destroy(leftArrow.gameObject,3.0f);
 			Destroy(rightArrow.gameObject,3.0f);
+			
+			MapHelper.RemovePassive(PassiveType.MultiArrow, attacker);
 		}
 	}
 	

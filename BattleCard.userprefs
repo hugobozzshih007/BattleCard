@@ -1,17 +1,35 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\scripts\PlayerData\PillarData.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\scripts\WinningUI.cs">
     <Files>
+      <File FileName="Assets\scripts\MapHelper.cs" Line="1" Column="1" />
+      <File FileName="Assets\scripts\ProceduralControl.cs" Line="30" Column="6" />
+      <File FileName="Assets\scripts\AI\PreVision.cs" Line="52" Column="6" />
+      <File FileName="Assets\scripts\AI\CalculateTactics.cs" Line="333" Column="3" />
+      <File FileName="Assets\scripts\AI\NpcPlayer.cs" Line="1" Column="1" />
+      <File FileName="Assets\scripts\AI\CharacterTactics.cs" Line="15" Column="2" />
+      <File FileName="Assets\scripts\SummonLand\EndSummonland.cs" Line="150" Column="10" />
+      <File FileName="Assets\scripts\LoadingScreen.cs" Line="7" Column="35" />
+      <File FileName="Assets\scripts\Cover\DemoUI.cs" Line="5" Column="87" />
+      <File FileName="Assets\scripts\LoadingFadeIn.cs" Line="53" Column="39" />
+      <File FileName="Assets\scripts\TimeOut.cs" Line="21" Column="1" />
+      <File FileName="Assets\scripts\TeamEditor\TeamLayout.cs" Line="1" Column="1" />
+      <File FileName="Assets\scripts\FX\RandomSounds.cs" Line="13" Column="17" />
+      <File FileName="Assets\CameraPath2\readme.txt" Line="1" Column="1" />
+      <File FileName="Assets\scripts\big_map\Basic_UI.cs" Line="166" Column="1" />
+      <File FileName="Assets\shaders\Gray_scale_softEdge.shader" Line="1" Column="1" />
+      <File FileName="Assets\scripts\VFX\PlaneShadows.cs" Line="85" Column="1" />
+      <File FileName="Assets\scripts\RoundCounter.cs" Line="1" Column="1" />
+      <File FileName="Assets\scripts\MainInfoUI.cs" Line="1" Column="1" />
       <File FileName="Assets\scripts\selection.cs" Line="1" Column="1" />
-      <File FileName="Assets\scripts\AI\NpcPlayer.cs" Line="18" Column="25" />
-      <File FileName="Assets\scripts\TeamEditor\InitTeamEditor.cs" Line="9" Column="19" />
-      <File FileName="Assets\scripts\TeamEditor\TeamLayout.cs" Line="181" Column="3" />
-      <File FileName="Assets\scripts\PlayerData\GuardianStorage.cs" Line="12" Column="17" />
-      <File FileName="Assets\scripts\SummonLand\PlaceSummoner.cs" Line="15" Column="46" />
-      <File FileName="Assets\scripts\SummonLand\SetTeam.cs" Line="30" Column="5" />
-      <File FileName="Assets\scripts\Tutorial\ShowSummoner.cs" Line="16" Column="69" />
-      <File FileName="Assets\scripts\StatusUI.cs" Line="26" Column="46" />
-      <File FileName="Assets\scripts\PlayerData\PillarData.cs" Line="21" Column="77" />
+      <File FileName="Assets\scripts\FX\SkillCDBarEffect.cs" Line="38" Column="50" />
+      <File FileName="Assets\IGSoft_Resources\Scripts\NcEffect\Common\NsRenderManager.cs" Line="1" Column="1" />
+      <File FileName="Assets\shaders\weed.shader" Line="39" Column="25" />
+      <File FileName="Assets\shaders\BlendingTextures_rgba.shader" Line="44" Column="16" />
+      <File FileName="Assets\scripts\CharacterSelect.cs" Line="1" Column="1" />
+      <File FileName="Assets\scripts\AI\FollowCam.cs" Line="99" Column="52" />
+      <File FileName="Assets\scripts\Prizes\PlacePrizes.cs" Line="42" Column="1" />
+      <File FileName="Assets\scripts\WinningUI.cs" Line="30" Column="19" />
     </Files>
     <Pads>
       <Pad Id="ClassPad">
@@ -23,7 +41,11 @@
     </Pads>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
-    <BreakpointStore />
+    <BreakpointStore>
+      <Breakpoint file="C:\Users\Hugo\Documents\BattleCardGit\BattleCard\Assets\scripts\SummonLand\SetTeam.cs" line="32" />
+    </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
-  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches>
+    <Watch file="Assets\scripts\AI\CalculateTactics.cs" line="335" offsetX="763" offsetY="6680" expression="tacticList" liveUpdate="False" />
+  </MonoDevelop.Ide.DebuggingService.PinnedWatches>
 </Properties>

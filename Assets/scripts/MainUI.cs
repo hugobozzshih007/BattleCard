@@ -22,7 +22,7 @@ public class MainUI : MonoBehaviour {
 	bool currentCommand;
 	float _mainAlpha;
 	float _subAlpha;
-	
+	//public bool InCmd = false;
 	public Font MainFont;
 	public Font NormalFont;
 	GUIStyle mainStyle = new GUIStyle(); 
@@ -139,6 +139,8 @@ public class MainUI : MonoBehaviour {
 		}
 			
 		//mainGuiFade = currentSelect.guiShow;
+		//if(CurrentChess!=null)
+		//	TurnFinished(CurrentChess);
 	}
 	
 	Rect CreateSkillBt(Transform skill, int seg){
@@ -176,29 +178,39 @@ public class MainUI : MonoBehaviour {
 	
 	public void DefenseCmd(Transform chess){
 		CharacterProperty chessProperty = chess.GetComponent<CharacterProperty>();
-		chessProperty.Attacked = true;
-		chessProperty.Moved = true;
 		chessProperty.Defensed = true;
-		//extending territory
+		chessProperty.CmdTimes-=1;
+		if(!currentSelect.npcMode)
+			networkView.RPC("UpdateCmdTimes", RPCMode.Others,chess.name,chessProperty.CmdTimes);
 		currentSelect.defenseCommand(chess);
+		if(!currentSelect.NpcPlaying)
+			currentSelect.CancelCmds();
 		//update buff calculation and map material
 		currentSelect.updateTerritoryMat();
 		//currentSelect.updateAllCharactersPowers();
 		currentSelect.DefenseNetwork();
-		TurnFinished(chess);
+		TurnFinished(chess, true);
 	}
 	
-	void TurnFinished(Transform chess){
+	public void TurnFinished(Transform chess, bool ifNPC){
 		CharacterProperty cp = chess.GetComponent<CharacterProperty>();
+		/*
 		if(cp.Moved && cp.Activated && cp.Attacked)
 			cp.TurnFinished = true;
+		*/
+		if(cp.CmdTimes<1)
+			cp.TurnFinished = true;
+		
 		if(!cp.TurnFinished){
-			MainGuiFade = true;
+			//MainGuiFade = true;
 		}else{
-			MainGuiFade = false;
-			CurrentChess.gameObject.layer = 10;
-			currentSelect.MoveToLayer(CurrentChess,10);
-			currentSelect.EndTurnNetwork();
+			//MainGuiFade = false;
+			if(CurrentChess!=null){
+				CurrentChess.gameObject.layer = 10;
+				currentSelect.MoveToLayer(CurrentChess,10);
+				if(ifNPC)
+					currentSelect.EndTurnNetwork();
+			}
 		}
 	}
 	
@@ -215,7 +227,7 @@ public class MainUI : MonoBehaviour {
 			if(CurrentChess!=null){
 				CharacterProperty chessProperty = CurrentChess.GetComponent<CharacterProperty>();
 				// move button
-				if(chessProperty.Moved)
+				if(/*chessProperty.Moved ||*/ chessProperty.CmdTimes < 1)
 					GUI.enabled = false;
 				else
 					GUI.enabled = true;
@@ -233,7 +245,7 @@ public class MainUI : MonoBehaviour {
 				}
 				GUI.enabled = true;
 				//roll over move button
-				if(!chessProperty.Moved && !InTutorial){
+				if(/*!chessProperty.Moved && */ !InTutorial && chessProperty.CmdTimes < 0){
 					if(posMoveBt.Contains(mousePos)){
 						GUI.DrawTexture(posMoveBt,MoveTex);
 						GUI.Label(new Rect(btSize+leftMargin+5,topMargin+16,100,30),"move", mainStyle); 
@@ -249,6 +261,7 @@ public class MainUI : MonoBehaviour {
 					MainGuiFade = false;
 					SubGuiFade = true;
 					summonShow = true;
+					currentSelect.CleanMapsMat();
 				}
 				GUI.enabled = true;
 				//roll over summon button
@@ -259,7 +272,7 @@ public class MainUI : MonoBehaviour {
 					}
 				}
 				// Attack button
-				if(chessProperty.Attacked || !MapHelper.Attackable(CurrentChess))
+				if(chessProperty.Attacked || !MapHelper.Attackable(CurrentChess) || chessProperty.CmdTimes < 1)
 					GUI.enabled = false;
 				else
 					GUI.enabled = true;
@@ -283,7 +296,7 @@ public class MainUI : MonoBehaviour {
 					}
 				}
 				// skill button
-				if(chessProperty.Activated || init.stage==1)
+				if(chessProperty.Activated || init.stage==1 || chessProperty.CmdTimes<1)
 					GUI.enabled = false;
 				else
 					GUI.enabled = true;
@@ -294,7 +307,7 @@ public class MainUI : MonoBehaviour {
 				}
 				GUI.enabled = true;
 				//roll over skill button
-				if(!chessProperty.Activated && init.stage!=1){
+				if(!chessProperty.Activated && init.stage!=1 && chessProperty.CmdTimes>0){
 					if(posSkillBt.Contains(mousePos)){
 						GUI.DrawTexture(posSkillBt,SkillTex);
 						GUI.Label(new Rect(btSize+leftMargin+5,topMargin+segment*3+16,100,30),"skill", mainStyle); 
@@ -302,7 +315,7 @@ public class MainUI : MonoBehaviour {
 				}
 				//Defense button
 				
-				if(chessProperty.Attacked || init.ShowBuff || InSecondTutor)
+				if(init.ShowBuff || InSecondTutor || chessProperty.CmdTimes < 1)
 					GUI.enabled = false;
 				else
 					GUI.enabled = true;
@@ -317,7 +330,7 @@ public class MainUI : MonoBehaviour {
 				}
 				GUI.enabled = true;
 				//roll over defense button
-				if(!chessProperty.Attacked){
+				if(chessProperty.CmdTimes>0){
 					if(posDefenseBt.Contains(mousePos)){
 							GUI.DrawTexture(posDefenseBt,DefenseTex);
 							GUI.Label(new Rect(btSize+leftMargin+5,topMargin+segment*4+16,100,30),"defence", mainStyle); 
@@ -335,6 +348,7 @@ public class MainUI : MonoBehaviour {
 					chessProperty.Activated = true;
 					chessProperty.Attacked = true;
 					chessProperty.Moved = true;
+					chessProperty.CmdTimes = 0;
 					chessProperty.TurnFinished = true;
 					CurrentChess.gameObject.layer = 10;
 					currentSelect.MoveToLayer(CurrentChess,10);
@@ -362,7 +376,7 @@ public class MainUI : MonoBehaviour {
 				Cancel = true;
 				MainGuiFade = true;
 				SubGuiFade = false;
-				TurnFinished(CurrentChess);
+				TurnFinished(CurrentChess, true);
 			}
 		}
 		if(attackShow){
@@ -372,7 +386,7 @@ public class MainUI : MonoBehaviour {
 				Cancel = true;
 				MainGuiFade = true;
 				SubGuiFade = false;
-				TurnFinished(CurrentChess);
+				TurnFinished(CurrentChess, true);
 			}
 		}
 		if(summonShow){
@@ -446,9 +460,10 @@ public class MainUI : MonoBehaviour {
 							skill.GetComponent<SkillProperty>().ActivateSkill();
 							currentSelect.player.GetComponent<ManaCounter>().Mana -= skill.GetComponent<SkillProperty>().SkillCost;
 							CurrentChess.GetComponent<CharacterProperty>().Activated = true;
+							CurrentChess.GetComponent<CharacterProperty>().CmdTimes -= 1;
 							currentSelect.AnimStateNetWork(CurrentChess,AnimVault.AnimState.skill);
 							SubGuiFade = false;
-							TurnFinished(CurrentChess);
+							TurnFinished(CurrentChess, true);
 							//update network
 							currentSelect.SkillCmdNetwork(CurrentChess,skill);
 						}else{
@@ -461,5 +476,11 @@ public class MainUI : MonoBehaviour {
 				}
 			}
 		}
+	}
+	
+	[RPC]
+	void UpdateCmdTimes(string chessName, int times){
+		Transform chess = GameObject.Find(chessName).transform;
+		chess.GetComponent<CharacterProperty>().CmdTimes = times;
 	}
 }

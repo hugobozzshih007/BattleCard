@@ -4,7 +4,6 @@ Shader "map/mixed_Flag" {
       _MainTex ("Texture", 2D) = "white" {}
       _MainTex2 ("Texture", 2D) = "white" {}
       _MainTexColor ("Texture Mult", Color) = (1.0,1.0,1.0,1.0)
-      _exl ("Brightness", float) = 1.0
       _alpha ("Alpha", float) = 1.0
     }
     SubShader 
@@ -20,7 +19,6 @@ Shader "map/mixed_Flag" {
 				sampler2D _MainTex;
 				sampler2D _MainTex2;
 				float4 _MainTexColor;
-				float _exl;
 				float _alpha;
 			  
 				struct v2f 
@@ -46,10 +44,10 @@ Shader "map/mixed_Flag" {
 				{
 					half4 texCol = tex2D (_MainTex, i.uv.xy) * _MainTexColor;
 					half4 texCol2 = tex2D (_MainTex2, i.uv.zw) * _MainTexColor;	
-					half4 outCol = texCol*texCol2*(1.0+texCol.a*_exl);
-					outCol.a = texCol.a + _alpha + texCol2.a;
-					
-					return  outCol;
+					half4 outCol = (texCol.a+texCol2)*texCol;
+					outCol.a = texCol2.a*_alpha;
+					//outCol.rgb += texCol.rgb;
+					return outCol;
 				}
 				
 			ENDCG

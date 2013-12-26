@@ -4,10 +4,9 @@ using System.Collections.Generic;
 using MapUtility;
 
 public class Suicide : MonoBehaviour, CommonSkill {
-	
+	int dmg = 5;
 	Transform attacker;
-	DamageSlidingUI sUI;
-	
+	public Transform BombFX; 
 	// Use this for initialization
 	void Start () {
 		attacker = transform.parent.parent;
@@ -20,32 +19,47 @@ public class Suicide : MonoBehaviour, CommonSkill {
 	
 	public IList GetSelectionRange ()
 	{
-		throw new System.NotImplementedException ();
+		IList selectionRange = new List<Transform>();
+		Transform thisPosition = attacker.GetComponent<CharacterSelect>().getMapPosition();  
+		selectionRange.Add(thisPosition);  
+		foreach(Transform map in thisPosition.GetComponent<Identy>().neighbor){
+			if(map!=null){
+				selectionRange.Add(map);
+			}
+		}
+		
+		return selectionRange;
 	}
 	
 	public void Execute ()
 	{
-		sUI = Camera.mainCamera.GetComponent<DamageSlidingUI>();
 		IList atkList = new List<Transform>();
 		Transform localMap = attacker.GetComponent<CharacterSelect>().getMapPosition();
 		Transform[] attackableMaps = localMap.GetComponent<Identy>().neighbor;
+		if(audio.clip != null)
+			audio.Play();
+		MapHelper.SetFX(attacker, BombFX, 2.5f);
+		
 		foreach(Transform unit in attackableMaps){
 			if((unit!=null) && MapHelper.IsMapOccupied(unit)){
 				atkList.Add(MapHelper.GetMapOccupiedObj(unit));
 			}
 		}
 		int d = attacker.GetComponent<CharacterProperty>().Hp+1;
-		attacker.GetComponent<CharacterProperty>().Hp -= (attacker.GetComponent<CharacterProperty>().Hp+1);
-		DamageUI aDieUI = new DamageUI(attacker, d, attacker);
-		sUI.UIItems.Add(aDieUI);
+		attacker.GetComponent<CharacterProperty>().Hp -= d;
+		DeathUI atkDUI = new DeathUI(attacker, attacker);
 		
 		if(atkList.Count>0){
 			foreach(Transform target in atkList){
-				target.GetComponent<CharacterProperty>().Hp -= attacker.GetComponent<CharacterProperty>().Damage;
-				DamageUI dUI = new DamageUI(target,attacker.GetComponent<CharacterProperty>().Damage, attacker);
-				sUI.UIItems.Add(dUI);
+				target.GetComponent<CharacterProperty>().Hp -= dmg;
+				int trueDmg = 5;
+				if(dmg > target.GetComponent<CharacterProperty>().Hp)
+					trueDmg = target.GetComponent<CharacterProperty>().Hp;
+				target.GetComponent<DamageSlidingFX>().ActivateSlidingFX(attacker, trueDmg);
+				if(target.GetComponent<CharacterProperty>().Hp <= 0){
+					DeathUI dUI = new DeathUI(target, attacker);
+				}
 			}
-			sUI.FadeInUI = true;
 		}
 	}
 }

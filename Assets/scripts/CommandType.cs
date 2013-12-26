@@ -11,6 +11,7 @@ public enum CommandType {
 
 public enum PowerType {
 	Damage,
+	Defense,
 	Hp,
 	SkillRate,
 	Critical,

@@ -6,6 +6,7 @@ using MapUtility;
 public class TurnHead : MonoBehaviour {
 	
 	public Transform Attacker;
+	CharacterProperty akProperty;
 	public Transform Target;
 	Transform attackerModel, targetLocation;
 	float t = 0.0f;
@@ -18,14 +19,17 @@ public class TurnHead : MonoBehaviour {
 	MainInfoUI chessUI;
 	Quaternion oldRotation;
 	selection currentSel;
+	StatusMachine sMachine;
 	// Use this for initialization
 	void Start () {
 		currentSel = transform.GetComponent<selection>();
 		chessUI = transform.GetComponent<MainInfoUI>();
+		sMachine = GameObject.Find("StatusMachine").GetComponent<StatusMachine>();
 	}
 	
 	public void SetTurnHeadSequence(Transform atk, Transform targetMap, bool doAttack, bool fightBack, bool critiq){
 		Attacker = atk; 
+		akProperty = Attacker.GetComponent<CharacterProperty>();
 		targetLocation = targetMap;
 		Target = MapHelper.GetMapOccupiedObj(targetMap);
 		oldRotation = Attacker.transform.rotation;
@@ -35,6 +39,11 @@ public class TurnHead : MonoBehaviour {
 		critiqHit = critiq;
 		//walking till turning ends
 		attackerModel = Attacker.FindChild("Models");
+		bool npc = false;
+		if(currentSel.npcMode && akProperty.Player == 2)
+			npc = true;
+		if(!sMachine.TutorialMode)
+			chessUI.TalkingShit(Attacker.GetComponent<TalkingContent>().GetAtkWords(), npc);
 		if(attackerModel.GetComponent<AnimVault>()!=null)
 			attackerModel.GetComponent<AnimVault>().CurrentState = AnimVault.AnimState.run;
 	}
@@ -46,9 +55,8 @@ public class TurnHead : MonoBehaviour {
 			Vector3 relativePos = Target.transform.position - Attacker.transform.position;
 			Quaternion rotation = Quaternion.LookRotation(relativePos);
 			float yAngle = Mathf.LerpAngle(oldRotation.eulerAngles.y, rotation.eulerAngles.y, t);
+			//if(!akProperty.Tower)
 			Attacker.transform.rotation = Quaternion.Euler(new Vector3(oldRotation.eulerAngles.x, yAngle, oldRotation.eulerAngles.z));
-			//update rotation network
-			//networkView.RPC("UpdateRotation", RPCMode.Others, Attacker.name, oldRotation, rotation, t);
 			float angle = Mathf.Abs(rotation.eulerAngles.y - yAngle);
 			if(Mathf.RoundToInt(angle) == 360){
 				angle -= 360.0f;
@@ -66,6 +74,8 @@ public class TurnHead : MonoBehaviour {
 							attackerModel.GetComponent<AttackEvent>().SetTarget(Attacker, targetLocation, fightBackMode, critiqHit);
 						}else if(attackerModel.GetComponent<ShowArrow>()!=null){
 							attackerModel.GetComponent<ShowArrow>().SetTarget(Target,fightBackMode,critiqHit);
+						}else if(attackerModel.GetComponent<ShowFlamingArrow>()!=null){
+							attackerModel.GetComponent<ShowFlamingArrow>().SetTarget(Target,fightBackMode,critiqHit);
 						}
 						
 				    }else{

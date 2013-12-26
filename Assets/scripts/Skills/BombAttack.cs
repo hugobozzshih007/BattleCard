@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using MapUtility;
 
 public class BombAttack : MonoBehaviour, CommonSkill {
-	
+	Transform models; 
 	int damage;
 	int skillRate;
 	Transform attacker, target, targetMap;
@@ -13,7 +13,9 @@ public class BombAttack : MonoBehaviour, CommonSkill {
 	// Use this for initialization
 	void Start () {
 		damage = 1;
+		sUI = Camera.mainCamera.GetComponent<DamageSlidingUI>();
 		attacker = transform.parent.parent;
+		models = attacker.Find("Models");
 	}
 	
 	public void InsertSelection (Transform map)
@@ -34,32 +36,35 @@ public class BombAttack : MonoBehaviour, CommonSkill {
 	
 	public void Execute ()
 	{
+		models.GetComponent<FireBombFX>().InsertBombLocation(target);
+	}
+	
+	void ShowDamageUI(Transform target,int damage, Transform atk){
+		DamageSlidingFX targetSFX = target.GetComponent<DamageSlidingFX>();
+		targetSFX.ActivateSlidingFX(atk, damage);
+	}
+	
+	public void CalculateDamage(){
 		IList targetList = new List<Transform>();
+		targetList = MapHelper.GetAroundGFs(target.GetComponent<CharacterSelect>().getMapPosition());
 		targetList.Add(target);
-		sUI = Camera.mainCamera.GetComponent<DamageSlidingUI>();
-		Transform[] mapArray = targetMap.GetComponent<Identy>().neighbor;
-		foreach(Transform map in mapArray){
-			if(map!=null){
-				if(MapHelper.IsMapOccupied(map)){
-					targetList.Add(MapHelper.GetMapOccupiedObj(map));
-				}
-			}
-		}
+		CharacterProperty atkP = attacker.GetComponent<CharacterProperty>();
 		foreach(Transform unit in targetList){
+			CharacterProperty unitP = unit.GetComponent<CharacterProperty>();
 			if(transform.GetComponent<SkillProperty>().PassSkillRate){
 				damage = 2;
-				unit.GetComponent<CharacterProperty>().Hp -= damage;
-				DamageUI dUI = new DamageUI(unit,damage, attacker);
-				sUI.UIItems.Add(dUI);
-				sUI.FadeInUI = true;
-				print("Bombed critical hit!");
+				if(atkP.Player != unitP.Player){
+					unitP.Hp -= damage;
+					ShowDamageUI(unit,2,attacker);
+					print("Bombed critical hit!");
+				}
 			}else{
 				damage = 1;
-				unit.GetComponent<CharacterProperty>().Hp -= damage;
-				DamageUI dUI = new DamageUI(unit,damage, attacker);
-				sUI.UIItems.Add(dUI);
-				sUI.FadeInUI = true;
+				if(atkP.Player != unitP.Player){
+					unitP.Hp -= damage;
+					ShowDamageUI(unit,1,attacker);
 				print("Bombed!");
+				}
 			}
 		}
 	}

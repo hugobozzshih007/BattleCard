@@ -13,6 +13,9 @@ public class RoundCounter : MonoBehaviour {
 	public IList PlayerBChesses;
 	public IList PlayerATerritory;
 	public IList PlayerBTerritory;
+	public IList AllTerritory;
+	public Transform RealPlayerA;
+	public Transform RealPlayerB;
 	public Transform playerA;
 	public Transform playerB;
 	public Texture2D InfoBlack;
@@ -33,28 +36,30 @@ public class RoundCounter : MonoBehaviour {
 	MainInfoUI infoUI;
 	selection currentSel;
 	NpcPlayer npc; 
+	StatusMachine sMachine;
+	GuardianStorage guardians;
 	public bool SummonerLand;
+	PlacePrizes pp;
+	PlaceSummoner pSummoner; 
+	float timeSeg = 0.0f;
 	// Use this for initialization
-	void Start () {
-		roundCounter = 1;
-		if(!SummonerLand)
-			playerA = GameObject.Find("pSummonerA").transform.GetChild(0).transform;
-		else 
-			playerA = GameObject.Find("pSummonerA").transform;
-		if(!SummonerLand)
-			playerB = GameObject.Find("pSummonerB").transform.GetChild(0).transform;
-		else 
-			playerB = GameObject.Find("pSummonerB").transform;
-		//AllChesses = new List<Transform>();
-		//PlayerAChesses = new List<Transform>();
-		//PlayerBChesses = new List<Transform>();
+	void Awake () {
+		sMachine = GameObject.Find("StatusMachine").GetComponent<StatusMachine>();
+		pSummoner = GameObject.Find("InitStage").transform.GetComponent<PlaceSummoner>();
+		Transform maps = GameObject.Find("Maps").transform;
+		pp = maps.GetComponent<PlacePrizes>();
+		GameObject playerData = GameObject.Find("PlayerData");
+		if(playerData!=null)
+			guardians = playerData.transform.GetComponent<GuardianStorage>();
+		
 		PlayerATerritory = new List<Transform>();
 		PlayerBTerritory = new List<Transform>();
-		
-		//PlayerATerritory.Add(GameObject.Find("unit_start_point_A").transform);
-		PlayerATerritory.Add(GameObject.Find("red_tower").transform);
-		//PlayerBTerritory.Add(GameObject.Find("unit_start_point_B").transform);
-		PlayerBTerritory.Add(GameObject.Find("yellow_tower").transform);
+		AllTerritory = new List<Transform>();
+		PlayerATerritory.Add(GameObject.Find("unit_start_point_A").transform);
+		//PlayerATerritory.Add(GameObject.Find("red_tower").transform);
+		if(!sMachine.TutorialMode)
+			PlayerBTerritory.Add(GameObject.Find("unit_start_point_B").transform);
+		//PlayerBTerritory.Add(GameObject.Find("yellow_tower").transform);
 		
 		rUI = transform.GetComponent<RoundUI>();
 		mUI = transform.GetComponent<MainUI>();
@@ -63,38 +68,96 @@ public class RoundCounter : MonoBehaviour {
 		
 		CamOffest = MidObject.position - transform.position;
 		
+		//print(CamOffest);
 		npc = GameObject.Find("NpcPlayer").GetComponent<NpcPlayer>();
+		
+		
+		roundCounter = 0;
+		for(int i=0; i<maps.childCount; i++){
+			AllTerritory.Add(maps.GetChild(i));
+		}
+		if(Network.connections.Length>0){
+			npcMode = false;
+		}else{
+			npcMode = true;
+		}
+		
 	}
 	
+	public IList GetWhiteTerritory(){
+		IList allMap = new List<Transform>();
+		foreach(Transform m in AllTerritory){
+			allMap.Add(m);
+		}
+		foreach(Transform m in PlayerATerritory){
+			if(allMap.Contains(m))
+				allMap.Remove(m);
+		}
+		foreach(Transform m in PlayerBTerritory){
+			if(allMap.Contains(m))
+				allMap.Remove(m);
+		}
+		return allMap;
+	}
+	
+	void CheckPrizes(){
+		bool prizes = false;
+		IList allMap = new List<Transform>();
+		foreach(Transform m in AllTerritory){
+			allMap.Add(m);
+		}
+		foreach(Transform m in allMap){
+			Identy mID = m.GetComponent<Identy>();
+			if(mID.PrizeRed || mID.PrizeYel){
+				prizes = true;
+				break;
+			}else{
+				prizes = false;
+			}
+		}
+		if(!prizes){
+			currentSel.PlacePrizes();
+		}
+	}
+	//set initial environment start here
 	public void SetPlayerChesses(){
 		if(!SummonerLand)
 			playerA = GameObject.Find("pSummonerA").transform.GetChild(0).transform;
 		else 
-			playerA = GameObject.Find("pSummonerA").transform;
+			playerA = Instantiate(RealPlayerA, noWhere, Quaternion.identity) as Transform;
 		if(!SummonerLand)
 			playerB = GameObject.Find("pSummonerB").transform.GetChild(0).transform;
 		else 
-			playerB = GameObject.Find("pSummonerB").transform;
+			playerB = Instantiate(RealPlayerB, noWhere, Quaternion.identity) as Transform;
+		pSummoner.SummonerA = playerA;
+		pSummoner.SummonerB = playerB;
+		
+		if(guardians!=null)
+			guardians.SetTeamUp(playerA, playerB);
 		PlayerAChesses = new List<Transform>();
 		PlayerBChesses = new List<Transform>();
 		AllChesses = new List<Transform>();
 		PlayerAChesses.Add(playerA);
 		foreach(Transform gf in playerA.GetComponent<CharacterProperty>().soldiers){
-			Transform gfClone = Instantiate(gf,noWhere,Quaternion.identity) as Transform;
-			gfClone.gameObject.layer = 10;
-			PlayerAChesses.Add(gfClone);
-			gfClone.GetComponent<CharacterProperty>().death = true;
-			gfClone.GetComponent<CharacterProperty>().Player = 1;
-			gfClone.GetComponent<CharacterProperty>().InitPlayer = 1;
+			if(gf!=null){
+				Transform gfClone = Instantiate(gf,noWhere,Quaternion.identity) as Transform;
+				gfClone.gameObject.layer = 10;
+				PlayerAChesses.Add(gfClone);
+				gfClone.GetComponent<CharacterProperty>().death = true;
+				gfClone.GetComponent<CharacterProperty>().Player = 1;
+				gfClone.GetComponent<CharacterProperty>().InitPlayer = 1;
+			}
 		}
 		PlayerBChesses.Add(playerB);
 		foreach(Transform gf in playerB.GetComponent<CharacterProperty>().soldiers){
-			Transform gfClone = Instantiate(gf,noWhere,Quaternion.identity) as Transform;
-			gfClone.gameObject.layer = 10;
-			PlayerBChesses.Add(gfClone);
-			gfClone.GetComponent<CharacterProperty>().death = true;
-			gfClone.GetComponent<CharacterProperty>().Player = playerB.GetComponent<CharacterProperty>().Player;
-			gfClone.GetComponent<CharacterProperty>().InitPlayer = playerB.GetComponent<CharacterProperty>().Player;
+			if(gf!=null){
+				Transform gfClone = Instantiate(gf,noWhere,Quaternion.identity) as Transform;
+				gfClone.gameObject.layer = 10;
+				PlayerBChesses.Add(gfClone);
+				gfClone.GetComponent<CharacterProperty>().death = true;
+				gfClone.GetComponent<CharacterProperty>().Player = playerB.GetComponent<CharacterProperty>().Player;
+				gfClone.GetComponent<CharacterProperty>().InitPlayer = playerB.GetComponent<CharacterProperty>().Player;
+			}
 		}
 		foreach(Transform chess in PlayerAChesses){
 			AllChesses.Add(chess);
@@ -102,15 +165,24 @@ public class RoundCounter : MonoBehaviour {
 		foreach(Transform chess in PlayerBChesses){
 			AllChesses.Add(chess);
 		}
-	}
-	
-	void Awake(){
-		if(Network.connections.Length>0){
-			npcMode = false;
-		}else{
-			npcMode = true;
+		
+		if(!sMachine.TutorialMode)
+			pSummoner.StartBattle();
+		else{
+			GameObject ss = GameObject.Find("StageSelection");
+			int stage = 1;
+			if(ss!=null)
+				stage = ss.GetComponent<StageSelection>().GetStage();
+			pSummoner.summonA = true;
+			GameObject.Find("Tutorial").GetComponent<Tutorial>().InitTutorial(stage);
+			if(ss!=null)
+				DestroyObject(ss);
 		}
-		roundCounter = 1;
+		
+		sMachine.InitGame = true;
+		infoUI.InitCameras();
+		GameObject playData = GameObject.Find("PlayerData");
+		Destroy(playData,0.5f);
 	}
 	
 	public void AddTerritory(Transform map, int player){
@@ -277,18 +349,18 @@ public class RoundCounter : MonoBehaviour {
 		return addedVlaue;
 	}*/
 	
-	void translateMainCam(int segment){
-		float segX = (oldCamPosition.x-newCamPosition.x)/segment;
-		float segZ = (oldCamPosition.z-newCamPosition.z)/segment;
-		transform.position = new Vector3(transform.position.x-segX,transform.position.y,transform.position.z-segZ);
-		camStep+=1;
-		if(camStep==segment){
+	void translateMainCam(float timeToReach){
+		timeSeg+= Time.deltaTime/timeToReach;
+		Vector3 newPos = Vector3.Lerp(oldCamPosition, newCamPosition, timeSeg);
+		transform.position = newPos;
+		float d = Vector3.Distance(transform.position, newCamPosition);
+		if(d<0.03f){
+			timeSeg = 0.0f;
 			camMoveMode = false;
 			if(currentSel.reviveMode){
 				//currentSel.reviveMode = false;
 				npc.npcReviveMode = false;
 			}
-			camStep = 0;
 		}
 	}
 	
@@ -331,9 +403,10 @@ public class RoundCounter : MonoBehaviour {
 			gfp.TurnFinished = false;
 			gfp.Damaged = false;
 			gfp.Defensed = false;
-			if(!gfp.death && gfp.AbleRestore){
-				gfp.Hp = gfp.ModifiedDefPow;
-			}
+			gfp.CmdTimes = 3;
+			//if(!gfp.death && gfp.AbleRestore){
+				//gfp.Hp = gfp.ModifiedDefPow;
+			//}
 		}
 	}
 	
@@ -364,7 +437,8 @@ public class RoundCounter : MonoBehaviour {
 							case UnnormalStatus.Sleeping:
 								break;
 							case UnnormalStatus.Wounded:
-								cProperty.AbleRestore = false;
+								cProperty.AbleDef = false;
+								cProperty.ModifiedDefPow = 0;
 								break;
 						}
 						cProperty.UnStatusCounter[key] -= 1;
@@ -382,7 +456,7 @@ public class RoundCounter : MonoBehaviour {
 							case UnnormalStatus.Sleeping:
 								break;
 							case UnnormalStatus.Wounded:
-								cProperty.AbleRestore = true;
+								cProperty.AbleDef = true;
 								break;
 						}
 					}
@@ -398,12 +472,13 @@ public class RoundCounter : MonoBehaviour {
 		}
 	}
 	
-	void updateExtraBuff(){
-		foreach(Transform gf in AllChesses){
+	void updateExtraBuff(IList chesses){
+		foreach(Transform gf in chesses){
 			if(!gf.GetComponent<CharacterProperty>().death){
-				foreach(BuffType Buff in Enum.GetValues(typeof(BuffType))){
-					gf.GetComponent<BuffList>().ExtraDict[Buff] = 0;
-				}
+				//foreach(BuffType Buff in Enum.GetValues(typeof(BuffType))){
+					if(MapHelper.CheckPassive(PassiveType.DefenseAddOne, gf))
+						gf.GetComponent<BuffList>().ExtraDict[BuffType.Defense] = 0;
+				//}
 			}
 		}
 	}
@@ -424,21 +499,6 @@ public class RoundCounter : MonoBehaviour {
 		}
 	}
 	*/
-	void initASideExtraBuff(){
-		foreach(Transform gf in PlayerAChesses){
-			foreach(BuffType Buff in Enum.GetValues(typeof(BuffType))){
-				gf.GetComponent<BuffList>().ExtraDict[Buff] = 0;
-			}
-		}
-	}
-	
-	void initBSideExtraBuff(){
-		foreach(Transform gf in PlayerBChesses){
-			foreach(BuffType Buff in Enum.GetValues(typeof(BuffType))){
-				gf.GetComponent<BuffList>().ExtraDict[Buff] = 0;
-			}
-		}
-	}
 	
 	void updateWaitRounds(){
 		foreach(Transform gf in PlayerAChesses){
@@ -457,12 +517,28 @@ public class RoundCounter : MonoBehaviour {
 		}
 	}
 	
-	void updatePassive(){
-		foreach(Transform chess in AllChesses){
+	void updateSkillCDRounds(){
+		foreach(Transform gf in AllChesses){
+			if(!gf.GetComponent<CharacterProperty>().death){
+				Transform[] skills = gf.GetComponent<SkillSets>().Skills;
+				foreach(Transform skill in skills){
+					SkillProperty gfSp = skill.GetComponent<SkillProperty>();
+					if(!gfSp.SkillReady){
+						gfSp.WaitingRounds -= 1;
+					}
+				}
+			}
+		}
+	}
+	
+	
+	void updatePassive(IList chesses){
+		foreach(Transform chess in chesses){
 			if(!chess.GetComponent<CharacterProperty>().death){
 				CharacterPassive chessPassive = chess.GetComponent<CharacterPassive>();
 				foreach(PassiveType passive in Enum.GetValues(typeof(PassiveType))){
-					chessPassive.PassiveDict[passive] = false;
+					if(passive == PassiveType.Flying)
+						chessPassive.PassiveDict[passive] = false;
 				}
 				if((chessPassive.PassiveAbility!=null) && (chessPassive.PassiveAbility.Length>0)){
 					foreach(PassiveType p in chessPassive.PassiveAbility){
@@ -501,11 +577,10 @@ public class RoundCounter : MonoBehaviour {
 	void revivePlayer(Transform player){
 		CharacterProperty property = player.GetComponent<CharacterProperty>();
 		if(property.death && property.Ready){
-			currentSel.ReviveCommand(player);
 			if(npcMode && currentSel.player == playerB){
 				npc.ReviveSummoner(player);
-				npc.InMove = true;
-			}
+			}else
+				currentSel.ReviveCommand(player);
 		}
 	}
 	
@@ -563,82 +638,86 @@ public class RoundCounter : MonoBehaviour {
 		foreach(Transform t in AllChesses){
 			t.gameObject.layer = 10;
 		}
-		mUI.MainGuiFade = false;
-		mUI.SubGuiFade = false;
 		infoUI.MainFadeIn = false;
 		infoUI.TargetFadeIn = false;
 	}
 	// Update is called once per frame
 	void Update () {
-		if(roundCounter%2 == 1){
-			
-			if(CheckRound(PlayerAChesses)|| checkAllDeath(PlayerAChesses)){
-				if(!checkRound && !currentSel.reviveMode){
-					rUI.SetRoundUI(Color.yellow);
-					checkRound = true;
+		if(!sMachine.InBusy && sMachine.InitGame && !sMachine.TutorialMode){
+			if(roundCounter%2 == 1 && !pSummoner.Initial && !pSummoner.ZeroTurn){
+				if(CheckRound(PlayerAChesses)|| checkAllDeath(PlayerAChesses)){
+					if(!checkRound && !currentSel.reviveMode){
+						rUI.SetRoundUI(Color.yellow);
+						checkRound = true;
+					}
 				}
-			}
-			if(rUI.UIfinished){
-				UpdateLayers();
-				updateWaitRounds();
-				oldCamPosition = transform.position;
-				playerB.GetComponent<ManaCounter>().Mana+=2;
-				updateUnnormalStatus();
-				//updateExtraBuff();
-				initBSideExtraBuff();
-				//updateASideMaxHp();
-				UpdateChessList();
-				updateRound(PlayerBChesses);
-				updateAllCharactersPowers();
-				updatePassive();
-				transform.GetComponent<selection>().APlaying=false;
-				transform.GetComponent<selection>().BPlaying=true;
-				updatePlaying();
-				UpdateNPCplayerList();
-				revivePlayer(playerB);
-				getNewCamPos(2);
-				camMoveMode = true;
-				roundCounter += 1;
-				checkRound = false;
-				rUI.UIfinished = false;
-				
-			}
-		} 
-		if(roundCounter%2 == 0){
-			if(CheckRound(PlayerBChesses)|| checkAllDeath(PlayerBChesses)){
-				if(!checkRound && !currentSel.reviveMode){
-					rUI.SetRoundUI(Color.red);
-					checkRound = true;
+				if(rUI.UIfinished){
+					UpdateLayers();
+					updateWaitRounds();
+					oldCamPosition = transform.position;
+					
+					updateUnnormalStatus();
+					updateExtraBuff(PlayerBChesses);
+					updatePassive(PlayerBChesses);
+					//updateASideMaxHp();
+					UpdateChessList();
+					updateRound(PlayerBChesses);
+					updateAllCharactersPowers();
+					updateSkillCDRounds();
+					transform.GetComponent<selection>().APlaying=false;
+					transform.GetComponent<selection>().BPlaying=true;
+					updatePlaying();
+					UpdateNPCplayerList();
+					revivePlayer(playerB);
+					getNewCamPos(2);
+					camMoveMode = true;
+					checkRound = false;
+					rUI.UIfinished = false;
+					if(!sMachine.TutorialMode){
+						CheckPrizes();
+						roundCounter += 1;
+					}
 				}
-			}
-			if(rUI.UIfinished){
-				UpdateLayers();
-				updateWaitRounds();
-				oldCamPosition = transform.position;
-				getNewCamPos(1);
-				camMoveMode = true;
-				playerA.GetComponent<ManaCounter>().Mana+=2;
-				updateUnnormalStatus();
-				//updateExtraBuff();
-				initASideExtraBuff();
-				//updateBSideMaxHp();
-				UpdateChessList();
-				updateRound(PlayerAChesses);
-				updateAllCharactersPowers();
-				updatePassive();
-				transform.GetComponent<selection>().APlaying=true;
-				transform.GetComponent<selection>().BPlaying=false;
-				updatePlaying();
-				revivePlayer(playerA);
-				roundCounter += 1;
-				checkRound = false;
-				rUI.UIfinished = false;
-				
+			} 
+			if(roundCounter%2 == 0 && !pSummoner.Initial){
+				if(CheckRound(PlayerBChesses)|| checkAllDeath(PlayerBChesses)){
+					if(!checkRound && !currentSel.reviveMode){
+						rUI.SetRoundUI(Color.red);
+						checkRound = true;
+					}
+				}
+				if(rUI.UIfinished){
+					UpdateLayers();
+					updateWaitRounds();
+					oldCamPosition = transform.position;
+					getNewCamPos(1);
+					camMoveMode = true;
+					
+					updateUnnormalStatus();
+					updateExtraBuff(PlayerAChesses);
+					updatePassive(PlayerAChesses);
+					//updateBSideMaxHp();
+					UpdateChessList();
+					updateRound(PlayerAChesses);
+					updateAllCharactersPowers();
+					updateSkillCDRounds();
+					transform.GetComponent<selection>().APlaying=true;
+					transform.GetComponent<selection>().BPlaying=false;
+					updatePlaying();
+					revivePlayer(playerA);
+					roundCounter += 1;
+					checkRound = false;
+					rUI.UIfinished = false;
+					if(!sMachine.TutorialMode){
+						CheckPrizes();
+						
+					}
+					pSummoner.ZeroTurn = false;
+				}
 			}
 		}
-		
 		if(camMoveMode && MoveCam){
-			translateMainCam(80);
+			translateMainCam(0.4f);
 		}
 	}
 	
@@ -652,10 +731,12 @@ public class RoundCounter : MonoBehaviour {
 	
 	void OnApplicationQuit(){
 		foreach(Transform gf in playerA.GetComponent<CharacterProperty>().soldiers){
-			gf.GetComponent<CharacterProperty>().death = true;
+			if(gf!=null)
+				gf.GetComponent<CharacterProperty>().death = true;
 		}
 		foreach(Transform gf in playerB.GetComponent<CharacterProperty>().soldiers){
-			gf.GetComponent<CharacterProperty>().death = true;
+			if(gf!=null)
+				gf.GetComponent<CharacterProperty>().death = true;
 		}
 	}
 	

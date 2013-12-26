@@ -32,7 +32,8 @@ public class DamageSlidingUI : MonoBehaviour {
 	bool showUI = false;
 	bool updateInMove = false;
 	float _textAlpha;
-	int delayCounter = 120;
+	public int DCounter = 40;
+	int delayCounter = 40;
 	DeathFX dFX;
 	
 	
@@ -46,6 +47,7 @@ public class DamageSlidingUI : MonoBehaviour {
 		smallFloating.font = UIFont;
 		smallFloating.fontSize = 40;
 		dFX = transform.GetComponent<DeathFX>();
+		delayCounter = DCounter;
 	}
 	
 	void FadeIn(){
@@ -70,7 +72,7 @@ public class DamageSlidingUI : MonoBehaviour {
 			_textAlpha = Mathf.Lerp(_textAlpha,0,Time.deltaTime*5); 
 		if(_textAlpha <= 0.1f){
 			showUI = false;
-			delayCounter = 120;
+			delayCounter = DCounter;
 			diffHeight = 0.0f;
 			foreach(DamageUI ui in UIItems){
 				if(ui.Chess.GetComponent<CharacterProperty>().Hp<=0){
