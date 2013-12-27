@@ -3,7 +3,7 @@ using System.Collections;
 using MapUtility; 
 using BuffUtility;
 
-public class WingBroken : MonoBehaviour, CommonSkill {
+public class WingBroken : MonoBehaviour, SkillInterface {
 	Transform aider;
 	public PowerType mode;
 	public int Value;

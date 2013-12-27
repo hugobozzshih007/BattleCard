@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using MapUtility;
 
-public class GainSelfPassive : MonoBehaviour, CommonSkill {
+public class GainSelfPassive : MonoBehaviour, SkillInterface {
 
 	public PassiveType mode;
 	int skillRate;

@@ -9,7 +9,7 @@ public class TP_LeaderShip : MonoBehaviour, CommonSkillTP {
 	IList maps = new List<Transform>(); 
 	Transform skill; 
 	SkillProperty skillP;
-	CommonSkill cSkill;
+	SkillInterface cSkill;
 	Tactics skillTactic;
 	// Use this for initialization
 	void Start () {
@@ -20,7 +20,7 @@ public class TP_LeaderShip : MonoBehaviour, CommonSkillTP {
 		skill = transform.FindChild("Skills").GetChild(0);
 		skillP = skill.GetComponent<SkillProperty>();
 		skillTactic = skillP.SkillTactic;
-		cSkill = skill.GetComponent(skillP.ScriptName) as CommonSkill;
+		cSkill = skill.GetComponent(skillP.ScriptName) as SkillInterface;
 		maps = cSkill.GetSelectionRange();
 		TacticPoint tp = new TacticPoint(transform, skillTactic, map, 0);
 		if(maps.Count>0){

@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using MapUtility;
 
-public class PosExchange :MonoBehaviour, CommonSkill{
+public class PosExchange :MonoBehaviour, SkillInterface{
 	
 	int skillRate;
 	RoundCounter chessStorage;

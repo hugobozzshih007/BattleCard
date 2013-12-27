@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using MapUtility;
 
-public class BombAttack : MonoBehaviour, CommonSkill {
+public class BombAttack : MonoBehaviour, SkillInterface {
 	Transform models; 
 	int damage;
 	int skillRate;

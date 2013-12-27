@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using MapUtility;
 using BuffUtility;
 
-public class Leadership : MonoBehaviour, CommonSkill {
+public class Leadership : MonoBehaviour, SkillInterface {
 	
 	Transform aider, fxBuffAtk, fxBuffDef,fxBuffHp;
 	public PowerType[] Mode;

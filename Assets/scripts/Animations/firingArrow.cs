@@ -91,12 +91,12 @@ public class firingArrow : MonoBehaviour {
 			
 			AttackCalFX aCal = Camera.mainCamera.GetComponent<AttackCalFX>();
 			if(fightBackMode){
-				aCal.fightBack = false;
+				aCal.FightBack = false;
 				aCal.CriticalHit = false;
 				aCal.SetAttackSequence(attacker, target.GetComponent<CharacterSelect>().getMapPosition());
 				//GameObject.Find("StatusMachine").GetComponent<StatusMachine>().InBusy = false;
 			}else{
-				aCal.fightBack = true;
+				aCal.FightBack = true;
 				aCal.CriticalHit = critiqHit;
 				aCal.SetAttackSequence(attacker, target.GetComponent<CharacterSelect>().getMapPosition());
 				if(currentSelect.npcMode && playerSide == 2)

@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using MapUtility;
 
-public class DarkBallAttack : MonoBehaviour, CommonSkill{
+public class DarkBallAttack : MonoBehaviour, SkillInterface{
 	Transform attacker;
 	Transform model; 
 	int damage = 2;

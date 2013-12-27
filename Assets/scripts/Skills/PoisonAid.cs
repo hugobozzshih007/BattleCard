@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using MapUtility;
 
-public class PoisonAid : MonoBehaviour, CommonSkill {
+public class PoisonAid : MonoBehaviour, SkillInterface {
 	
 	int skillRate;
 	RoundCounter chessStorage;

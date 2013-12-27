@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using MapUtility;
 
-public class CtrlStealing : MonoBehaviour, CommonSkill{
+public class CtrlStealing : MonoBehaviour, SkillInterface{
 	public Transform stealFX;
 	int Player;
 	IList aTerritory, bTerritory;

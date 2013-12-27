@@ -483,7 +483,7 @@ public class GeneralSelection : MonoBehaviour {
 										
 										CurrentSkill.GetComponent<SkillProperty>().GetRealSkillRate();
 										CurrentSkill.GetComponent<SkillProperty>().PassSkillRate = MapHelper.Success(CurrentSkill.GetComponent<SkillProperty>().SkillRate);
-										CommonSkill cSkill = CurrentSkill.GetComponent(CurrentSkill.GetComponent<SkillProperty>().ScriptName) as CommonSkill;
+										SkillInterface cSkill = CurrentSkill.GetComponent(CurrentSkill.GetComponent<SkillProperty>().ScriptName) as SkillInterface;
 										cSkill.InsertSelection(sel);
 										cSkill.Execute();
 										skillMode = false;
@@ -833,7 +833,7 @@ public class GeneralSelection : MonoBehaviour {
 			CharacterSelect character = chess.GetComponent<CharacterSelect>();
 			Transform currentPos = character.getMapPosition();
 			if(currentPos!=null){
-				CommonSkill cSkill = skill.GetComponent(skill.GetComponent<SkillProperty>().ScriptName) as CommonSkill;
+				SkillInterface cSkill = skill.GetComponent(skill.GetComponent<SkillProperty>().ScriptName) as SkillInterface;
 				neighbors = cSkill.GetSelectionRange();
 				if(neighbors.Count>0){
 					foreach(Transform sixGon in neighbors){
@@ -858,7 +858,7 @@ public class GeneralSelection : MonoBehaviour {
 		Transform currentPos = character.getMapPosition();
 		Transform skill = gf.GetComponent<SkillSets>().Skills[0];
 		if(currentPos!=null){
-			CommonSkill cSkill = skill.GetComponent(skill.GetComponent<SkillProperty>().ScriptName) as CommonSkill;
+			SkillInterface cSkill = skill.GetComponent(skill.GetComponent<SkillProperty>().ScriptName) as SkillInterface;
 			skillrollOverList = cSkill.GetSelectionRange();
 			if(skillrollOverList.Count > 0){
 				foreach(Transform sixGon in skillrollOverList){
@@ -1092,7 +1092,7 @@ public class GeneralSelection : MonoBehaviour {
 	
 	public void AttackActivate(Transform chess, Transform sel){
 		attackerCal.CriticalHit = attackerCal.CalcriticalHit(chess,AttackType.physical);
-		attackerCal.fightBack = true;
+		attackerCal.FightBack = true;
 		attackerCal.SetAttackSequence(chess, sel);
 		chessUI.Critical = attackerCal.CriticalHit;
 		chessUI.DelayFadeOut = true;
@@ -1285,7 +1285,7 @@ public class GeneralSelection : MonoBehaviour {
 		Transform selection = GameObject.Find(selName).transform;
 		Transform chess = GameObject.Find(chessName).transform;
 		attackerCal.CriticalHit = state;
-		attackerCal.fightBack = true;
+		attackerCal.FightBack = true;
 		attackerCal.SetAttackSequence(chess,selection);
 	}
 	
@@ -1307,7 +1307,7 @@ public class GeneralSelection : MonoBehaviour {
 				currentSkill = skill;
 		}
 		if(currentSkill!=null){
-			CommonSkill cSkill = currentSkill.GetComponent(currentSkill.GetComponent<SkillProperty>().ScriptName) as CommonSkill;
+			SkillInterface cSkill = currentSkill.GetComponent(currentSkill.GetComponent<SkillProperty>().ScriptName) as SkillInterface;
 			currentSkill.GetComponent<SkillProperty>().PassSkillRate = state;
 			cSkill.InsertSelection(selection);
 			cSkill.Execute();

@@ -8,7 +8,7 @@ public class TP_MultiArrow : MonoBehaviour, CommonSkillTP {
 	const float skillScore = 100.0f; 
 	Transform skill; 
 	SkillProperty skillP;
-	CommonSkill cSkill;
+	SkillInterface cSkill;
 	Tactics skillTactic;
 	//RoundCounter rc;
 	// Use this for initialization

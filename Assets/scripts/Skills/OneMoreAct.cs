@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using MapUtility;
 
-public class OneMoreAct : MonoBehaviour, CommonSkill{
+public class OneMoreAct : MonoBehaviour, SkillInterface{
 	
 	int skillRate;
 	RoundCounter chessStorage;

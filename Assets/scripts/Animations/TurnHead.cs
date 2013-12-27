@@ -81,11 +81,11 @@ public class TurnHead : MonoBehaviour {
 				    }else{
 						AttackCalFX aCal = transform.GetComponent<AttackCalFX>();
 						if(fightBackMode){
-							aCal.fightBack = false;
+							aCal.FightBack = false;
 							aCal.CriticalHit = false;
 							aCal.SetAttackSequence(Attacker, targetLocation);
 						}else{
-							aCal.fightBack = true;
+							aCal.FightBack = true;
 							aCal.CriticalHit = critiqHit;
 							aCal.SetAttackSequence(Attacker, targetLocation);
 							chessUI.Critical = critiqHit;

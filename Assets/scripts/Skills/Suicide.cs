@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using MapUtility;
 
-public class Suicide : MonoBehaviour, CommonSkill {
+public class Suicide : MonoBehaviour, SkillInterface {
 	int dmg = 5;
 	Transform attacker;
 	public Transform BombFX; 

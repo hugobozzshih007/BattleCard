@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using MapUtility;
 using BuffUtility;
 
-public class GainSelfPowerAndPassive : MonoBehaviour, CommonSkill {
+public class GainSelfPowerAndPassive : MonoBehaviour, SkillInterface {
 	
 	Transform aider;
 	public PassiveType mode;

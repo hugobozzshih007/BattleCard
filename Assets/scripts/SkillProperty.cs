@@ -39,7 +39,7 @@ public class SkillProperty : MonoBehaviour{
 	}
 	
 	public void ActivateSkill(){
-		CommonSkill skill  = transform.GetComponent(ScriptName) as CommonSkill;
+		SkillInterface skill  = transform.GetComponent(ScriptName) as SkillInterface;
 		skill.Execute();
 	}
 	

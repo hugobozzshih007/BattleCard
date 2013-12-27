@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using MapUtility;
 
-public class MapStealing : MonoBehaviour, CommonSkill {
+public class MapStealing : MonoBehaviour, SkillInterface {
 	
 	int Player;
 	IList aTerritory, bTerritory;

@@ -28,11 +28,11 @@ public class AttackEvent : MonoBehaviour {
 	void ActivateAtk(){
 		AttackCalFX atkCal = Camera.mainCamera.GetComponent<AttackCalFX>();
 		if(fightBackMode){
-			atkCal.fightBack = false;
+			atkCal.FightBack = false;
 			atkCal.CriticalHit = false;
 			atkCal.SetAttackSequence(Chess,Sel);
 		}else{
-			atkCal.fightBack = true;
+			atkCal.FightBack = true;
 			atkCal.CriticalHit = critiqHit;
 			atkCal.SetAttackSequence(Chess,Sel);
 			if(currentSelect.npcMode && playerSide == 2)

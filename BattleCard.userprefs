@@ -1,36 +1,12 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\scripts\GeneralSelection.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\scripts\Skills\SkillInterface.cs">
     <Files>
-      <File FileName="Assets\scripts\MapHelper.cs" Line="312" Column="1" />
-      <File FileName="Assets\scripts\ProceduralControl.cs" Line="1" Column="1" />
-      <File FileName="Assets\scripts\AI\PreVision.cs" Line="94" Column="1" />
-      <File FileName="Assets\scripts\AI\CalculateTactics.cs" Line="964" Column="2" />
-      <File FileName="Assets\scripts\AI\NpcPlayer.cs" Line="683" Column="2" />
-      <File FileName="Assets\scripts\AI\CharacterTactics.cs" Line="1" Column="1" />
-      <File FileName="Assets\scripts\SummonLand\EndSummonland.cs" Line="192" Column="1" />
-      <File FileName="Assets\scripts\LoadingScreen.cs" Line="1" Column="1" />
-      <File FileName="Assets\scripts\Cover\DemoUI.cs" Line="1" Column="1" />
-      <File FileName="Assets\scripts\LoadingFadeIn.cs" Line="1" Column="1" />
-      <File FileName="Assets\scripts\TimeOut.cs" Line="113" Column="1" />
-      <File FileName="Assets\scripts\TeamEditor\TeamLayout.cs" Line="1" Column="1" />
-      <File FileName="Assets\scripts\FX\RandomSounds.cs" Line="1" Column="1" />
-      <File FileName="Assets\CameraPath2\readme.txt" Line="1" Column="1" />
-      <File FileName="Assets\scripts\big_map\Basic_UI.cs" Line="1" Column="1" />
-      <File FileName="Assets\shaders\Gray_scale_softEdge.shader" Line="1" Column="1" />
-      <File FileName="Assets\scripts\VFX\PlaneShadows.cs" Line="1" Column="1" />
-      <File FileName="Assets\scripts\RoundCounter.cs" Line="761" Column="1" />
-      <File FileName="Assets\scripts\MainInfoUI.cs" Line="683" Column="1" />
-      <File FileName="Assets\scripts\FX\SkillCDBarEffect.cs" Line="1" Column="1" />
-      <File FileName="Assets\IGSoft_Resources\Scripts\NcEffect\Common\NsRenderManager.cs" Line="86" Column="1" />
-      <File FileName="Assets\shaders\weed.shader" Line="1" Column="1" />
-      <File FileName="Assets\shaders\BlendingTextures_rgba.shader" Line="1" Column="1" />
-      <File FileName="Assets\scripts\CharacterSelect.cs" Line="215" Column="1" />
-      <File FileName="Assets\scripts\AI\FollowCam.cs" Line="137" Column="1" />
-      <File FileName="Assets\scripts\Prizes\PlacePrizes.cs" Line="92" Column="1" />
-      <File FileName="Assets\scripts\WinningUI.cs" Line="124" Column="1" />
-      <File FileName="Assets\scripts\CharacterProperty.cs" Line="382" Column="1" />
-      <File FileName="Assets\scripts\GeneralSelection.cs" Line="1589" Column="1" />
+      <File FileName="Assets\scripts\AttackCalculation.cs" Line="12" Column="53" />
+      <File FileName="Assets\scripts\AttackCalFX.cs" Line="42" Column="46" />
+      <File FileName="Assets\scripts\AI\CalculateTactics.cs" Line="709" Column="34" />
+      <File FileName="Assets\scripts\AI\Decisions.cs" Line="409" Column="3" />
+      <File FileName="Assets\scripts\Skills\SkillInterface.cs" Line="10" Column="1" />
     </Files>
     <Pads>
       <Pad Id="ClassPad">

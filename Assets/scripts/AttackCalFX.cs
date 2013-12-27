@@ -8,7 +8,7 @@ public class AttackCalFX : MonoBehaviour {
 	public Transform Attacker;
 	public Transform Target;
 	public bool CriticalHit;
-	public bool fightBack = true;
+	public bool FightBack = true;
 	Transform attackerLocation; 
 	Transform targetLocation;
 	CharacterProperty attackerProperty, targetProperty;
@@ -36,7 +36,7 @@ public class AttackCalFX : MonoBehaviour {
 	}
 	
 	public void SetAttackSequence(Transform attacker, Transform targetMap){
-		Attacker = attacker;
+		this.Attacker = attacker;
 		//CriticalHit = false;
 		attackerProperty = Attacker.GetComponent<CharacterProperty>();
 		attackerSelect = Attacker.GetComponent<CharacterSelect>();
@@ -248,7 +248,7 @@ public class AttackCalFX : MonoBehaviour {
 					chessUI.TargetFadeIn = false;
 		
 		}else{
-			if(fightBack){
+			if(FightBack){
 				fb.SetFightBack(Target,Attacker);
 				targetProperty.Attacked = true;
 				//cancel attack buff

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using MapUtility;
 using BuffUtility;
 
-public class GainPower : MonoBehaviour, CommonSkill {
+public class GainPower : MonoBehaviour, SkillInterface {
 	
 	RoundCounter chessStorage;
 	Transform aider, target;

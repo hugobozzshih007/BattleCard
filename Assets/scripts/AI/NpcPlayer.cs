@@ -313,7 +313,7 @@ public class NpcPlayer : MonoBehaviour {
 			NpcSummonCam = true;
 			sMachine.InBusy = true;
 		}else{
-			CommonSkill cSkill = skill.GetComponent(skill.GetComponent<SkillProperty>().ScriptName) as CommonSkill;
+			SkillInterface cSkill = skill.GetComponent(skill.GetComponent<SkillProperty>().ScriptName) as SkillInterface;
 			cSkill.InsertSelection(target);
 			cSkill.Execute();
 			skill.GetComponent<SkillProperty>().DefaultCDRounds();

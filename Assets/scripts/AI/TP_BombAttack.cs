@@ -12,7 +12,7 @@ public class TP_BombAttack : MonoBehaviour, CommonSkillTP {
 	IList maps = new List<Transform>(); 
 	Transform skill; 
 	SkillProperty skillP;
-	CommonSkill cSkill;
+	SkillInterface cSkill;
 	Tactics skillTactic;
 	RoundCounter rc;
 	
@@ -25,7 +25,7 @@ public class TP_BombAttack : MonoBehaviour, CommonSkillTP {
 		skill = transform.FindChild("Skills").GetChild(0);
 		skillP = skill.GetComponent<SkillProperty>();
 		skillTactic = skillP.SkillTactic;
-		cSkill = skill.GetComponent(skillP.ScriptName) as CommonSkill;
+		cSkill = skill.GetComponent(skillP.ScriptName) as SkillInterface;
 		rc = Camera.main.GetComponent<RoundCounter>();
 		TacticPoint tp = new TacticPoint(transform, skillTactic, map, 0);
 		Dictionary<Transform, int> sortDict = new Dictionary<Transform, int>();

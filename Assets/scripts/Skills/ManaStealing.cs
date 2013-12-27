@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using MapUtility;
 
-public class ManaStealing :MonoBehaviour, CommonSkill{
+public class ManaStealing :MonoBehaviour, SkillInterface{
 	
 	int Player;
 	SkillProperty property;
