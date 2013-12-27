@@ -11,7 +11,5 @@ bin
 TestResults
 
 *.meta
-Library
-Library/metadata
-Library/metatdata/ff
-Temp
+Library/
+Temp/
