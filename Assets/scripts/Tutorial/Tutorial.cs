@@ -14,7 +14,7 @@ public class Tutorial : MonoBehaviour {
 	bool fadeIn, fadeOut;
 	float _alpha = 0.0f; 
 	Transform root, rootB; 
-	selection currentSel;
+	GeneralSelection currentSel;
 	float castLength = 80.0f;
 	Transform hitMap = null;
 	Transform hitCharacter = null;
@@ -25,7 +25,7 @@ public class Tutorial : MonoBehaviour {
 		root = GameObject.Find("unit_start_point_A").transform;
 		rootB = GameObject.Find("unit_start_point_B").transform;
 		rc = Camera.mainCamera.GetComponent<RoundCounter>();
-		currentSel = Camera.mainCamera.GetComponent<selection>();
+		currentSel = Camera.mainCamera.GetComponent<GeneralSelection>();
 		pSummoner = GameObject.Find("InitStage").GetComponent<PlaceSummoner>();
 		summoner = pSummoner.SummonerA;
 		chessUI = Camera.main.GetComponent<MainInfoUI>();

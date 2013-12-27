@@ -3,7 +3,7 @@ using System.Collections;
 
 public class PlaceSummoner : MonoBehaviour {
 	public Transform SummonerA, SummonerB; //TowerA, TowerB;
-	selection currentSel; 
+	GeneralSelection currentSel; 
 	public bool summonA = false; 
 	public bool summonB = false;
 	public bool TalkA = false;
@@ -24,7 +24,7 @@ public class PlaceSummoner : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		sMachine = GameObject.Find("StatusMachine").GetComponent<StatusMachine>();
-		currentSel = Camera.main.GetComponent<selection>();
+		currentSel = Camera.main.GetComponent<GeneralSelection>();
 		fc = Camera.main.GetComponent<FollowCam>();
 		redStartPos = GameObject.Find("unit_start_point_A").transform;
 		yelStartPos = GameObject.Find("unit_start_point_B").transform;

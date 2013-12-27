@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public class BGMusic : MonoBehaviour {
 	public AudioClip Opening, Initial_Loop, Init_To_Start, Start_Loop, Start_To_Climax, Start_To_Init, Climax_Loop, Climax_To_Start;
-	selection currentSel; 
+	GeneralSelection currentSel; 
 	RoundCounter currentRC;  
 	StatusMachine sMachine;
 	BuffInfoUI buffInfo;
@@ -25,7 +25,7 @@ public class BGMusic : MonoBehaviour {
 	
 	// Use this for initialization
 	void Start () {
-		currentSel = transform.parent.GetComponent<selection>();
+		currentSel = transform.parent.GetComponent<GeneralSelection>();
 		currentRC = transform.parent.GetComponent<RoundCounter>();
 		buffInfo = transform.parent.GetComponent<BuffInfoUI>();
 		sMachine = GameObject.Find("StatusMachine").transform.GetComponent<StatusMachine>();

@@ -16,7 +16,7 @@ public class TimerLoop : MonoBehaviour {
 	bool showMoveCmd = false;
 	Rect cmdRect;
 	MainUI mUI;
-	selection currentSel; 
+	GeneralSelection currentSel; 
 	HealthCircleEffect hce; 
 	RoundUI rUI;
 	// Use this for initialization
@@ -24,7 +24,7 @@ public class TimerLoop : MonoBehaviour {
 		hce = transform.GetComponent<HealthCircleEffect>();
 		mUI = Camera.mainCamera.GetComponent<MainUI>();
 		rUI = Camera.mainCamera.GetComponent<RoundUI>();
-		currentSel = Camera.mainCamera.GetComponent<selection>();
+		currentSel = Camera.mainCamera.GetComponent<GeneralSelection>();
 	}
 	
 	void StartTimer(){

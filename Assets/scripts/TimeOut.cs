@@ -12,12 +12,12 @@ public class TimeOut : MonoBehaviour {
 	string currentLevel;
 	NameMaps nMaps;
 	public bool SummonLand = false;
-	selection sel; 
+	GeneralSelection sel; 
 	LoadingFadeIn lf;
 	// Use this for initialization
 	void Start () {
 		currentLevel = Application.loadedLevelName; 
-		sel = Camera.main.GetComponent<selection>();
+		sel = Camera.main.GetComponent<GeneralSelection>();
 		lf = GameObject.Find("LoadingScreen").GetComponent<LoadingFadeIn>();
 		if(SummonLand){
 			nMaps = GameObject.Find("Maps").GetComponent<NameMaps>();

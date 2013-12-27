@@ -68,7 +68,7 @@ public class PointCalculation : MonoBehaviour {
 	}
 	
 	public void AddDeadNum(Transform gf){
-		selection sel = Camera.main.GetComponent<selection>();
+		GeneralSelection sel = Camera.main.GetComponent<GeneralSelection>();
 		CharacterProperty gfp = gf.GetComponent<CharacterProperty>();
 		if(sel.npcMode && gfp.Player == 2){
 			if(gfp.Summoner)

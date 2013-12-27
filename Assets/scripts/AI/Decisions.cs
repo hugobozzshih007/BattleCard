@@ -5,11 +5,11 @@ using MapUtility;
 using System.Linq;
 
 public class Decisions : MonoBehaviour {
-	selection currentSelect; 
+	GeneralSelection currentSelect; 
 	RoundCounter currentRC;
 	// Use this for initialization
 	void Start () {
-		currentSelect = Camera.main.GetComponent<selection>();
+		currentSelect = Camera.main.GetComponent<GeneralSelection>();
 		currentRC = Camera.main.GetComponent<RoundCounter>();
 	}
 	

@@ -8,12 +8,12 @@ public class PlacePrizes : MonoBehaviour {
 	public int InitYel;
 	IList PrizeMaps = new List<Transform>();
 	BuffInfoUI buffUI;
-	selection currentSel;
+	GeneralSelection currentSel;
 	RoundCounter currentRC; 
 	// Use this for initialization
 	void Start () {
 		buffUI = Camera.mainCamera.GetComponent<BuffInfoUI>();
-		currentSel = Camera.mainCamera.GetComponent<selection>();
+		currentSel = Camera.mainCamera.GetComponent<GeneralSelection>();
 		currentRC = Camera.mainCamera.GetComponent<RoundCounter>();
 	}
 	

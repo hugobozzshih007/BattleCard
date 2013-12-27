@@ -3,7 +3,7 @@ using System.Collections;
 
 public class InitTutor : MonoBehaviour {
 	public Transform SummonerA, SummonerB; //TowerA, TowerB;
-	selection currentSel; 
+	GeneralSelection currentSel; 
 	public bool summonA = false; 
 	public bool summonB = false; 
 	public bool InitialA = false;  
@@ -16,7 +16,7 @@ public class InitTutor : MonoBehaviour {
 	NpcPlayer npc;
 	// Use this for initialization
 	void Start () {
-		currentSel = Camera.main.GetComponent<selection>();
+		currentSel = Camera.main.GetComponent<GeneralSelection>();
 		fc = Camera.main.GetComponent<FollowCam>();
 		redStartPos = GameObject.Find("unit_start_point_A").transform;
 		yelStartPos = GameObject.Find("unit_start_point_B").transform;

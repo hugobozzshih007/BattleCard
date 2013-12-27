@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 public class NpcPlayer : MonoBehaviour {
-	selection CurrentSel;
+	GeneralSelection CurrentSel;
 	Decisions decisions;
 	RoundCounter CurrentRC;
 	public Transform currentInMove; 
@@ -36,7 +36,7 @@ public class NpcPlayer : MonoBehaviour {
 		InMove = false;
 		InPause = false;
 		decisions = transform.GetComponent<Decisions>();
-		CurrentSel = Camera.main.GetComponent<selection>();
+		CurrentSel = Camera.main.GetComponent<GeneralSelection>();
 		CurrentRC = Camera.main.GetComponent<RoundCounter>();
 		playerBList = new List<Transform>();
 		firstPhaseList = new List<Transform>();

@@ -18,11 +18,11 @@ public class TurnHead : MonoBehaviour {
 	bool critiqHit;
 	MainInfoUI chessUI;
 	Quaternion oldRotation;
-	selection currentSel;
+	GeneralSelection currentSel;
 	StatusMachine sMachine;
 	// Use this for initialization
 	void Start () {
-		currentSel = transform.GetComponent<selection>();
+		currentSel = transform.GetComponent<GeneralSelection>();
 		chessUI = transform.GetComponent<MainInfoUI>();
 		sMachine = GameObject.Find("StatusMachine").GetComponent<StatusMachine>();
 	}

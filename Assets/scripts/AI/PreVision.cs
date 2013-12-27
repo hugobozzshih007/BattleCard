@@ -12,7 +12,7 @@ public class PreVision{
 		CharacterProperty chessP = chess.GetComponent<CharacterProperty>();
 		RoundCounter rc = Camera.mainCamera.GetComponent<RoundCounter>();
 		PlacePrizes pp = GameObject.Find("Maps").transform.GetComponent<PlacePrizes>();
-		selection sel = Camera.main.GetComponent<selection>();
+		GeneralSelection sel = Camera.main.GetComponent<GeneralSelection>();
 		int step = chess.GetComponent<CharacterProperty>().BuffMoveRange;
 		IList targetMaps = GetMapTargetList();
 		IList roundMaps = new List<Transform>();

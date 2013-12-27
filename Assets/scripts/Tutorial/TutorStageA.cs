@@ -14,7 +14,7 @@ public class TutorStageA : MonoBehaviour {
 	string[] content  = new string[15];
 	int contentIndex = 0;
 	Texture2D clearBt;
-	selection currentSel; 
+	GeneralSelection currentSel; 
 	StatusMachine sMachine; 
 	RoundCounter currentRC;
 	TutorStageB nextStage;
@@ -70,7 +70,7 @@ public class TutorStageA : MonoBehaviour {
 		sMachine.TutorialBusy = true;
 		currentRC = Camera.main.GetComponent<RoundCounter>();
 		MainCharacter = currentRC.playerA;
-		currentSel = Camera.main.GetComponent<selection>();
+		currentSel = Camera.main.GetComponent<GeneralSelection>();
 		chessUI = Camera.main.GetComponent<MainInfoUI>();
 		tutorMom = transform.GetComponent<Tutorial>();
 		chessUI.SomeoneTaking(MainCharacter, content[0], false);

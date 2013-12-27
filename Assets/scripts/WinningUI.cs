@@ -24,7 +24,7 @@ public class WinningUI : MonoBehaviour {
 	int delayCounter = 120;
 	float t = 0.0f;
 	Vector2 mousePos = new Vector2();
-	selection currentSel; 
+	GeneralSelection currentSel; 
 	EndSummonland endStage; 
 	StatusMachine sMachine;
 	PointCalculation pCal; 
@@ -39,7 +39,7 @@ public class WinningUI : MonoBehaviour {
 		pointRect = new Rect(midRect.x,  Screen.height/2.0f + 100, 300, 50);
 		endStage = transform.GetComponent<EndSummonland>();
 		sMachine = GameObject.Find("StatusMachine").transform.GetComponent<StatusMachine>();
-		currentSel = Camera.main.GetComponent<selection>();
+		currentSel = Camera.main.GetComponent<GeneralSelection>();
 		rUI.normal.textColor = Color.white;
 		rUI.font = numFont; 
 		rUI.fontSize = 24;

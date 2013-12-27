@@ -37,7 +37,7 @@ public class MainUI : MonoBehaviour {
 	float guiAlpha = 0.0f;
 	Vector2 mousePos;
 	RoundCounter players;
-	selection currentSelect; 
+	GeneralSelection currentSelect; 
 	InfoUI infoUI;
 	NumIconVault numIcon;
 	MainInfoUI chessUI;
@@ -47,7 +47,7 @@ public class MainUI : MonoBehaviour {
 	
 	// Use this for initialization
 	void Start () {
-		currentSelect = this.GetComponent<selection>();
+		currentSelect = this.GetComponent<GeneralSelection>();
 		segment = btSize;
 		posMoveBt =new Rect(leftMargin,topMargin,btSize,btSize);
 		posSummonBt = new Rect(leftMargin,topMargin+segment,btSize,btSize); 

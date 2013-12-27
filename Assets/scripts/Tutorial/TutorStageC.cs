@@ -19,7 +19,7 @@ public class TutorStageC : MonoBehaviour {
 	string[] content  = new string[20];
 	int contentIndex = 0;
 	Texture2D clearBt;
-	selection currentSel; 
+	GeneralSelection currentSel; 
 	StatusMachine sMachine; 
 	RoundCounter currentRC;
 	Transform root, rootB; 
@@ -51,7 +51,7 @@ public class TutorStageC : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		clearBt = new Texture2D(20,20);
-		currentSel = Camera.main.GetComponent<selection>();
+		currentSel = Camera.main.GetComponent<GeneralSelection>();
 		currentRC = Camera.main.GetComponent<RoundCounter>();
 		MainCharacter = currentRC.playerA;
 		sMachine = GameObject.Find("StatusMachine").GetComponent<StatusMachine>();

@@ -4,11 +4,14 @@
 *.suo
 *.mdb
 *.dll
-obj/
-bin/
+obj
+bin
 
 # mstest test results
 TestResults
 
 *.meta
-Library/
+Library
+Library/metadata
+Library/metatdata/ff
+Temp

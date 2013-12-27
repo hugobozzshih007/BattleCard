@@ -4,7 +4,7 @@ using System.Collections;
 public class FollowCam : MonoBehaviour {
 	NpcPlayer npc;
 	//public Texture2D UpArrow, DownArrow, LeftArrow, RightArrow; 
-	selection currentSel; 
+	GeneralSelection currentSel; 
 	Transform currentInMove;
 	RoundCounter RC; 
 	Vector3 oldCamPosition = new Vector3();
@@ -35,7 +35,7 @@ public class FollowCam : MonoBehaviour {
 	void Start () {
 		barWidth = Screen.height / 72.0f;
 		npc = GameObject.Find("NpcPlayer").GetComponent<NpcPlayer>();
-		currentSel = transform.GetComponent<selection>();
+		currentSel = transform.GetComponent<GeneralSelection>();
 		sMachine = GameObject.Find("StatusMachine").GetComponent<StatusMachine>();
 		RC = transform.GetComponent<RoundCounter>();
 		up = new Rect(0.0f, 0.0f, Screen.width, barWidth); 

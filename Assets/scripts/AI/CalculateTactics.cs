@@ -7,7 +7,7 @@ using BuffUtility;
 
 public class CalculateTactics : MonoBehaviour {
 	PlacePrizes pp;
-	selection currentSel;
+	GeneralSelection currentSel;
 	AttackCalFX atkCal; 
 	RoundCounter currentRC; 
 	const float singleUnit = 6.9282f; 
@@ -25,7 +25,7 @@ public class CalculateTactics : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		allMaps = GameObject.Find("Maps").transform.childCount;
-		currentSel = Camera.mainCamera.GetComponent<selection>();
+		currentSel = Camera.mainCamera.GetComponent<GeneralSelection>();
 		atkCal = Camera.mainCamera.GetComponent<AttackCalFX>();
 		currentRC = Camera.mainCamera.GetComponent<RoundCounter>();
 		buffInfo = Camera.mainCamera.GetComponent<BuffInfoUI>();

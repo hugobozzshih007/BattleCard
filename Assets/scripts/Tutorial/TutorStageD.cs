@@ -5,7 +5,7 @@ using System.Collections.Generic;
 public class TutorStageD : MonoBehaviour {
 	public Transform MainCharacter; 
 	RoundCounter currentRC; 
-	selection currentSel; 
+	GeneralSelection currentSel; 
 	bool showUI = false;
 	Rect rectContinue = new Rect();
 	Tutorial tutorMom; 
@@ -35,7 +35,7 @@ public class TutorStageD : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		currentRC = Camera.main.GetComponent<RoundCounter>();
-		currentSel = Camera.main.GetComponent<selection>();
+		currentSel = Camera.main.GetComponent<GeneralSelection>();
 		tutorMom = transform.GetComponent<Tutorial>();
 		rectContinue = tutorMom.GetContinueRect();
 		sMachine = GameObject.Find("StatusMachine").GetComponent<StatusMachine>();

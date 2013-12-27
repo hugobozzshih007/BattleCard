@@ -20,13 +20,13 @@ public class MoveCharacter : MonoBehaviour {
 	int init = 0;
 	public bool MoveMode = false;
 	bool facingTower = false;
-	selection currentSelect;
+	GeneralSelection currentSelect;
 	CharacterPassive cPass;
 	MainUI mUI;
 	FollowCam fCam;
 	// Use this for initialization
 	void Start () {
-		currentSelect = transform.GetComponent<selection>();
+		currentSelect = transform.GetComponent<GeneralSelection>();
 		mUI = transform.GetComponent<MainUI>();
 		fCam = transform.GetComponent<FollowCam>();
 	}

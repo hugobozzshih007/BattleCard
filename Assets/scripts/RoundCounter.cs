@@ -34,7 +34,7 @@ public class RoundCounter : MonoBehaviour {
 	RoundUI rUI;
 	MainUI mUI;
 	MainInfoUI infoUI;
-	selection currentSel;
+	GeneralSelection currentSel;
 	NpcPlayer npc; 
 	StatusMachine sMachine;
 	GuardianStorage guardians;
@@ -64,7 +64,7 @@ public class RoundCounter : MonoBehaviour {
 		rUI = transform.GetComponent<RoundUI>();
 		mUI = transform.GetComponent<MainUI>();
 		infoUI = transform.GetComponent<MainInfoUI>();
-		currentSel = transform.GetComponent<selection>();
+		currentSel = transform.GetComponent<GeneralSelection>();
 		
 		CamOffest = MidObject.position - transform.position;
 		
@@ -606,7 +606,7 @@ public class RoundCounter : MonoBehaviour {
 	}
 	
 	void updatePlaying(){
-		selection currentSel = transform.GetComponent<selection>();
+		GeneralSelection currentSel = transform.GetComponent<GeneralSelection>();
 		if(!npcMode){
 			if(Network.peerType == NetworkPeerType.Client){
 				currentSel.Playing = currentSel.BPlaying;
@@ -664,8 +664,8 @@ public class RoundCounter : MonoBehaviour {
 					updateRound(PlayerBChesses);
 					updateAllCharactersPowers();
 					updateSkillCDRounds();
-					transform.GetComponent<selection>().APlaying=false;
-					transform.GetComponent<selection>().BPlaying=true;
+					transform.GetComponent<GeneralSelection>().APlaying=false;
+					transform.GetComponent<GeneralSelection>().BPlaying=true;
 					updatePlaying();
 					UpdateNPCplayerList();
 					revivePlayer(playerB);
@@ -701,8 +701,8 @@ public class RoundCounter : MonoBehaviour {
 					updateRound(PlayerAChesses);
 					updateAllCharactersPowers();
 					updateSkillCDRounds();
-					transform.GetComponent<selection>().APlaying=true;
-					transform.GetComponent<selection>().BPlaying=false;
+					transform.GetComponent<GeneralSelection>().APlaying=true;
+					transform.GetComponent<GeneralSelection>().BPlaying=false;
 					updatePlaying();
 					revivePlayer(playerA);
 					roundCounter += 1;

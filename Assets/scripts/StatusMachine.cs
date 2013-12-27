@@ -10,10 +10,10 @@ public class StatusMachine : MonoBehaviour {
 	public bool TutorialBusy = false;
 	bool lastBusy = true;
 	NpcPlayer npc; 
-	selection currentSel; 
+	GeneralSelection currentSel; 
 	// Use this for initialization
 	void Start () {
-		currentSel = Camera.mainCamera.GetComponent<selection>();
+		currentSel = Camera.mainCamera.GetComponent<GeneralSelection>();
 		if(Application.loadedLevelName == "summon_land_tutorials"){
 			TutorialMode = true;
 			//GameObject.Find("Tutorial").GetComponent<Tutorial>().InitTutorial();

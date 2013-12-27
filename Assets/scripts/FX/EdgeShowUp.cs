@@ -3,11 +3,11 @@ using UnityEngine;
 
 public class EdgeShowUp : ImageEffectBase {
 	public Color SideAColor, SideBColor;
-	selection currentSel;  
+	GeneralSelection currentSel;  
 	// Use this for initialization
 	void Start () {
 		camera.depthTextureMode = DepthTextureMode.DepthNormals;
-		currentSel = Camera.main.GetComponent<selection>();
+		currentSel = Camera.main.GetComponent<GeneralSelection>();
 	}
 	
 	Color ChooseColor(){

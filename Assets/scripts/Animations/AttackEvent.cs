@@ -6,14 +6,14 @@ public class AttackEvent : MonoBehaviour {
 	bool fightBackMode = false;
 	bool critiqHit;
 	int playerSide;
-	selection currentSelect;
+	GeneralSelection currentSelect;
 	MainInfoUI chessUI;
 	//StatusMachine sMachine; 
 	//CalculateTactics cTatic;
 	
 	void Start(){
 		chessUI = Camera.mainCamera.GetComponent<MainInfoUI>();
-		currentSelect = Camera.mainCamera.GetComponent<selection>();
+		currentSelect = Camera.mainCamera.GetComponent<GeneralSelection>();
 		//sMachine = GameObject.Find("StatusMachine").GetComponent<StatusMachine>();
 		//cTatic = GameObject.Find("NpcPlayer").GetComponent<CalculateTactics>();
 	}

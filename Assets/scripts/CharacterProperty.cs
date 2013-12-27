@@ -71,7 +71,7 @@ public class CharacterProperty : MonoBehaviour {
 	float turnsWidth = 62.0f/1280.0f*Screen.width;
 	float turnsHeight = 12.0f/720.0f*Screen.height;
 	
-	selection currentSel;
+	GeneralSelection currentSel;
 	  
 	// Use this for initialization
 	void Start () {
@@ -126,7 +126,7 @@ public class CharacterProperty : MonoBehaviour {
 			WaitRounds = 0;
 		}
 		CmdTimes = 3; 
-		currentSel = Camera.mainCamera.GetComponent<selection>();
+		currentSel = Camera.mainCamera.GetComponent<GeneralSelection>();
 	
 		if(!currentSel.NpcPlaying && Player==2){
 			CmdTimes = 0;

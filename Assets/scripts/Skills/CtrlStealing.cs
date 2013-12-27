@@ -9,7 +9,7 @@ public class CtrlStealing : MonoBehaviour, CommonSkill{
 	IList aTerritory, bTerritory;
 	int skillRate;
 	RoundCounter chessStorage;
-	selection currentSel; 
+	GeneralSelection currentSel; 
 	Transform selectedMap, target;
 	SkillSlidingUI sUI;
 	NpcPlayer npc;
@@ -17,7 +17,7 @@ public class CtrlStealing : MonoBehaviour, CommonSkill{
 	// Use this for initialization
 	void Start () {
 		chessStorage = Camera.main.GetComponent<RoundCounter>();
-		currentSel = Camera.main.GetComponent<selection>();
+		currentSel = Camera.main.GetComponent<GeneralSelection>();
 		npc = GameObject.Find("NpcPlayer").transform.GetComponent<NpcPlayer>();
 	}
 	

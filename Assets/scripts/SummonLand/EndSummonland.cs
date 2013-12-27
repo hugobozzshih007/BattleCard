@@ -8,7 +8,7 @@ public class EndSummonland : MonoBehaviour {
 	//public int VictoryRate = 70;
 	bool AWon, BWon,DrawGame;   
 	Material matToChange;
-	selection currentSel; 
+	GeneralSelection currentSel; 
 	BuffInfoUI buffUI;
 	RoundCounter currentRC;
 	IList leftMaps = new List<Transform>();
@@ -35,7 +35,7 @@ public class EndSummonland : MonoBehaviour {
 		sMachine = GameObject.Find("StatusMachine").transform.GetComponent<StatusMachine>();
 		AWon = BWon = DrawGame = AWin = BWin =false;
 		currentRC = Camera.mainCamera.GetComponent<RoundCounter>();
-		currentSel = Camera.mainCamera.GetComponent<selection>();
+		currentSel = Camera.mainCamera.GetComponent<GeneralSelection>();
 		buffUI = Camera.mainCamera.GetComponent<BuffInfoUI>();
 		mInfoUI = Camera.mainCamera.GetComponent<MainInfoUI>();
 		wUI = transform.GetComponent<WinningUI>();

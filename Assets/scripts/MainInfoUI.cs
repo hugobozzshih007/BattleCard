@@ -31,7 +31,7 @@ public class MainInfoUI : MonoBehaviour {
 	InfoUI iconVault; 
 	int allMaps;
 	RoundCounter rc;
-	selection currentSel;  
+	GeneralSelection currentSel;  
 	float _mainAlpha, _targetAlpha, _castAlpha;
 	int delayCounter = 200;
 	Vector2 mousePos;
@@ -112,7 +112,7 @@ public class MainInfoUI : MonoBehaviour {
 		talkingStyle.fontSize = 16;
 		talkingStyle.wordWrap = true;
 		talkingStyle.alignment = TextAnchor.MiddleCenter;
-		currentSel = transform.GetComponent<selection>();
+		currentSel = transform.GetComponent<GeneralSelection>();
 		LeftRounds = 1;
 		rc.SetPlayerChesses();
 	}

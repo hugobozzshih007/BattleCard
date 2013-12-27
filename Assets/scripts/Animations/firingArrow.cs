@@ -17,7 +17,7 @@ public class firingArrow : MonoBehaviour {
 	bool gotPassive = false; 
 	Transform attacker, target;
 	Transform explosion;
-	selection currentSelect; 
+	GeneralSelection currentSelect; 
 	IList ignoreList;
 	MainInfoUI chessUI;
 	RoundCounter rc;
@@ -62,7 +62,7 @@ public class firingArrow : MonoBehaviour {
 	void Start () {
 		//cTactic = GameObject.Find("NpcPlayer").GetComponent<CalculateTactics>();
 		chessUI = Camera.mainCamera.GetComponent<MainInfoUI>();
-		currentSelect = Camera.mainCamera.GetComponent<selection>();
+		currentSelect = Camera.mainCamera.GetComponent<GeneralSelection>();
 		hitClip = HitSound;
 	}
 	
