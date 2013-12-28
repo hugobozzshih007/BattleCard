@@ -107,7 +107,7 @@ public class RoundCounter : MonoBehaviour {
 			allMap.Add(m);
 		}
 		foreach(Transform m in allMap){
-			Identy mID = m.GetComponent<Identy>();
+			Identity mID = m.GetComponent<Identity>();
 			if(mID.PrizeRed || mID.PrizeYel){
 				prizes = true;
 				break;

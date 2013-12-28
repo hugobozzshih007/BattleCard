@@ -47,7 +47,7 @@ public class AquirePrize : MonoBehaviour {
 				transform.position = noWhere;
 				//restore map's prize
 				if(posMap!=null){
-					Identy posMapID = posMap.GetComponent<Identy>();
+					Identity posMapID = posMap.GetComponent<Identity>();
 					posMapID.Prize = null;
 					pp.RemovePrizeMap(posMap);
 				}

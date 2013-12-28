@@ -266,9 +266,11 @@
      <Compile Include="Assets\scripts\Buffs\BuffList.cs" />
      <Compile Include="Assets\scripts\Buffs\BuffSlidingUI.cs" />
      <Compile Include="Assets\scripts\Buffs\BuffType.cs" />
-     <Compile Include="Assets\scripts\CharacterPassive.cs" />
-     <Compile Include="Assets\scripts\CharacterProperty.cs" />
-     <Compile Include="Assets\scripts\CharacterSelect.cs" />
+     <Compile Include="Assets\scripts\Character\CharacterPassive.cs" />
+     <Compile Include="Assets\scripts\Character\CharacterProperty.cs" />
+     <Compile Include="Assets\scripts\Character\CharacterSelect.cs" />
+     <Compile Include="Assets\scripts\Character\MoveCharacter.cs" />
+     <Compile Include="Assets\scripts\Character\Tower.cs" />
      <Compile Include="Assets\scripts\ClipCursorScript.cs" />
      <Compile Include="Assets\scripts\CommandType.cs" />
      <Compile Include="Assets\scripts\ConnectMasterServer.cs" />
@@ -297,7 +299,7 @@
      <Compile Include="Assets\scripts\FightBack.cs" />
      <Compile Include="Assets\scripts\GUItest.cs" />
      <Compile Include="Assets\scripts\GeneralSelection.cs" />
-     <Compile Include="Assets\scripts\Identy.cs" />
+     <Compile Include="Assets\scripts\Identity.cs" />
      <Compile Include="Assets\scripts\InfoUI.cs" />
      <Compile Include="Assets\scripts\LoadingFadeIn.cs" />
      <Compile Include="Assets\scripts\LoadingScreen.cs" />
@@ -305,7 +307,6 @@
      <Compile Include="Assets\scripts\MainUI.cs" />
      <Compile Include="Assets\scripts\ManaCounter.cs" />
      <Compile Include="Assets\scripts\MapHelper.cs" />
-     <Compile Include="Assets\scripts\MoveCharacter.cs" />
      <Compile Include="Assets\scripts\NameMaps.cs" />
      <Compile Include="Assets\scripts\NetworkLevelLoad.cs" />
      <Compile Include="Assets\scripts\NumIconVault.cs" />
@@ -324,9 +325,6 @@
      <Compile Include="Assets\scripts\RoundUI.cs" />
      <Compile Include="Assets\scripts\SelfDestroy.cs" />
      <Compile Include="Assets\scripts\SixGonRays.cs" />
-     <Compile Include="Assets\scripts\SkillProperty.cs" />
-     <Compile Include="Assets\scripts\SkillSets.cs" />
-     <Compile Include="Assets\scripts\SkillSlidingUI.cs" />
      <Compile Include="Assets\scripts\Skills\BombAttack.cs" />
      <Compile Include="Assets\scripts\Skills\ChaosAid.cs" />
      <Compile Include="Assets\scripts\Skills\CtrlStealing.cs" />
@@ -343,7 +341,10 @@
      <Compile Include="Assets\scripts\Skills\OneMoreAct.cs" />
      <Compile Include="Assets\scripts\Skills\PoisonAid.cs" />
      <Compile Include="Assets\scripts\Skills\PosExchange.cs" />
-     <Compile Include="Assets\scripts\Skills\SkillInterface.cs" />
+     <Compile Include="Assets\scripts\Skills\SkillBase\SkillInterface.cs" />
+     <Compile Include="Assets\scripts\Skills\SkillBase\SkillProperty.cs" />
+     <Compile Include="Assets\scripts\Skills\SkillBase\SkillSets.cs" />
+     <Compile Include="Assets\scripts\Skills\SkillBase\SkillSlidingUI.cs" />
      <Compile Include="Assets\scripts\Skills\SkillType.cs" />
      <Compile Include="Assets\scripts\Skills\Suicide.cs" />
      <Compile Include="Assets\scripts\Skills\WingBroken.cs" />
@@ -364,7 +365,6 @@
      <Compile Include="Assets\scripts\TimeOut.cs" />
      <Compile Include="Assets\scripts\Tools\DraggableGUIElement.cs" />
      <Compile Include="Assets\scripts\Tools\MeshMerger.cs" />
-     <Compile Include="Assets\scripts\Tower.cs" />
      <Compile Include="Assets\scripts\Tutorial\ArrowUI.cs" />
      <Compile Include="Assets\scripts\Tutorial\EndStage.cs" />
      <Compile Include="Assets\scripts\Tutorial\InitStage.cs" />

@@ -38,7 +38,7 @@ public class NameMaps : MonoBehaviour {
 	public void ToggleGrid(bool hex){
 		if(hex){
 			foreach(Transform unit in entireUnits){
-				Identy uID = unit.GetComponent<Identy>();
+				Identity uID = unit.GetComponent<Identity>();
 				
 				if(rc.PlayerATerritory.Contains(unit)){
 					unit.renderer.material = mapTerritoryA;
@@ -53,7 +53,7 @@ public class NameMaps : MonoBehaviour {
 			}
 		}else{
 			foreach(Transform unit in entireUnits){
-				Identy uID = unit.GetComponent<Identy>();
+				Identity uID = unit.GetComponent<Identity>();
 				unit.renderer.material = mapOrigin;
 				uID.originalMat = mapOrigin;
 			}

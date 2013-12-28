@@ -63,7 +63,7 @@ public class AttackCalculation{
 		Transform allMap = GameObject.Find("Maps").transform;
 		int mapUnitNum = allMap.GetChildCount();
 		for(int i=0;i<mapUnitNum;i++){
-			allMap.GetChild(i).GetComponent<Identy>().step = 0;
+			allMap.GetChild(i).GetComponent<Identity>().step = 0;
 			//print(allMap.GetChild(i).name + ".step=" + allMap.GetChild(i).GetComponent<Identy>().step);
 		}
 	}

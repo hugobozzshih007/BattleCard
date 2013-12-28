@@ -81,7 +81,7 @@ public class TutorStageD : MonoBehaviour {
 		showUI = true;
 		currentSel.chess = null;
 		
-		Identy rootID = root.GetComponent<Identy>();
+		Identity rootID = root.GetComponent<Identity>();
 		foreach(Transform m in rootID.neighbor){
 			if(m!=null){
 				roundMaps.Add(m);
@@ -101,7 +101,7 @@ public class TutorStageD : MonoBehaviour {
 	
 	bool CheckLessonH(){
 		bool check = false;
-		Identy mID = prizeMap.GetComponent<Identy>();
+		Identity mID = prizeMap.GetComponent<Identity>();
 		if(!mID.PrizeRed)
 			check = true;
 		if(!check && mainP.CmdTimes==0){

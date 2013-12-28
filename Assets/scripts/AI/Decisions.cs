@@ -327,7 +327,7 @@ public class Decisions : MonoBehaviour {
 		possiblePos.CopyTo(pPos,0);
 		
 		Transform currentPos = chess.GetComponent<CharacterSelect>().getMapPosition();
-		Transform[] closestPos = currentPos.GetComponent<Identy>().neighbor;
+		Transform[] closestPos = currentPos.GetComponent<Identity>().neighbor;
 		
 		int ran = Random.Range(0, pPos.Length-1);
 		

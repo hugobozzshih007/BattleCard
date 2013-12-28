@@ -209,7 +209,7 @@ public class TutorStageC : MonoBehaviour {
 				arrowOn[1] = aUI.HideArrow();
 				IList territory = new List<Transform>();
 				Transform currentPos = mainS.getMapPosition();
-				Identy posID = currentPos.GetComponent<Identy>();
+				Identity posID = currentPos.GetComponent<Identity>();
 				foreach(Transform m in posID.neighbor){
 					if(m!=null)
 						territory.Add(m);

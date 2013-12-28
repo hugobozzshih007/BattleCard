@@ -99,7 +99,7 @@ public class TutorStageB : MonoBehaviour {
 		root = GameObject.Find("unit_start_point_A").transform;
 		rootB = GameObject.Find("unit_start_point_B").transform;
 		int index = Random.Range(0,5);
-		opMap = root.GetComponent<Identy>().neighbor[index];
+		opMap = root.GetComponent<Identity>().neighbor[index];
 		pSummoner.ResetSummoner(true, null, opMap);
 		tutorMom.ShowContinue(true);
 		chessUI.SomeoneTaking(MainCharacter, content[0], false);
@@ -118,13 +118,13 @@ public class TutorStageB : MonoBehaviour {
 	void PrepareLessonE(){
 		
 		int index = Random.Range(0,5);
-		opMap = root.GetComponent<Identy>().neighbor[index];
+		opMap = root.GetComponent<Identity>().neighbor[index];
 		
-		foreach(Transform m in root.GetComponent<Identy>().neighbor){
+		foreach(Transform m in root.GetComponent<Identity>().neighbor){
 			if(m!=null){
-				foreach(Transform n in m.GetComponent<Identy>().neighbor){
+				foreach(Transform n in m.GetComponent<Identity>().neighbor){
 					if(n!=null){
-						foreach(Transform o in n.GetComponent<Identy>().neighbor){
+						foreach(Transform o in n.GetComponent<Identity>().neighbor){
 							if(o!=null){
 								if(!currentRC.PlayerATerritory.Contains(o)){
 									currentRC.AddTerritory(o, 1);
@@ -137,11 +137,11 @@ public class TutorStageB : MonoBehaviour {
 			}
 		}
 		
-		foreach(Transform m in rootB.GetComponent<Identy>().neighbor){
+		foreach(Transform m in rootB.GetComponent<Identity>().neighbor){
 			if(m!=null){
-				foreach(Transform n in m.GetComponent<Identy>().neighbor){
+				foreach(Transform n in m.GetComponent<Identity>().neighbor){
 					if(n!=null){
-						foreach(Transform o in n.GetComponent<Identy>().neighbor){
+						foreach(Transform o in n.GetComponent<Identity>().neighbor){
 							if(o!=null){
 								if(!currentRC.PlayerBTerritory.Contains(o)){
 									currentRC.AddTerritory(o, 2);
@@ -152,7 +152,7 @@ public class TutorStageB : MonoBehaviour {
 				}
 			}
 		}
-		foreach(Transform m in opMap.GetComponent<Identy>().neighbor){
+		foreach(Transform m in opMap.GetComponent<Identity>().neighbor){
 			if(m!=null){
 				if(!currentRC.PlayerBTerritory.Contains(m)){
 					currentRC.AddTerritory(m, 2);

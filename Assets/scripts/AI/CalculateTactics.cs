@@ -421,7 +421,7 @@ public class CalculateTactics : MonoBehaviour {
 	TacticPoint GetMeleeAttackPoint(Transform map, Transform gf){
 		IList attackableList = new List<Transform>();
 		int sideMapCount = currentRC.PlayerBTerritory.Count;
-		Identy mapID = map.GetComponent<Identy>();
+		Identity mapID = map.GetComponent<Identity>();
 		int currentBuff = BuffCalculation.BuffXValue(buffInfo.GetTerritoryPersent(2)); 
 		//int currentRedBuff = BuffCalculation.BuffXValue(buffInfo.GetTerritoryPersent(1));
 		//int potentailBuff = 0;
@@ -747,7 +747,7 @@ public class CalculateTactics : MonoBehaviour {
 	TacticPoint GetExpandPoint(Transform map, Transform gf){
 		TacticPoint tp = new TacticPoint(gf, Tactics.Expend,map,0);
 		CharacterProperty gfp = gf.GetComponent<CharacterProperty>();
-		Identy mapID = map.GetComponent<Identy>();
+		Identity mapID = map.GetComponent<Identity>();
 		// AI always plays as player2
 		if(!gfp.Summoner && !gfp.LeadingCharacter){
 			float mapFact = GetUnitFact(map);
@@ -764,7 +764,7 @@ public class CalculateTactics : MonoBehaviour {
 			IList aroundMaps = new List<Transform>();
 			foreach(Transform unit in mapID.neighbor){
 				if(unit != null ){
-					Identy unitID = unit.GetComponent<Identy>();
+					Identity unitID = unit.GetComponent<Identity>();
 					if(!currentRC.PlayerBTerritory.Contains(unit) && unitID.FixedSide!=1 ){
 						aroundMaps.Add(unit);
 					}
@@ -785,7 +785,7 @@ public class CalculateTactics : MonoBehaviour {
 	
 	float GetUnitFact(Transform unit){
 		float unitFact = 0.0f;
-		Identy unitID = unit.GetComponent<Identy>();
+		Identity unitID = unit.GetComponent<Identity>();
 		if(currentRC.PlayerATerritory.Contains(unit) && unitID.FixedSide==3){
 			unitFact = 1.5f;
 			Transform aChess = null;
@@ -818,7 +818,7 @@ public class CalculateTactics : MonoBehaviour {
 	
 	float GetEmptyUnitFact(Transform unit){
 		float unitFact = 0.0f;
-		Identy unitID = unit.GetComponent<Identy>();
+		Identity unitID = unit.GetComponent<Identity>();
 		if(unitID.FixedSide == 3 && currentRC.PlayerATerritory.Contains(unit)){
 			unitFact = 0.5f;
 		}else if(currentRC.PlayerBTerritory.Contains(unit)){

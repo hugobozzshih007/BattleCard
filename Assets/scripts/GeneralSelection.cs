@@ -296,8 +296,8 @@ public class GeneralSelection : MonoBehaviour {
 			if(selectMode)
 				switchMask = MaskMap;
 			if(Physics.Raycast(ray, out hit, castLength,switchMask)){
-				if(hit.transform.GetComponent<Identy>() != null){
-					if(!hit.transform.GetComponent<Identy>().MapUnit){
+				if(hit.transform.GetComponent<CharacterProperty>()){
+					if(!hit.transform.GetComponent<CharacterProperty>().Tower){
 						if(selectMode)
 							CancelCmds();
 						chess = hit.transform;
@@ -367,8 +367,8 @@ public class GeneralSelection : MonoBehaviour {
 			Ray ray = camera.ScreenPointToRay(Input.mousePosition);
 			RaycastHit hit;
 			if(Physics.Raycast(ray, out hit, castLength,MaskMap)){
-				if(hit.transform.GetComponent<Identy>()!=null){
-					if(hit.transform.GetComponent<Identy>().MapUnit){
+				if(hit.transform.GetComponent<Identity>()!=null){
+					if(hit.transform.GetComponent<Identity>().MapUnit){
 						sel = hit.transform;
 						if(neighbors.Contains(sel)){
 							if(!skillMode)
@@ -629,7 +629,7 @@ public class GeneralSelection : MonoBehaviour {
 		Transform allMap = GameObject.Find("Maps").transform;
 		int mapUnitNum = allMap.GetChildCount();
 		for(int i=0;i<mapUnitNum;i++){
-			allMap.GetChild(i).GetComponent<Identy>().step = 0;
+			allMap.GetChild(i).GetComponent<Identity>().step = 0;
 			//print(allMap.GetChild(i).name + ".step=" + allMap.GetChild(i).GetComponent<Identy>().step);
 		}
 	}
@@ -731,19 +731,19 @@ public class GeneralSelection : MonoBehaviour {
 			}
 			
 			if(chessProperty.Summoner || chessProperty.LeadingCharacter || chessProperty.Tower){
-				foreach(Transform territory in locationMap.GetComponent<Identy>().neighbor){
+				foreach(Transform territory in locationMap.GetComponent<Identity>().neighbor){
 					//tower defense
 					if(chessProperty.Tower && territory!=null){
-						Identy territoryID = territory.GetComponent<Identy>();
+						Identity territoryID = territory.GetComponent<Identity>();
 						territoryID.FixedSide = chessProperty.Player;
-						locationMap.GetComponent<Identy>().FixedSide = chessProperty.Player;
+						locationMap.GetComponent<Identity>().FixedSide = chessProperty.Player;
 						if(!npcMode){
 							networkView.RPC("UpdateMapFixedSide", RPCMode.Others, territory.name, territoryID.FixedSide);
 							networkView.RPC("UpdateMapFixedSide", RPCMode.Others, locationMap.name, territoryID.FixedSide);
 						}
 					}
 					if(territory!=null){
-						Identy territoryID = territory.GetComponent<Identy>();
+						Identity territoryID = territory.GetComponent<Identity>();
 						if(territoryID.FixedSide==3 || territoryID.FixedSide == chessProperty.Player ){
 							if(!players.IsInsideTerritory(territory,playerSide)&& territory!=null){
 								players.AddTerritory(territory,playerSide);
@@ -763,7 +763,7 @@ public class GeneralSelection : MonoBehaviour {
 				}
 			}
 			if(!players.IsInsideTerritory(locationMap,playerSide)&& locationMap!=null){
-				if(locationMap.GetComponent<Identy>().FixedSide == 3 || locationMap.GetComponent<Identy>().FixedSide == chessProperty.Player ){
+				if(locationMap.GetComponent<Identity>().FixedSide == 3 || locationMap.GetComponent<Identity>().FixedSide == chessProperty.Player ){
 					players.AddTerritory(locationMap,playerSide);
 					if(players.IsInsideTerritory(locationMap,theOtherSide)){
 						players.RemoveTerritory(locationMap,theOtherSide);
@@ -965,7 +965,7 @@ public class GeneralSelection : MonoBehaviour {
 			CleanMapsMat();
 			Transform allMap = GameObject.Find("Maps").transform;
 			for(int i =0; i< allMap.childCount; i++){
-				Identy id = allMap.GetChild(i).GetComponent<Identy>();
+				Identity id = allMap.GetChild(i).GetComponent<Identity>();
 				networkView.RPC("RPCUpdateMapID", RPCMode.Others,allMap.GetChild(i).name,id.PrizeRed, id.PrizeYel);  
 			}
 			CleanMapsMat();
@@ -974,7 +974,7 @@ public class GeneralSelection : MonoBehaviour {
 	
 	public void CheckPrizes(){
 		foreach(Transform map in players.PlayerATerritory){
-			Identy mapID = map.GetComponent<Identy>();
+			Identity mapID = map.GetComponent<Identity>();
 			if(mapID.PrizeRed){
 				mapID.PrizeRed = false;
 				int num = ps.PrizeNum();
@@ -993,7 +993,7 @@ public class GeneralSelection : MonoBehaviour {
 			}
 		}
 		foreach(Transform map in players.PlayerBTerritory){
-			Identy mapID = map.GetComponent<Identy>();
+			Identity mapID = map.GetComponent<Identity>();
 			if(mapID.PrizeYel){
 				mapID.PrizeYel = false;
 				int num = ps.PrizeNum();
@@ -1016,7 +1016,7 @@ public class GeneralSelection : MonoBehaviour {
 	
 	Material GetOriginalMat(Transform map){
 		Material closeMat = null;
-		Identy id = map.GetComponent<Identy>();
+		Identity id = map.GetComponent<Identity>();
 		if(id.MapUnit){
 			if(id.PrizeRed)
 				closeMat = originalMat[1];
@@ -1031,7 +1031,7 @@ public class GeneralSelection : MonoBehaviour {
 	
 	Material GetCloseByMat(Transform map){
 		Material closeMat = null;
-		Identy id = map.GetComponent<Identy>();
+		Identity id = map.GetComponent<Identity>();
 		if(id.MapUnit){
 			if(id.PrizeRed)
 				closeMat = closeBy[1];
@@ -1045,7 +1045,7 @@ public class GeneralSelection : MonoBehaviour {
 	
 	Material GetRollOverMat(Transform map){
 		Material closeMat = null;
-		Identy id = map.GetComponent<Identy>();
+		Identity id = map.GetComponent<Identity>();
 		if(id.MapUnit){
 			if(id.PrizeRed)
 				closeMat = rollOver[1];
@@ -1059,7 +1059,7 @@ public class GeneralSelection : MonoBehaviour {
 	
 	Material GetEnemyMat(Transform map){
 		Material closeMat = null;
-		Identy id = map.GetComponent<Identy>();
+		Identity id = map.GetComponent<Identity>();
 		if(id.MapUnit){
 			if(id.PrizeRed)
 				closeMat = rollOverEnemy[1];
@@ -1348,7 +1348,7 @@ public class GeneralSelection : MonoBehaviour {
 	[RPC]
 	void RPCUpdateMapID(string selName, bool red, bool yel){
 		Transform selection = GameObject.Find(selName).transform;
-		Identy selID = selection.GetComponent<Identy>();
+		Identity selID = selection.GetComponent<Identity>();
 		selID.PrizeRed = red; 
 		selID.PrizeYel = yel;
 	}
@@ -1582,7 +1582,7 @@ public class GeneralSelection : MonoBehaviour {
 	[RPC]
 	void UpdateMapFixedSide(string mapName, int fixedSide){
 		Transform map = GameObject.Find(mapName).transform;
-		Identy mapID = map.GetComponent<Identy>();
+		Identity mapID = map.GetComponent<Identity>();
 		mapID.FixedSide = fixedSide;
 	}
 }

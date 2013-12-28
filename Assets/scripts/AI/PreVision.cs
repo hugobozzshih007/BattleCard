@@ -34,7 +34,7 @@ public class PreVision{
 			finalDest = dirMapA;
 		
 		foreach(Transform m in roundMaps){
-			Identy mID = m.GetComponent<Identy>();
+			Identity mID = m.GetComponent<Identity>();
 			if(mID.PrizeYel)
 				finalDest = m;
 		}
@@ -77,7 +77,7 @@ public class PreVision{
 		IList targetMaps = new List<Transform>();
 		RoundCounter rc = Camera.mainCamera.GetComponent<RoundCounter>();
 		foreach(Transform m in rc.PlayerATerritory){
-			Identy mID = m.GetComponent<Identy>();
+			Identity mID = m.GetComponent<Identity>();
 			int count = 0;  
 			foreach(Transform n in mID.neighbor){
 				if((n!=null)&& rc.PlayerATerritory.Contains(n))

@@ -91,7 +91,7 @@ public class InitStage : MonoBehaviour {
 			Transform theMap = playerB.GetComponent<CharacterSelect>().getMapPosition();
 			if(theMap!=null){
 				IList maps = new List<Transform>();
-				foreach(Transform m in theMap.GetComponent<Identy>().neighbor){
+				foreach(Transform m in theMap.GetComponent<Identity>().neighbor){
 					if(m!=null)
 						maps.Add(m);
 				}

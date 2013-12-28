@@ -28,7 +28,7 @@ public class PlacePrizes : MonoBehaviour {
 		unitMaps = currentRC.GetWhiteTerritory();
 		
 		foreach(Transform map in unitMaps){
-			Identy mapID = map.GetComponent<Identy>();
+			Identity mapID = map.GetComponent<Identity>();
 			if(mapID.PrizeRed || mapID.PrizeYel)
 				unitMaps.Remove(map);
 		}
@@ -49,18 +49,18 @@ public class PlacePrizes : MonoBehaviour {
 		}
 		foreach(int i in yels){
 			Transform map = unitMaps[i] as Transform;
-			Identy mapID = map.GetComponent<Identy>();
+			Identity mapID = map.GetComponent<Identity>();
 			mapID.PrizeYel = true;
 		}
 		foreach(int i in reds){
 			Transform map = unitMaps[i] as Transform;
-			Identy mapID = map.GetComponent<Identy>();
+			Identity mapID = map.GetComponent<Identity>();
 			mapID.PrizeRed = true;
 		}
 	}
 	
 	public void PlacePrize(int mode, Transform map){
-		Identy mapID = map.GetComponent<Identy>();
+		Identity mapID = map.GetComponent<Identity>();
 		if(mode == 1){
 			mapID.PrizeRed = true;
 		}else if(mode == 2){

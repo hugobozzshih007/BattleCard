@@ -18,7 +18,7 @@ namespace MapUtility{
 		public static IList GetAroundGFs(Transform map){
 			IList GFs = new List<Transform>();
 			
-			Identy mapID = map.GetComponent<Identy>();
+			Identity mapID = map.GetComponent<Identity>();
 			foreach(Transform unit in mapID.neighbor){
 				if(unit != null){
 					if(IsMapOccupied(unit)){
