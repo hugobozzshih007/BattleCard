@@ -128,7 +128,7 @@ public class TutorStageA : MonoBehaviour {
 		Transform pointedMap = null;
 		
 		if(arrowOn[0]){
-			if(currentSel.chess == MainCharacter){
+			if(currentSel.ChessInSelection == MainCharacter){
 				arrowOn[0] = aUI.HideArrow();
 				currentSel.updateMapSteps();
 				mainS.MoveRangeList.Clear();
@@ -213,7 +213,7 @@ public class TutorStageA : MonoBehaviour {
 				}else if(contentIndex == 4){
 					tutorMom.ResetPlayerA(MainCharacter);
 					tutorMom.ShowContinue(false);
-					chessUI.FadeOutUI();
+					//chessUI.FadeOutUI();
 					subLessonA = true;
 					sMachine.TutorialBusy = false;
 					UpdateScreenPos(MainCharacter);
@@ -229,7 +229,7 @@ public class TutorStageA : MonoBehaviour {
 					tutorMom.ResetPlayerA(MainCharacter);
 					sMachine.TutorialBusy = false;
 					tutorMom.ShowContinue(false);
-					chessUI.FadeOutUI();
+					//chessUI.FadeOutUI();
 					subLessonB = true;
 					UpdateScreenPos(MainCharacter);
 					arrowRect = new Rect(screenPos.x+25, screenPos.y-105, 64, 64);

@@ -79,7 +79,7 @@ public class PreVision{
 		foreach(Transform m in rc.PlayerATerritory){
 			Identity mID = m.GetComponent<Identity>();
 			int count = 0;  
-			foreach(Transform n in mID.neighbor){
+			foreach(Transform n in mID.Neighbor){
 				if((n!=null)&& rc.PlayerATerritory.Contains(n))
 					count += 1;
 			}

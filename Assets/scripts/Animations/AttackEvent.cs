@@ -35,12 +35,15 @@ public class AttackEvent : MonoBehaviour {
 			atkCal.FightBack = true;
 			atkCal.CriticalHit = critiqHit;
 			atkCal.SetAttackSequence(Chess,Sel);
-			if(currentSelect.npcMode && playerSide == 2)
-				chessUI.CriticalRight = critiqHit;
-			else
-				chessUI.Critical = critiqHit;
-			chessUI.DelayFadeOut = true;
-			chessUI.TargetFadeIn = false;
+			if(currentSelect.npcMode && playerSide == 2){
+				//NGUI
+				chessUI.ShowHitStatus(critiqHit, 2);
+			}else{
+				//NGUI
+				chessUI.ShowHitStatus(critiqHit, 1);
+			}
+			//NGUI
+			chessUI.DelayDeactivateInfoUI(2);
 		}
 	}
 }

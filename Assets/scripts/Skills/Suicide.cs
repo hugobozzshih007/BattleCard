@@ -22,7 +22,7 @@ public class Suicide : MonoBehaviour, SkillInterface {
 		IList selectionRange = new List<Transform>();
 		Transform thisPosition = attacker.GetComponent<CharacterSelect>().getMapPosition();  
 		selectionRange.Add(thisPosition);  
-		foreach(Transform map in thisPosition.GetComponent<Identity>().neighbor){
+		foreach(Transform map in thisPosition.GetComponent<Identity>().Neighbor){
 			if(map!=null){
 				selectionRange.Add(map);
 			}
@@ -35,7 +35,7 @@ public class Suicide : MonoBehaviour, SkillInterface {
 	{
 		IList atkList = new List<Transform>();
 		Transform localMap = attacker.GetComponent<CharacterSelect>().getMapPosition();
-		Transform[] attackableMaps = localMap.GetComponent<Identity>().neighbor;
+		Transform[] attackableMaps = localMap.GetComponent<Identity>().Neighbor;
 		if(audio.clip != null)
 			audio.Play();
 		MapHelper.SetFX(attacker, BombFX, 2.5f);

@@ -91,7 +91,7 @@ public class InitStage : MonoBehaviour {
 			Transform theMap = playerB.GetComponent<CharacterSelect>().getMapPosition();
 			if(theMap!=null){
 				IList maps = new List<Transform>();
-				foreach(Transform m in theMap.GetComponent<Identity>().neighbor){
+				foreach(Transform m in theMap.GetComponent<Identity>().Neighbor){
 					if(m!=null)
 						maps.Add(m);
 				}
@@ -111,7 +111,7 @@ public class InitStage : MonoBehaviour {
 			GUI.DrawTexture(finalRect, FinalKill);
 			if(GUI.Button(next2Rect, NextBut)){
 				ShowFinal = false; 
-				Camera.mainCamera.GetComponent<MainUI>().InSecondTutor = false;
+				//Camera.mainCamera.GetComponent<MainUI>().InSecondTutor = false;
 			}
 		}
 	}

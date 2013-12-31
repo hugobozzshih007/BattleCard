@@ -22,7 +22,7 @@ public class DarkBallAttack : MonoBehaviour, SkillInterface{
 	IList GetTargets(){
 		IList atkList = new List<Transform>();
 		Transform localMap = attacker.GetComponent<CharacterSelect>().getMapPosition();
-		Transform[] targetMaps = localMap.GetComponent<Identity>().neighbor;
+		Transform[] targetMaps = localMap.GetComponent<Identity>().Neighbor;
 		foreach(Transform unit in targetMaps){
 			if((unit!=null) && MapHelper.IsMapOccupied(unit)){
 				Transform character = MapHelper.GetMapOccupiedObj(unit);

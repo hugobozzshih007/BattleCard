@@ -99,14 +99,14 @@ public class TutorStageB : MonoBehaviour {
 		root = GameObject.Find("unit_start_point_A").transform;
 		rootB = GameObject.Find("unit_start_point_B").transform;
 		int index = Random.Range(0,5);
-		opMap = root.GetComponent<Identity>().neighbor[index];
+		opMap = root.GetComponent<Identity>().Neighbor[index];
 		pSummoner.ResetSummoner(true, null, opMap);
 		tutorMom.ShowContinue(true);
 		chessUI.SomeoneTaking(MainCharacter, content[0], false);
 		fc.CamFollowMe(MainCharacter);
 		aUI = transform.GetComponent<ArrowUI>();
 		showUI = true;
-		currentSel.chess = null;
+		currentSel.ChessInSelection = null;
 		currentSel.CleanMapsMat();
 	}
 	
@@ -118,13 +118,13 @@ public class TutorStageB : MonoBehaviour {
 	void PrepareLessonE(){
 		
 		int index = Random.Range(0,5);
-		opMap = root.GetComponent<Identity>().neighbor[index];
-		
-		foreach(Transform m in root.GetComponent<Identity>().neighbor){
+		opMap = root.GetComponent<Identity>().Neighbor[index];
+
+		foreach(Transform m in root.GetComponent<Identity>().Neighbor){
 			if(m!=null){
-				foreach(Transform n in m.GetComponent<Identity>().neighbor){
+				foreach(Transform n in m.GetComponent<Identity>().Neighbor){
 					if(n!=null){
-						foreach(Transform o in n.GetComponent<Identity>().neighbor){
+						foreach(Transform o in n.GetComponent<Identity>().Neighbor){
 							if(o!=null){
 								if(!currentRC.PlayerATerritory.Contains(o)){
 									currentRC.AddTerritory(o, 1);
@@ -137,11 +137,11 @@ public class TutorStageB : MonoBehaviour {
 			}
 		}
 		
-		foreach(Transform m in rootB.GetComponent<Identity>().neighbor){
+		foreach(Transform m in rootB.GetComponent<Identity>().Neighbor){
 			if(m!=null){
-				foreach(Transform n in m.GetComponent<Identity>().neighbor){
+				foreach(Transform n in m.GetComponent<Identity>().Neighbor){
 					if(n!=null){
-						foreach(Transform o in n.GetComponent<Identity>().neighbor){
+						foreach(Transform o in n.GetComponent<Identity>().Neighbor){
 							if(o!=null){
 								if(!currentRC.PlayerBTerritory.Contains(o)){
 									currentRC.AddTerritory(o, 2);
@@ -152,7 +152,7 @@ public class TutorStageB : MonoBehaviour {
 				}
 			}
 		}
-		foreach(Transform m in opMap.GetComponent<Identity>().neighbor){
+		foreach(Transform m in opMap.GetComponent<Identity>().Neighbor){
 			if(m!=null){
 				if(!currentRC.PlayerBTerritory.Contains(m)){
 					currentRC.AddTerritory(m, 2);
@@ -217,7 +217,7 @@ public class TutorStageB : MonoBehaviour {
 	
 	void ArrowCheckLessonA(){
 		if(arrowOn[0]){
-			if(currentSel.chess == MainCharacter){
+			if(currentSel.ChessInSelection == MainCharacter){
 				arrowOn[0] = aUI.HideArrow();
 				UpdateScreenPos(Opponent);
 				arrowRect = new Rect(screenPos.x+25, screenPos.y-105, 64, 64);
@@ -308,7 +308,7 @@ public class TutorStageB : MonoBehaviour {
 					sMachine.TutorialBusy = false;
 					tutorMom.ResetPlayerA(MainCharacter);
 					tutorMom.ShowContinue(false);
-					chessUI.FadeOutUI();
+					//chessUI.FadeOutUI();
 					UpdateScreenPos(MainCharacter);
 					arrowRect = new Rect(screenPos.x+25, screenPos.y-105, 64, 64);
 					arrowOn[0] = aUI.ShowArrow(arrowRect, ArrowUI.ArrowMode.downLeft);
@@ -322,7 +322,7 @@ public class TutorStageB : MonoBehaviour {
 				}else if(contentIndex == 15){
 					sMachine.TutorialBusy = false;
 					tutorMom.ShowContinue(false);
-					chessUI.FadeOutUI();
+					//chessUI.FadeOutUI();
 					pSummoner.ResetSummoner(true, null, OppMap);
 					tutorMom.ResetPlayerA(MainCharacter);
 					oppP.Hp = oppP.MaxHp;
@@ -337,7 +337,7 @@ public class TutorStageB : MonoBehaviour {
 				}else if(contentIndex == 23){
 					sMachine.TutorialBusy = false;
 					tutorMom.ShowContinue(false);
-					chessUI.FadeOutUI();
+					//chessUI.FadeOutUI();
 					PrepareLessonE();
 					
 					subLessonC = true;
@@ -351,7 +351,7 @@ public class TutorStageB : MonoBehaviour {
 					DeathUI dUI = new DeathUI(MainCharacter,MainCharacter);
 					tutorMom.ResetMap(0);
 					tutorMom.ShowContinue(false);
-					chessUI.FadeOutUI();
+					//chessUI.FadeOutUI();
 					nextStage.StartPause(3.0f);
 					currentSel.CancelCmds();
 					showUI = false;

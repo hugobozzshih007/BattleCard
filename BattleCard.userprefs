@@ -1,14 +1,41 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\scripts\GeneralSelection.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\scripts\FX\SummonFX.cs">
     <Files>
-      <File FileName="Assets\scripts\AttackCalculation.cs" Line="12" Column="53" />
+      <File FileName="Assets\scripts\MainInfoUI.cs" Line="493" Column="27" />
+      <File FileName="Assets\scripts\AttackCalculation.cs" Line="1" Column="1" />
       <File FileName="Assets\scripts\AttackCalFX.cs" Line="1" Column="1" />
       <File FileName="Assets\scripts\AI\CalculateTactics.cs" Line="1" Column="1" />
       <File FileName="Assets\scripts\AI\Decisions.cs" Line="1" Column="1" />
-      <File FileName="Assets\scripts\Identity.cs" Line="9" Column="20" />
-      <File FileName="Assets\scripts\AI\PreVision.cs" Line="37" Column="42" />
-      <File FileName="Assets\scripts\GeneralSelection.cs" Line="300" Column="10" />
+      <File FileName="Assets\scripts\Identity.cs" Line="1" Column="1" />
+      <File FileName="Assets\scripts\AI\PreVision.cs" Line="1" Column="1" />
+      <File FileName="Assets\scripts\GeneralSelection.cs" Line="1" Column="1" />
+      <File FileName="Assets\scripts\Tutorial\TutorStageD.cs" Line="1" Column="1" />
+      <File FileName="Assets\scripts\Character\CharacterProperty.cs" Line="247" Column="3" />
+      <File FileName="Assets\scripts\AI\NpcPlayer.cs" Line="1" Column="1" />
+      <File FileName="Assets\scripts\RoundCounter.cs" Line="1" Column="1" />
+      <File FileName="Assets\scripts\Prizes\PlacePrizes.cs" Line="1" Column="1" />
+      <File FileName="Assets\scripts\Buffs\BuffInfoUI.cs" Line="1" Column="1" />
+      <File FileName="Assets\scripts\VFX\EdgeDetectEffectNormals.js" Line="1" Column="1" />
+      <File FileName="Assets\shaders\image\EdgeDetectNormals.shader" Line="1" Column="1" />
+      <File FileName="Assets\scripts\TeamEditor\InitTeamEditor.cs" Line="1" Column="1" />
+      <File FileName="Assets\scripts\Animations\TurnHead.cs" Line="1" Column="1" />
+      <File FileName="Assets\Top Down\tools scripts\Editor\TerrainRandEditor.cs" Line="1" Column="1" />
+      <File FileName="Assets\scripts\Tutorial\TutorStageA.cs" Line="1" Column="1" />
+      <File FileName="Assets\scripts\Tutorial\TutorStageB.cs" Line="1" Column="1" />
+      <File FileName="Assets\scripts\Tutorial\TutorStageC.cs" Line="1" Column="1" />
+      <File FileName="Assets\scripts\FX\SummonFX.cs" Line="95" Column="5" />
+      <File FileName="Assets\scripts\Animations\AttackEvent.cs" Line="1" Column="1" />
+      <File FileName="Assets\scripts\Animations\firingArrow.cs" Line="1" Column="1" />
+      <File FileName="Assets\scripts\SummonLand\PlaceSummoner.cs" Line="1" Column="1" />
+      <File FileName="Assets\scripts\Animations\TimerLoop.cs" Line="1" Column="1" />
+      <File FileName="Assets\scripts\Character\MoveCharacter.cs" Line="1" Column="1" />
+      <File FileName="Assets\scripts\Tutorial\InitStage.cs" Line="1" Column="1" />
+      <File FileName="Assets\scripts\Tutorial\ShowSummoner.cs" Line="1" Column="1" />
+      <File FileName="Assets\scripts\Character\CharacterPassive.cs" Line="1" Column="1" />
+      <File FileName="Assets\scripts\WinningUI.cs" Line="1" Column="1" />
+      <File FileName="Assets\scripts\SummonLand\EndSummonland.cs" Line="1" Column="1" />
+      <File FileName="Assets\scripts\DamageSlidingUI.cs" Line="1" Column="1" />
     </Files>
     <Pads>
       <Pad Id="MonoDevelop.Debugger.WatchPad">

@@ -19,8 +19,8 @@ public class DamageSlidingFX : MonoBehaviour {
 	bool showUI = false;
 	bool updateInMove = false;
 	float _textAlpha;
-	public int DCounter = 40;
-	int delayCounter = 40;
+	public int DCounter = 1;
+	int delayCounter = 1;
 	DeathFX dFX;
 	
 	// Use this for initialization
@@ -39,6 +39,7 @@ public class DamageSlidingFX : MonoBehaviour {
 		attacker = atk; 
 		currentDmg = dmg; 
 		fadeInUI = true; 
+		showUI = true;
 	}
 	
 	void FadeIn(){
@@ -76,19 +77,22 @@ public class DamageSlidingFX : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+
 		if(showUI){
-			screenPos = Camera.main.WorldToScreenPoint(this.transform.position);
-			screenPos.y = Screen.height - screenPos.y;
-			startPoint = new Rect(screenPos.x-boxW/2, screenPos.y-40-boxH/2,boxW,boxH);
+			//screenPos = Camera.main.WorldToScreenPoint(this.transform.position);
+			//screenPos.y = Screen.height - screenPos.y;
+			//startPoint = new Rect(screenPos.x-boxW/2, screenPos.y-40-boxH/2,boxW,boxH);
+			if(fadeInUI)
+				FadeIn();
+			else if(showUI)
+				FadeOut();
 		}
-		if(fadeInUI)
-			FadeIn();
-		else if(showUI)
-			FadeOut();
-		
+
+
 	}
 	
 	void OnGUI(){
+		/*
 		GUI.color = new Color(1.0f,1.0f,1.0f,_textAlpha);
 		GUI.backgroundColor = Color.clear;
 		if(showUI){
@@ -98,5 +102,6 @@ public class DamageSlidingFX : MonoBehaviour {
 			else 
 				updateInMove = false;
 		}
+		*/
 	}
 }

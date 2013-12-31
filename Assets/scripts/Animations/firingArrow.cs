@@ -99,12 +99,18 @@ public class firingArrow : MonoBehaviour {
 				aCal.FightBack = true;
 				aCal.CriticalHit = critiqHit;
 				aCal.SetAttackSequence(attacker, target.GetComponent<CharacterSelect>().getMapPosition());
-				if(currentSelect.npcMode && playerSide == 2)
-					chessUI.CriticalRight = critiqHit;
-				else
-					chessUI.Critical = critiqHit;
-				chessUI.DelayFadeOut = true;
-				chessUI.TargetFadeIn = false;
+				if(currentSelect.npcMode && playerSide == 2){
+
+					//NGUI
+					chessUI.ShowHitStatus(critiqHit,2);
+				}else{
+
+					//NGUI
+					chessUI.ShowHitStatus(critiqHit,1);
+				}
+
+				//NGUI
+				chessUI.DelayDeactivateInfoUI(2);
 			}
 			
 			Destroy(transform.gameObject,0.1f);

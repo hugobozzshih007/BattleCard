@@ -42,20 +42,20 @@ public class NameMaps : MonoBehaviour {
 				
 				if(rc.PlayerATerritory.Contains(unit)){
 					unit.renderer.material = mapTerritoryA;
-					uID.originalMat = mapTerritoryA;
+					uID.OriginalMat = mapTerritoryA;
 				}else if(rc.PlayerBTerritory.Contains(unit)){
 					unit.renderer.material = mapTerritoryB;
-					uID.originalMat = mapTerritoryB;
+					uID.OriginalMat = mapTerritoryB;
 				}else{
 					unit.renderer.material = mapOrigin_alpha;
-					uID.originalMat = mapOrigin_alpha;
+					uID.OriginalMat = mapOrigin_alpha;
 				}
 			}
 		}else{
 			foreach(Transform unit in entireUnits){
 				Identity uID = unit.GetComponent<Identity>();
 				unit.renderer.material = mapOrigin;
-				uID.originalMat = mapOrigin;
+				uID.OriginalMat = mapOrigin;
 			}
 		}
 	}

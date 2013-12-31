@@ -102,8 +102,7 @@ public class TutorStageC : MonoBehaviour {
 				gfClone.GetComponent<CharacterProperty>().InitPlayer = 1;
 			}
 		}
-		
-		chessUI.InitCameras();
+
 		
 		content[0] = "Lesson 6: How to summon your allies!";
 		content[1] = "Summonning your allies is very important to learn.";
@@ -130,7 +129,7 @@ public class TutorStageC : MonoBehaviour {
 		chessUI.SomeoneTaking(MainCharacter, content[0], false);
 		fc.timeSeg = 0.0f;
 		fc.CamFollowMe(MainCharacter);
-		currentSel.chess = null;
+		currentSel.ChessInSelection = null;
 		currentSel.CleanMapsMat();
 		showUI = true;
 	}
@@ -210,7 +209,7 @@ public class TutorStageC : MonoBehaviour {
 				IList territory = new List<Transform>();
 				Transform currentPos = mainS.getMapPosition();
 				Identity posID = currentPos.GetComponent<Identity>();
-				foreach(Transform m in posID.neighbor){
+				foreach(Transform m in posID.Neighbor){
 					if(m!=null)
 						territory.Add(m);
 				}
@@ -225,7 +224,7 @@ public class TutorStageC : MonoBehaviour {
 	
 	void ArrowCheckLessonB(){
 		if(arrowOn[3]){
-			if(currentSel.chess == MainCharacter){
+			if(currentSel.ChessInSelection == MainCharacter){
 				arrowOn[3] = aUI.HideArrow();
 				arrowRect = new Rect((float)Screen.width*132.0f/1280.0f, (float)Screen.height*615.0f/720.0f, 64, 64);
 				arrowOn[4] = aUI.ShowArrow(arrowRect, ArrowUI.ArrowMode.downLeft);
@@ -277,7 +276,7 @@ public class TutorStageC : MonoBehaviour {
 				contentIndex+=1;
 				chessUI.SomeoneTaking(MainCharacter, content[contentIndex], false);
 				subLessonA = false;
-				currentSel.chess = null;
+				currentSel.ChessInSelection = null;
 				currentSel.CancelCmds();
 				sMachine.TutorialBusy = true;
 			}
@@ -312,7 +311,7 @@ public class TutorStageC : MonoBehaviour {
 				}else if(contentIndex == 8){
 					PrepareLessonF();
 					tutorMom.ShowContinue(false);
-					chessUI.FadeOutUI();
+					//chessUI.FadeOutUI();
 					sMachine.TutorialBusy = false;
 					UpdateScreenPos(MainCharacter);
 					arrowRect = new Rect(screenPos.x+25, screenPos.y-105, 64, 64);
@@ -328,7 +327,7 @@ public class TutorStageC : MonoBehaviour {
 				}else if(contentIndex == 15){
 					PrepareLessonG();
 					tutorMom.ShowContinue(false);
-					chessUI.FadeOutUI();
+					//chessUI.FadeOutUI();
 					sMachine.TutorialBusy = false;
 					UpdateScreenPos(MainCharacter);
 					arrowRect = new Rect(screenPos.x+25, screenPos.y-105, 64, 64);
@@ -345,7 +344,7 @@ public class TutorStageC : MonoBehaviour {
 					DeathUI dUI = new DeathUI(MainCharacter,MainCharacter);
 					DeathUI dUIB = new DeathUI(archerInstance,archerInstance);
 					tutorMom.ShowContinue(false);
-					chessUI.FadeOutUI();
+					//chessUI.FadeOutUI();
 					showUI = false;
 					tutorMom.ResetMap(0);
 					nextStage.StartPause(3.0f);

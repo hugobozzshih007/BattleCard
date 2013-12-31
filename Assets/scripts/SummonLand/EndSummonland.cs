@@ -5,9 +5,9 @@ using System.Collections.Generic;
 public class EndSummonland : MonoBehaviour {
 	public Transform Plane_Color;
 	public bool AWin, BWin; 
+	public float EndCamHeight; 
 	//public int VictoryRate = 70;
 	bool AWon, BWon,DrawGame;   
-	Material matToChange;
 	GeneralSelection currentSel; 
 	BuffInfoUI buffUI;
 	RoundCounter currentRC;
@@ -40,6 +40,7 @@ public class EndSummonland : MonoBehaviour {
 		mInfoUI = Camera.mainCamera.GetComponent<MainInfoUI>();
 		wUI = transform.GetComponent<WinningUI>();
 		excuted = false;
+		EndCam = new Vector3(0.0f, EndCamHeight, -39.0f);
 	}
 	
 	// Update is called once per frame
@@ -47,7 +48,6 @@ public class EndSummonland : MonoBehaviour {
 		if(sMachine.InitGame){
 			if(currentRC.PlayerATerritory.Count==0 || BWin){
 				BWon = true; AWon = false;
-				matToChange = currentRC.TerritoryB;
 				winSide = 2;
 				leftMaps = currentRC.GetWhiteTerritory();
 				stage = "yellowwins";
@@ -62,7 +62,6 @@ public class EndSummonland : MonoBehaviour {
 			}
 			if(currentRC.PlayerBTerritory.Count==0 || AWin){
 				AWon = true; BWon = false;
-				matToChange = currentRC.TerritoryA;
 				winSide = 1;
 				leftMaps = currentRC.GetWhiteTerritory();
 				stage = "redwins";
@@ -80,7 +79,6 @@ public class EndSummonland : MonoBehaviour {
 					int diff = currentRC.PlayerATerritory.Count - currentRC.PlayerBTerritory.Count;
 					if(diff > 0){
 						AWon = true; BWon = false;
-						matToChange = currentRC.TerritoryA;
 						winSide = 1;
 						IList allMap = new List<Transform>();
 						foreach(Transform m in currentRC.AllTerritory){
@@ -102,7 +100,6 @@ public class EndSummonland : MonoBehaviour {
 						inGame = false;
 					}else if(diff < 0){
 						AWon = false; BWon = true;
-						matToChange = currentRC.TerritoryB;
 						winSide = 2;
 						IList allMap = new List<Transform>();
 						foreach(Transform m in currentRC.AllTerritory){
@@ -139,9 +136,8 @@ public class EndSummonland : MonoBehaviour {
 				if(!inDelay){
 					if(t<leftMaps.Count){
 						Transform currentEmptyMap = leftMaps[t] as Transform;
-						currentEmptyMap.GetComponent<PlaneShadows>().ChangeShadowMaterial(winSide);
+						//currentEmptyMap.GetComponent<PlaneShadows>().ChangeShadowMaterial(winSide);
 						//Transform realMap = currentEmptyMap.GetComponent<Identy>().ShowMap;
-						//realMap.renderer.material = matToChange;
 						if(t==(leftMaps.Count-1)){
 							if(AWon){
 								if(Plane_Color){

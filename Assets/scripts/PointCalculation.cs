@@ -2,6 +2,8 @@ using UnityEngine;
 using System.Collections;
 
 public class PointCalculation : MonoBehaviour {
+	public bool GUIControl = true;
+	public Transform CurrentScore; 
 	public Texture2D ScoreLayout, Star, EmptyStar;
 	public Font NumFont; 
 	Rect rectScoreLay; 
@@ -169,17 +171,25 @@ public class PointCalculation : MonoBehaviour {
 			GUI.EndGroup ();
 		}
 	}
-	
+
+	//NGUI
+	void UpdateScore(){
+		CurrentScore.GetComponent<UILabel>().text = "SCORE: "+ GetPoint(1).ToString();
+	}
+
 	// Update is called once per frame
 	void Update () {
-		
+		if(!showUI)
+			UpdateScore();
 	}
 	
 	void OnGUI(){
 		GUI.depth = 0; 
 		GUI.backgroundColor = Color.clear;
-		if(!showUI){
-			GUI.Label(pointRect, "SCORE: "+GetPoint(1).ToString(),numStyle[3]);
+		if(GUIControl){
+			if(!showUI){
+				GUI.Label(pointRect, "SCORE: "+GetPoint(1).ToString(),numStyle[3]);
+			}
 		}
 		ShowScores(showUI);
 		if(showUI){

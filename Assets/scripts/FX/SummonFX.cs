@@ -57,7 +57,43 @@ public class SummonFX : MonoBehaviour {
 			startDie = true;
 		}
 	}
-	
+	//for new NGUI system
+	void GenerateHUDInfo(){
+		GameObject uiInfo = NGUITools.AddChild(GameObject.Find("main_info_panel"), infoUI.GetQuickInfo(cp.Player)); 
+		uiInfo.gameObject.layer = 8;
+		uiInfo.GetComponent<UIFollowTarget>().target = MapHelper.FindAnyChildren(transform, "UIAnchor"); 
+		uiInfo.GetComponent<UIFollowTarget>().gameCamera = Camera.main;
+		uiInfo.GetComponent<UIFollowTarget>().uiCamera = GameObject.Find("UICamera").camera; 
+		cp.QuickInfoRealUI = uiInfo.transform;
+	}
+	//for new NGUI system
+	void KillHUDInfo(){
+		if(cp.QuickInfoRealUI){
+			Destroy(cp.QuickInfoRealUI.gameObject, 1.0f);
+			cp.QuickInfoRealUI = null;
+		}
+	}
+
+	//Instance HUDtext for this character  
+	/*
+	void GenerateHUDText(){
+		GameObject uiText = NGUITools.AddChild(GameObject.Find("main_info_panel"), infoUI.HUDText.gameObject); 
+		uiText.gameObject.layer = 8;
+		uiText.GetComponent<UIFollowTarget>().target = transform; 
+		uiText.GetComponent<UIFollowTarget>().gameCamera = Camera.main;
+		uiText.GetComponent<UIFollowTarget>().uiCamera = GameObject.Find("UICamera").camera; 
+		cp.HUDText = uiText.transform;
+	}
+
+
+	//Kill HUDtext for this character
+	void KillHUDText(){
+		if(cp.HUDText){
+			Destroy(cp.HUDText.gameObject, 1.0f);
+			cp.HUDText = null;
+		}
+	}*/
+
 	bool RecordOldShaderList(Transform gf){
 		oldShaderDict.Clear();
 		List<Transform> models = new List<Transform>();
@@ -132,6 +168,8 @@ public class SummonFX : MonoBehaviour {
 					}
 				}else{
 				}
+				GenerateHUDInfo();
+				//GenerateHUDText();
 				soundInPlayed = false;
 				sMachine.InBusy = false;
 				npc.npcReviveMode = false;
@@ -166,9 +204,13 @@ public class SummonFX : MonoBehaviour {
 				cp.death = true;
 				startDie = false;
 				rUI.Wait = false;
-				if(!sMachine.TutorialMode)
-					infoUI.MainFadeIn = false;
-				infoUI.TargetFadeIn = false;
+				if(!sMachine.TutorialMode){
+					// NGUI
+					infoUI.DeactivateInfoUI(1);
+				}
+				//NGUI
+				infoUI.DeactivateInfoUI(2);
+
 				cp.Ready = false;
 				cp.WaitRounds = cp.StandByRounds;
 				timeDie = 0.0f;
@@ -176,6 +218,8 @@ public class SummonFX : MonoBehaviour {
 				//restore material
 				MapHelper.SetObjOldShader(this.transform,oldShaderDict,1.0f);
 				GameObject.Find("StatusMachine").GetComponent<StatusMachine>().InBusy = false;
+				KillHUDInfo();
+				//KillHUDText();
 				if(Network.connections.Length==0){
 					Transform npcPlayer = GameObject.Find("NpcPlayer").transform;
 					NpcPlayer npc = npcPlayer.GetComponent<NpcPlayer>();

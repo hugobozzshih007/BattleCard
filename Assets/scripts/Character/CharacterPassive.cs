@@ -19,7 +19,7 @@ public class CharacterPassive : MonoBehaviour {
 	bool flying = false;
 	RoundUI rUI;
 	MainInfoUI infoUI;
-	MainUI mUI;
+
 	// Use this for initialization
 	void Start () {
 		cp = transform.GetComponent<CharacterProperty>();
@@ -34,7 +34,7 @@ public class CharacterPassive : MonoBehaviour {
 		}
 		rUI = Camera.mainCamera.GetComponent<RoundUI>();
 		infoUI = Camera.mainCamera.transform.GetComponent<MainInfoUI>();
-		mUI = Camera.mainCamera.transform.GetComponent<MainUI>();
+
 	}
 	
 	void Update(){

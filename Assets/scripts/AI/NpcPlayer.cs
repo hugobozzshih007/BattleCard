@@ -5,9 +5,9 @@ using System.Collections.Generic;
 using System.Linq;
 
 public class NpcPlayer : MonoBehaviour {
-	GeneralSelection CurrentSel;
+	GeneralSelection currentSel;
 	Decisions decisions;
-	RoundCounter CurrentRC;
+	RoundCounter currentRC;
 	public Transform currentInMove; 
 	Transform lastInMove; 
 	public bool InMove, InPause;
@@ -36,8 +36,8 @@ public class NpcPlayer : MonoBehaviour {
 		InMove = false;
 		InPause = false;
 		decisions = transform.GetComponent<Decisions>();
-		CurrentSel = Camera.main.GetComponent<GeneralSelection>();
-		CurrentRC = Camera.main.GetComponent<RoundCounter>();
+		currentSel = Camera.main.GetComponent<GeneralSelection>();
+		currentRC = Camera.main.GetComponent<RoundCounter>();
 		playerBList = new List<Transform>();
 		firstPhaseList = new List<Transform>();
 		
@@ -60,7 +60,7 @@ public class NpcPlayer : MonoBehaviour {
 		firstPhaseList.Clear();
 		GFs.Clear();
 		initPhase = true;
-		foreach(Transform chess in CurrentRC.PlayerBChesses){
+		foreach(Transform chess in currentRC.PlayerBChesses){
 			if(!chess.GetComponent<CharacterProperty>().death){
 				playerBList.Add(chess);
 			}
@@ -239,7 +239,7 @@ public class NpcPlayer : MonoBehaviour {
 		IList pathList = new List<Transform>();
 		Transform sel = dest;
 		//check if dest is in move range
-		CurrentSel.updateMapSteps();
+		currentSel.updateMapSteps();
 		chessSelect.MoveRangeList.Clear();
 		chessSelect.findMoveRange(localUnit, 0, chessProperty.BuffMoveRange);
 		bool possibleDest = chessSelect.MoveRangeList.Contains(dest);
@@ -248,7 +248,7 @@ public class NpcPlayer : MonoBehaviour {
 		if(!possibleDest)
 			sel = PreVision.GetDirectionMap(chess);
 		if(sel!=null){
-			pathList = chessSelect.FindPathList(localUnit,CurrentSel.GetSteps(localUnit,sel),sel);
+			pathList = chessSelect.FindPathList(localUnit,currentSel.GetSteps(localUnit,sel),sel);
 			MoveCharacter mc = Camera.main.GetComponent<MoveCharacter>();
 			mc.SetSteps(chess,pathList);
 			chessProperty.Moved = true;
@@ -265,7 +265,7 @@ public class NpcPlayer : MonoBehaviour {
 		bool attackable = false;
 		oldCamPosition = Camera.mainCamera.transform.position;
 		Vector3 centerPos = MapHelper.GetCenterPos(chess,target);
-		newCamPosition = centerPos - CurrentRC.CamOffest;
+		newCamPosition = centerPos - currentRC.CamOffest;
 		NpcSummonCam = true;
 		chess.GetComponent<CharacterSelect>().AttackRangeList.Clear();
 		Transform sel = target.GetComponent<CharacterSelect>().getMapPosition();
@@ -281,18 +281,15 @@ public class NpcPlayer : MonoBehaviour {
 		//set machine busy
 		sMachine.InBusy = true;
 		
-		chessUI.InsertTargetChess(target); 
-		chessUI.TargetFadeIn = true;
+
 		return attackable;
 	}
 	
 	bool DefenseCommand(Transform chess){
 		bool defable = true;
-		MainUI mUI = Camera.main.GetComponent<MainUI>();
-		mUI.DefenseCmd(chess);
-		chessUI.TargetFadeIn = false;
+		currentSel.DefenseCmd(chess);
 		oldCamPosition = Camera.mainCamera.transform.position;
-		newCamPosition = chess.transform.position -CurrentRC.CamOffest;
+		newCamPosition = chess.transform.position -currentRC.CamOffest;
 		NpcSummonCam = true;
 		return defable;
 	}
@@ -304,12 +301,12 @@ public class NpcPlayer : MonoBehaviour {
 			//skill.GetComponent<SkillProperty>().GetRealSkillRate();
 			//skill.GetComponent<SkillProperty>().PassSkillRate = MapHelper.Success(skill.GetComponent<SkillProperty>().SkillRate);
 			skill.GetComponent<SkillProperty>().ActivateSkill();
-			CurrentSel.AnimStateNetWork(chess,AnimVault.AnimState.skill);
+			currentSel.AnimStateNetWork(chess,AnimVault.AnimState.skill);
 			chess.GetComponent<CharacterProperty>().Activated = true;
 			skill.GetComponent<SkillProperty>().DefaultCDRounds();
 			chess.GetComponent<CharacterProperty>().CmdTimes -= 1;
 			oldCamPosition = Camera.mainCamera.transform.position;
-			newCamPosition = chess.transform.position - CurrentRC.CamOffest;
+			newCamPosition = chess.transform.position - currentRC.CamOffest;
 			NpcSummonCam = true;
 			sMachine.InBusy = true;
 		}else{
@@ -317,16 +314,15 @@ public class NpcPlayer : MonoBehaviour {
 			cSkill.InsertSelection(target);
 			cSkill.Execute();
 			skill.GetComponent<SkillProperty>().DefaultCDRounds();
-			CurrentSel.AnimStateNetWork(chess,AnimVault.AnimState.skill);
+			currentSel.AnimStateNetWork(chess,AnimVault.AnimState.skill);
 			sMachine.InBusy = true;
 			chess.GetComponent<CharacterProperty>().CmdTimes -= 1;
 			oldCamPosition = Camera.mainCamera.transform.position;
 			Vector3 centerPos = MapHelper.GetCenterPos(chess,target);
-			newCamPosition = centerPos - CurrentRC.CamOffest;
+			newCamPosition = centerPos - currentRC.CamOffest;
 			NpcSummonCam = true;
 		}
-		
-		chessUI.TargetFadeIn = false;
+
 		return true;
 	}
 	
@@ -335,17 +331,17 @@ public class NpcPlayer : MonoBehaviour {
 		//Transform gf = decisions.GetSummonGF(chess);
 		Transform map = calTactic.GetSummonPosition(chess);
 		if(gf!=null && map!=null){
-			CurrentSel.currentGF = gf;
-			CurrentSel.SummonTrueCmd(chess, gf, map);
+			currentSel.currentGF = gf;
+			currentSel.SummonTrueCmd(chess, gf, map);
 			summoned = true;
 			oldCamPosition = Camera.mainCamera.transform.position;
-			newCamPosition = gf.position - CurrentRC.CamOffest;
+			newCamPosition = gf.position - currentRC.CamOffest;
 			NpcSummonCam = true;
 		}else{
 			NpcSummonCam = false;
 			summoned = false;
 		}
-		chessUI.TargetFadeIn = false;
+
 		return summoned;
 	}
 	
@@ -357,8 +353,6 @@ public class NpcPlayer : MonoBehaviour {
 		chessProperty.Attacked = true;
 		chessProperty.CmdTimes = 0;
 		chessProperty.TurnFinished = true;
-		chessUI.TargetFadeIn = false;
-		chessUI.MainFadeIn = false;
 		//NpcSummonCam = false;
 		return finished;
 	}
@@ -393,13 +387,13 @@ public class NpcPlayer : MonoBehaviour {
 	public void ReviveSummoner(Transform masterChess){
 		Transform map = decisions.GetRevivePos();
 		if(map!=null){
-			CurrentSel.currentGF = masterChess;
-			CurrentSel.SummonTrueCmd(masterChess, masterChess, map);
+			currentSel.currentGF = masterChess;
+			currentSel.SummonTrueCmd(masterChess, masterChess, map);
 			npcReviveMode = true;
-			CurrentSel.reviveMode = false;
+			currentSel.reviveMode = false;
 			sMachine.InBusy = true;
 			oldCamPosition = Camera.main.transform.position;
-			newCamPosition = map.position - CurrentRC.CamOffest;
+			newCamPosition = map.position - currentRC.CamOffest;
 			NpcSummonCam = true;
 			//masterChess.GetComponent<CharacterProperty>().TurnFinished = true;
 		}
@@ -410,15 +404,10 @@ public class NpcPlayer : MonoBehaviour {
 	public void ShowSelection(Transform chess, bool showUp){
 		if(showUp){
 			chess.gameObject.layer = 11;
-			CurrentSel.MoveToLayer(chess,11);
-			chessUI.InsertChess(chess);
-			chessUI.MainFadeIn = true;
-			chessUI.Critical = false;
+			currentSel.MoveToLayer(chess,11);
 		}else{
 			chess.gameObject.layer = 10;
-			CurrentSel.MoveToLayer(chess,10);
-			chessUI.MainFadeIn = false;
-			chessUI.TargetFadeIn = false;
+			currentSel.MoveToLayer(chess,10);
 		}
 	}
 	
@@ -428,7 +417,7 @@ public class NpcPlayer : MonoBehaviour {
 		Dictionary<Transform, int> sortDict = new Dictionary<Transform, int>();
 		IList gfsOnField = new List<Transform>();
 		Transform inMove = null;
-		foreach(Transform gf in CurrentRC.PlayerBChesses){
+		foreach(Transform gf in currentRC.PlayerBChesses){
 			CharacterProperty gfp = gf.GetComponent<CharacterProperty>();
 			if(!gfp.death && gfp.CmdTimes>0 && !gfp.Tower){
 				gfsOnField.Add(gf);
@@ -462,8 +451,7 @@ public class NpcPlayer : MonoBehaviour {
 	void InitStep(){
 		if(initPhase && !sMachine.InBusy && firstPhaseList.Count>0 && !InPause){
 			InPause = false;
-			//Debug.Log("NPC: Initial Step");
-			chessUI.TargetFadeIn = false;
+
 			lastInMove = currentInMove;
 			
 			if(lastInMove!=null)
@@ -551,7 +539,7 @@ public class NpcPlayer : MonoBehaviour {
 			InPause = false;
 			if(currentCmdList.Count>2 && !CheckDeath(currentInMove)){
 				IList liveList = new List<Transform>();
-				foreach(Transform gf in CurrentRC.PlayerBChesses){
+				foreach(Transform gf in currentRC.PlayerBChesses){
 					if(!gf.GetComponent<CharacterProperty>().death)
 						liveList.Add(gf);
 				}
@@ -627,7 +615,7 @@ public class NpcPlayer : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if(CurrentSel.NpcPlaying && sMachine.InitGame){
+		if(currentSel.NpcPlaying && sMachine.InitGame){
 			if(InPause){
 				interSeg += Time.deltaTime/pauseTime;
 				if(interSeg >= 0.9f){

@@ -16,7 +16,6 @@ public class WinningUI : MonoBehaviour {
 	GUIStyle rUI;
 	int winner;
 	Rect startRect, midRect, posRect; 
-	Rect pointRect;
 	float moveSpeed = 1.0f;
 	float timeToShow = 0.5f;
 	float timeToDelay = 1.2f;
@@ -36,7 +35,6 @@ public class WinningUI : MonoBehaviour {
 		startRect = new Rect(0.0f-RedWon.width/2.0f, Screen.height/2.0f- RedWon.height/2.0f, RedWon.width, RedWon.height);
 		posRect = new Rect(startRect);
 		midRect = new Rect(Screen.width/2.0f-startRect.width/2.0f, startRect.height,startRect.width,startRect.height);
-		pointRect = new Rect(midRect.x,  Screen.height/2.0f + 100, 300, 50);
 		endStage = transform.GetComponent<EndSummonland>();
 		sMachine = GameObject.Find("StatusMachine").transform.GetComponent<StatusMachine>();
 		currentSel = Camera.main.GetComponent<GeneralSelection>();

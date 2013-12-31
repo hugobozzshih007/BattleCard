@@ -32,7 +32,7 @@ public class Leadership : MonoBehaviour, SkillInterface {
 	{
 		IList atkList = new List<Transform>();
 		Transform localMap = aider.GetComponent<CharacterSelect>().getMapPosition();
-		Transform[] aidMaps = localMap.GetComponent<Identity>().neighbor;
+		Transform[] aidMaps = localMap.GetComponent<Identity>().Neighbor;
 		foreach(Transform unit in aidMaps){
 			if((unit!=null) && MapHelper.IsMapOccupied(unit)){
 				Transform character = MapHelper.GetMapOccupiedObj(unit);
@@ -49,7 +49,7 @@ public class Leadership : MonoBehaviour, SkillInterface {
 		//BuffSlidingUI bSUI = Camera.mainCamera.GetComponent<BuffSlidingUI>();
 		IList atkList = new List<Transform>();
 		Transform localMap = aider.GetComponent<CharacterSelect>().getMapPosition();
-		Transform[] attackableMaps = localMap.GetComponent<Identity>().neighbor;
+		Transform[] attackableMaps = localMap.GetComponent<Identity>().Neighbor;
 		foreach(Transform unit in attackableMaps){
 			if((unit!=null) && MapHelper.IsMapOccupied(unit)){
 				Transform character = MapHelper.GetMapOccupiedObj(unit);

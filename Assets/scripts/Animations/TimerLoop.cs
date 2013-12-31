@@ -15,14 +15,12 @@ public class TimerLoop : MonoBehaviour {
 	Vector3 screenPos;
 	bool showMoveCmd = false;
 	Rect cmdRect;
-	MainUI mUI;
 	GeneralSelection currentSel; 
 	HealthCircleEffect hce; 
 	RoundUI rUI;
 	// Use this for initialization
 	void Start () {
 		hce = transform.GetComponent<HealthCircleEffect>();
-		mUI = Camera.mainCamera.GetComponent<MainUI>();
 		rUI = Camera.mainCamera.GetComponent<RoundUI>();
 		currentSel = Camera.mainCamera.GetComponent<GeneralSelection>();
 	}
@@ -38,7 +36,7 @@ public class TimerLoop : MonoBehaviour {
 			RaycastHit hit;
 			if(Physics.Raycast(ray, out hit, castLength)){
 				currentHit = hit.transform;
-				if(hit.transform == currentSel.chess && !currentSel.chess.GetComponent<CharacterProperty>().TurnFinished){
+				if(hit.transform == currentSel.ChessInSelection && !currentSel.ChessInSelection.GetComponent<CharacterProperty>().TurnFinished){
 					guiShow = true;
 					startTimer = true;
 				}else{
@@ -71,8 +69,8 @@ public class TimerLoop : MonoBehaviour {
 			hce.m_angle = trueAngle;
 			if(trueAngle >= 359.5f){
 				t = .0f;
-				if(currentSel.chess!=null && !currentSel.chess.GetComponent<CharacterProperty>().Defensed && !rUI.showUI)
-					mUI.DefenseCmd(currentSel.chess);
+				if(currentSel.ChessInSelection!=null && !currentSel.ChessInSelection.GetComponent<CharacterProperty>().Defensed && !rUI.showUI)
+					currentSel.DefenseCmd(currentSel.ChessInSelection);
 				startTimer = false;
 				guiShow = false;
 			}
@@ -81,13 +79,11 @@ public class TimerLoop : MonoBehaviour {
 			showMoveCmd = false;
 		}
 		if(Input.GetMouseButtonUp(0) && !rUI.showUI){
-			if(showMoveCmd && currentSel.chess.gameObject.layer == 11 && !currentSel.selectMode){
+			if(showMoveCmd && currentSel.ChessInSelection.gameObject.layer == 11 && !currentSel.selectMode){
 				//currentSel.CancelCmds();
-				currentSel.chess.GetComponent<CharacterProperty>().Defensed = false;
+				currentSel.ChessInSelection.GetComponent<CharacterProperty>().Defensed = false;
 				currentSel.moveCommand(currentHit);
-				currentSel.MoveCommandNetwork();
 				currentSel.attackCommand(currentHit);
-				currentSel.AttackCommandNetwork();
 			}
 		}
 	}

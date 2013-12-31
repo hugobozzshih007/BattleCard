@@ -22,20 +22,18 @@ public class MoveCharacter : MonoBehaviour {
 	bool facingTower = false;
 	GeneralSelection currentSelect;
 	CharacterPassive cPass;
-	MainUI mUI;
+
 	FollowCam fCam;
 	// Use this for initialization
 	void Start () {
 		currentSelect = transform.GetComponent<GeneralSelection>();
-		mUI = transform.GetComponent<MainUI>();
+	
 		fCam = transform.GetComponent<FollowCam>();
 	}
 	
 	// Update is called once per frame
 	void Update () {
 		if(Step>0){
-			mUI.MainGuiFade = false;
-			mUI.SubGuiFade = true;
 			t += Time.deltaTime/timeToReach;
 			r += Time.deltaTime/timeToRotate;
 			//Vector3 fowardPos = Chess.transform.forward*accl+Chess.transform.position;
@@ -94,7 +92,7 @@ public class MoveCharacter : MonoBehaviour {
 				MoveMode = false;
 				Chess.GetComponent<CharacterProperty>().Moved = true;
 				Chess.GetComponent<CharacterProperty>().CmdTimes -= 1;
-				mUI.TurnFinished(Chess, false);
+				currentSelect.TurnFinished(Chess, false);
 				//networkView.RPC("RPCUpdateChessMoved", RPCMode.Others,Chess.name,true);
 				currentSelect.updateAllCharactersPowers();
 				if(chessModel.GetComponent<AnimVault>()!=null){
@@ -106,9 +104,9 @@ public class MoveCharacter : MonoBehaviour {
 					NpcPlayer npcPlayer = npc.GetComponent<NpcPlayer>();
 					npcPlayer.InPause = true;
 				}
-				if(mUI.InTutorial){
-					GameObject.Find("InitStage").GetComponent<InitStage>().ShowBuff = true;
-				}
+				//if(mUI.InTutorial){
+				//	GameObject.Find("InitStage").GetComponent<InitStage>().ShowBuff = true;
+				//}
 				//set machine free
 				GameObject.Find("StatusMachine").GetComponent<StatusMachine>().InBusy = false;
 				//cancel move extra buff

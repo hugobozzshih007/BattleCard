@@ -762,7 +762,7 @@ public class CalculateTactics : MonoBehaviour {
 		}else{
 			int expendintPoint = 0;
 			IList aroundMaps = new List<Transform>();
-			foreach(Transform unit in mapID.neighbor){
+			foreach(Transform unit in mapID.Neighbor){
 				if(unit != null ){
 					Identity unitID = unit.GetComponent<Identity>();
 					if(!currentRC.PlayerBTerritory.Contains(unit) && unitID.FixedSide!=1 ){

@@ -13,12 +13,11 @@ public class AttackCalFX : MonoBehaviour {
 	Transform targetLocation;
 	CharacterProperty attackerProperty, targetProperty;
 	CharacterSelect attackerSelect, targetSelect;
-	//DamageSlidingUI sUI;
+	GeneralSelection currentSel;
 	DeathFX dFX;
 	
 	bool wait = false;
-	
-	MainUI mUI;
+
 	MainInfoUI chessUI;
 	CommonFX cFX;
 	
@@ -27,16 +26,15 @@ public class AttackCalFX : MonoBehaviour {
 	StatusMachine sMachine; 
 	// Use this for initialization
 	void Start () {
-		mUI = transform.GetComponent<MainUI>();
 		fb = transform.GetComponent<FightBack>();
 		chessUI = transform.GetComponent<MainInfoUI>();
 		cFX =  transform.GetComponent<CommonFX>();
 		sMachine = GameObject.Find("StatusMachine").GetComponent<StatusMachine>();
-		//currentSel = transform.GetComponent<selection>();
+		currentSel = transform.GetComponent<GeneralSelection>();
 	}
 	
 	public void SetAttackSequence(Transform attacker, Transform targetMap){
-		this.Attacker = attacker;
+		Attacker = attacker;
 		//CriticalHit = false;
 		attackerProperty = Attacker.GetComponent<CharacterProperty>();
 		attackerSelect = Attacker.GetComponent<CharacterSelect>();
@@ -51,11 +49,7 @@ public class AttackCalFX : MonoBehaviour {
 		GameObject blood = Instantiate(cFX.NormalAttack,pos,Quaternion.identity) as GameObject;
 		Destroy(blood,3.0f);
 		if(!sMachine.TutorialMode){
-			chessUI.Talking = false;
-			chessUI.TalkingRight = false;
 		}
-		//mUI.MainGuiFade = true;
-		//mUI.SubGuiFade = false;	
 	}
 	
 	public bool Attackable(Transform atk, Transform newTarget){
@@ -151,6 +145,9 @@ public class AttackCalFX : MonoBehaviour {
 	void ShowDamageUI(Transform target,int damage, Transform atk){
 		DamageSlidingFX targetSFX = target.GetComponent<DamageSlidingFX>();
 		targetSFX.ActivateSlidingFX(atk, damage);
+
+		//for NGUI HUD text to show dmg
+		target.GetComponent<CharacterProperty>().UpdateHudText("-"+damage.ToString(), Color.green);
 	}
 	
 	// Update is called once per frame
@@ -231,21 +228,18 @@ public class AttackCalFX : MonoBehaviour {
 		
 		if(targetProperty.Hp<=0){
 			targetProperty.Hp = 0;
-			
-				//dFX.SetDeathSequence(Target);
-				//targetProperty.Ready = false;
-				//targetProperty.WaitRounds = targetProperty.StandByRounds;
-				chessUI.DelayFadeOut = true;
-				targetProperty.Attacked = true;
-				//cancel attack buff
-				Target.GetComponent<BuffList>().ExtraDict[BuffType.Attack] = 0;
-				Target.GetComponent<BuffList>().ExtraDict[BuffType.CriticalHit] = 0;
-				targetProperty.CmdTimes -= 1;
-				mUI.TurnFinished(Target, false);
-				if(chessUI.playerSide ==1)
-					chessUI.MainFadeIn = false;
-				else
-					chessUI.TargetFadeIn = false;
+			targetProperty.Attacked = true;
+			//cancel attack buff
+			Target.GetComponent<BuffList>().ExtraDict[BuffType.Attack] = 0;
+			Target.GetComponent<BuffList>().ExtraDict[BuffType.CriticalHit] = 0;
+			targetProperty.CmdTimes -= 1;
+			currentSel.TurnFinished(Target, false);
+			if(chessUI.PlayerSide ==1){
+				// NGUI
+				chessUI.DelayDeactivateInfoUI(1);
+			}else{
+				chessUI.DelayDeactivateInfoUI(2);
+			}
 		
 		}else{
 			if(FightBack){
@@ -255,7 +249,7 @@ public class AttackCalFX : MonoBehaviour {
 				Target.GetComponent<BuffList>().ExtraDict[BuffType.Attack] = 0;
 				Target.GetComponent<BuffList>().ExtraDict[BuffType.CriticalHit] = 0;
 				targetProperty.CmdTimes -= 1;
-				mUI.TurnFinished(Target, false);
+				currentSel.TurnFinished(Target, false);
 			}else{
 				sMachine.InBusy = false;
 			}
@@ -265,6 +259,8 @@ public class AttackCalFX : MonoBehaviour {
 		Attacker.GetComponent<BuffList>().ExtraDict[BuffType.Attack] = 0;
 		Attacker.GetComponent<BuffList>().ExtraDict[BuffType.CriticalHit] = 0;
 		attackerProperty.CmdTimes -= 1;
-		mUI.TurnFinished(Attacker, false);
+		currentSel.TurnFinished(Attacker, false);
+
+		chessUI.DelayDeactivateInfoUI(1);
 	}
 }

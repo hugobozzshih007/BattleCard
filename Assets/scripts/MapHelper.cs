@@ -19,7 +19,7 @@ namespace MapUtility{
 			IList GFs = new List<Transform>();
 			
 			Identity mapID = map.GetComponent<Identity>();
-			foreach(Transform unit in mapID.neighbor){
+			foreach(Transform unit in mapID.Neighbor){
 				if(unit != null){
 					if(IsMapOccupied(unit)){
 						GFs.Add(GetMapOccupiedObj(unit));
@@ -210,11 +210,8 @@ namespace MapUtility{
 		}
 		
 		public static void SetObjTransparent(Transform obj, Color col, float alpha){	
-			Shader opaShader = Shader.Find("Transparent/Diffuse");
-			//obj.renderer.material.shader = opaShader;
-			//col.a = alpha;
-			//obj.renderer.material.color = col;
-			
+			Shader opaShader = Shader.Find("Unlit/Transparent_color");
+
 			Transform model = obj.FindChild("Models");
 			List<Transform> models = new List<Transform>();
 			if(model.childCount>0){
@@ -234,7 +231,7 @@ namespace MapUtility{
 		}
 		
 		public static bool SetObjOldShader(Transform obj, Dictionary<string,string> shaderNames, float alpha){
-			//Shader diffShader = Shader.Find("shaderName");
+			Shader diffShader = Shader.Find("shaderName");
 			//obj.renderer.material.shader = diffShader;
 			//Color currentCol = obj.renderer.material.color; 
 			//currentCol.a = alpha;

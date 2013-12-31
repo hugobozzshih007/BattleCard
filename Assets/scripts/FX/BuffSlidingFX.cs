@@ -27,7 +27,8 @@ public class BuffSlidingFX : MonoBehaviour {
 		sMachine = GameObject.Find("StatusMachine").transform.GetComponent<StatusMachine>();
 		sSound = GameObject.Find("SystemSound").transform.GetComponent<SystemSound>();
 	}
-	
+
+	//old GUI
 	GUIStyle GetGUIStyle(BuffType type){
 		GUIStyle s = new GUIStyle();
 		s.alignment = TextAnchor.MiddleCenter;
@@ -59,6 +60,35 @@ public class BuffSlidingFX : MonoBehaviour {
 		}
 		return new GUIStyle(s);
 	}
+
+	//NGUI
+	Color GetGUIColor(BuffType type){
+		switch(type){
+		case BuffType.Attack:
+			return Color.red;
+			break;
+		case BuffType.AttackRange:
+			return  Color.magenta;
+			break;
+		case BuffType.CriticalHit:
+			return  new Color(97.0f/255.0f, 189.0f/255.0f, 1.0f, 1.0f);
+			break;
+		case BuffType.Defense:
+			return  Color.blue;
+			break;
+		case BuffType.MoveRange:
+			return new Color(1.0f, 103.0f/255.0f, 221.0f/255.0f, 1.0f);
+			break;
+		case BuffType.SkillRate:
+			return new Color(206.0f/255.0f, 108.0f/255.0f, 41.0f/255.0f, 1.0f);
+			break;
+		case BuffType.Hp:
+			return Color.green;
+			break;
+		}
+		return Color.white;
+	}
+
 	
 	string GetContent(BuffType type){
 		string content = "";
@@ -91,13 +121,19 @@ public class BuffSlidingFX : MonoBehaviour {
 	string GetPlus(int num){
 		string plus = "+";
 		if(num<0)
-			plus = "";
-		return plus;
+			plus = "-";
+		return plus+num.ToString();
 	}
 	
 	public void ActiveBuffSlidingFX(Dictionary<BuffType, int> buffDict){
-		fadeInUI = true; 
-		BuffDict = buffDict; 
+		//fadeInUI = true; 
+		//BuffDict = buffDict; 
+		foreach(var buff in buffDict){
+			string init = GetContent((BuffType)buff.Key);
+			string val = GetPlus((int)buff.Value);
+			Color showColor = GetGUIColor((BuffType)buff.Key);
+			transform.GetComponent<CharacterProperty>().UpdateHudText(init+val, showColor);
+		}
 	}
 	
 	void FadeIn(){
@@ -128,6 +164,7 @@ public class BuffSlidingFX : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+		/*
 		if(fadeInUI)
 			FadeIn();
 		else if(showUI)
@@ -136,11 +173,12 @@ public class BuffSlidingFX : MonoBehaviour {
 			screenPos = Camera.main.WorldToScreenPoint(this.transform.position);
 			screenPos.y = Screen.height - screenPos.y;
 			startPoint = new Rect(screenPos.x-boxW/2, screenPos.y-40-boxH/2,boxW,boxH);
-		}
+		}*/
 		
 	}
 	
 	void OnGUI(){
+		/*
 		GUI.color = new Color(1.0f,1.0f,1.0f,_textAlpha);
 		GUI.backgroundColor = Color.clear;
 		if(sMachine.InitGame){
@@ -152,5 +190,6 @@ public class BuffSlidingFX : MonoBehaviour {
 				}
 			}
 		}
+		*/
 	}
 }

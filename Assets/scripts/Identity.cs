@@ -11,10 +11,10 @@ public class Identity : MonoBehaviour {
 	public int FixedSide = 3; 
 	public bool PrizeRed = false;
 	public bool PrizeYel = false;
-	public Transform[] neighbor;
-	public Material originalMat, PrizeMatRed, PrizeMatYel; 
+	public Transform[] Neighbor;
+	public Material OriginalMat, PrizeMatRed, PrizeMatYel; 
 	public int step = 0;
-	public IDictionary neighbors;
+	public IDictionary NeighborDict;
 	public Transform Prize = null;
 	private bool test = true;
 	//public Transform ShowMap; 
@@ -23,15 +23,15 @@ public class Identity : MonoBehaviour {
 		if(PrizeRed){
 			transform.renderer.material = PrizeMatRed;
 		}else if(MapUnit){
-			transform.renderer.material = originalMat;
+			transform.renderer.material = OriginalMat;
 		}else if(PrizeYel){
 			transform.renderer.material = PrizeMatYel;
 		}
 	}
 	
 	void getStructure(){
-		neighbor = new Transform[6];
-		neighbors = new Dictionary<string,Transform>(6);
+		Neighbor = new Transform[6];
+		NeighborDict = new Dictionary<string,Transform>(6);
 		//shoot rays depends on how many steps
 		int rayNumber = 6;
 		float angle = 360.0f/(float)rayNumber;
@@ -42,19 +42,19 @@ public class Identity : MonoBehaviour {
 		for(int i=0; i<rayNumber; i++){
 			RaycastHit hit;
 			if(Physics.Raycast(newRay,out hit,castLength)){
-				neighbor[i] = hit.transform;
+				Neighbor[i] = hit.transform;
 			}else{
-				neighbor[i]= null;
+				Neighbor[i]= null;
 			}
 			rayDir = Quaternion.AngleAxis(angle,Vector3.up)*rayDir;
 			newRay = new Ray(transform.position, rayDir);
 		}
-		neighbors.Add("Top",neighbor[0]);
-		neighbors.Add("TopRight",neighbor[1]);
-		neighbors.Add("BotRight",neighbor[2]);
-		neighbors.Add("Bot",neighbor[3]);
-		neighbors.Add("BotLeft",neighbor[4]);
-		neighbors.Add("TopLeft",neighbor[5]);
+		NeighborDict.Add("Top",Neighbor[0]);
+		NeighborDict.Add("TopRight",Neighbor[1]);
+		NeighborDict.Add("BotRight",Neighbor[2]);
+		NeighborDict.Add("Bot",Neighbor[3]);
+		NeighborDict.Add("BotLeft",Neighbor[4]);
+		NeighborDict.Add("TopLeft",Neighbor[5]);
 		
 		//ShowMap = GetRealMap(transform);
 	}

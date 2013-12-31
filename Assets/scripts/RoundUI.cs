@@ -2,7 +2,8 @@ using UnityEngine;
 using System.Collections;
 
 public class RoundUI : MonoBehaviour {
-	
+
+	public bool GUIControl = true;
 	public Texture2D RedRound, YelRound;
 	Texture2D showRound; 
 	public bool StartUI = false;
@@ -115,11 +116,13 @@ public class RoundUI : MonoBehaviour {
 	}
 	
 	void OnGUI(){
-		GUI.depth = 0;
-		GUI.color = new Color(1.0f,1.0f,1.0f,_Alpha);
-		GUI.backgroundColor = Color.clear;
-		if(showUI){
-			GUI.DrawTexture(posRect, showRound);
+		if(GUIControl){
+			GUI.depth = 0;
+			GUI.color = new Color(1.0f,1.0f,1.0f,_Alpha);
+			GUI.backgroundColor = Color.clear;
+			if(showUI){
+				GUI.DrawTexture(posRect, showRound);
+			}
 		}
 	}
 }

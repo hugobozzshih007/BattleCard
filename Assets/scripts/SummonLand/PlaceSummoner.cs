@@ -107,10 +107,14 @@ public class PlaceSummoner : MonoBehaviour {
 			if(TalkB){
 				chessUI.SomeoneTaking(SummonerB, SummonerB.GetComponent<TalkingContent>().AttackWords[1], true);
 				pause[1] = true;
+				//NGUI
+				chessUI.SomeoneTalking(SummonerB, SummonerB.GetComponent<TalkingContent>().AttackWords[1], true);
 			}
 			if(TalkA){
 				chessUI.SomeoneTaking(SummonerA, SummonerA.GetComponent<TalkingContent>().AttackWords[1], false);
 				pause[2] = true;
+				//NGUI
+				chessUI.SomeoneTalking(SummonerA, SummonerA.GetComponent<TalkingContent>().AttackWords[1], true);
 			}
 		}
 	}

@@ -13,8 +13,8 @@ public class EdgeShowUp : ImageEffectBase {
 	Color ChooseColor(){
 		Color mainColor = SideAColor;
 		int side = 1;
-		if(currentSel.chess!=null)
-			side = currentSel.chess.GetComponent<CharacterProperty>().Player;
+		if(currentSel.ChessInSelection!=null)
+			side = currentSel.ChessInSelection.GetComponent<CharacterProperty>().Player;
 		if(side==1){
 			mainColor = SideAColor; 
 		}else{

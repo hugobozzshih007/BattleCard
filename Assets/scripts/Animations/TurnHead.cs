@@ -42,8 +42,9 @@ public class TurnHead : MonoBehaviour {
 		bool npc = false;
 		if(currentSel.npcMode && akProperty.Player == 2)
 			npc = true;
-		if(!sMachine.TutorialMode)
-			chessUI.TalkingShit(Attacker.GetComponent<TalkingContent>().GetAtkWords(), npc);
+		if(!sMachine.TutorialMode){
+			chessUI.SomeoneTalking(Attacker, Attacker.GetComponent<TalkingContent>().GetAtkWords(), false);
+		}
 		if(attackerModel.GetComponent<AnimVault>()!=null)
 			attackerModel.GetComponent<AnimVault>().CurrentState = AnimVault.AnimState.run;
 	}
@@ -78,7 +79,7 @@ public class TurnHead : MonoBehaviour {
 							attackerModel.GetComponent<ShowFlamingArrow>().SetTarget(Target,fightBackMode,critiqHit);
 						}
 						
-				    }else{
+					}else{
 						AttackCalFX aCal = transform.GetComponent<AttackCalFX>();
 						if(fightBackMode){
 							aCal.FightBack = false;
@@ -88,19 +89,13 @@ public class TurnHead : MonoBehaviour {
 							aCal.FightBack = true;
 							aCal.CriticalHit = critiqHit;
 							aCal.SetAttackSequence(Attacker, targetLocation);
-							chessUI.Critical = critiqHit;
-							chessUI.DelayFadeOut = true;
-							chessUI.TargetFadeIn = false;
+							//NGUI
+							chessUI.ShowHitStatus(critiqHit,1);
+							chessUI.DelayDeactivateInfoUI(2);
 						}
 					}
 				}
 			}
 		}
 	}
-	/*
-	[RPC]
-	void UpdateRotation(string chessName, Quaternion old, Quaternion rotation, float t){
-		Transform chess = GameObject.Find(chessName).transform;
-		chess.transform.rotation = Quaternion.Lerp(old, rotation, t);
-	}*/
 }

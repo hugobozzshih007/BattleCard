@@ -18,7 +18,6 @@ public class RoundCounter : MonoBehaviour {
 	public Transform RealPlayerB;
 	public Transform playerA;
 	public Transform playerB;
-	public Texture2D InfoBlack;
 	Vector3 noWhere = new Vector3(0.0f,1000.0f,0.0f);
 	private bool camMoveMode = false;
 	private Vector3 oldCamPosition;
@@ -26,14 +25,12 @@ public class RoundCounter : MonoBehaviour {
 	//private float viewOffsetZ = 30.0f;
 	public Transform MidObject;
 	public Vector3 CamOffest = new Vector3();
-	private int camStep = 0;
-	public Material TerritoryA;
-	public Material TerritoryB;
 	public bool MoveCam;
 	bool checkRound = false;
 	RoundUI rUI;
-	MainUI mUI;
+
 	MainInfoUI infoUI;
+	BuffInfoUI buffInfoUI;
 	GeneralSelection currentSel;
 	NpcPlayer npc; 
 	StatusMachine sMachine;
@@ -62,8 +59,9 @@ public class RoundCounter : MonoBehaviour {
 		//PlayerBTerritory.Add(GameObject.Find("yellow_tower").transform);
 		
 		rUI = transform.GetComponent<RoundUI>();
-		mUI = transform.GetComponent<MainUI>();
+	
 		infoUI = transform.GetComponent<MainInfoUI>();
+		buffInfoUI = transform.GetComponent<BuffInfoUI>();
 		currentSel = transform.GetComponent<GeneralSelection>();
 		
 		CamOffest = MidObject.position - transform.position;
@@ -180,7 +178,7 @@ public class RoundCounter : MonoBehaviour {
 		}
 		
 		sMachine.InitGame = true;
-		infoUI.InitCameras();
+		infoUI.InitChampButtons();
 		GameObject playData = GameObject.Find("PlayerData");
 		Destroy(playData,0.5f);
 	}
@@ -638,8 +636,9 @@ public class RoundCounter : MonoBehaviour {
 		foreach(Transform t in AllChesses){
 			t.gameObject.layer = 10;
 		}
-		infoUI.MainFadeIn = false;
-		infoUI.TargetFadeIn = false;
+		//NGUI
+		infoUI.DeactivateInfoUI(1);
+		infoUI.DeactivateInfoUI(2);
 	}
 	// Update is called once per frame
 	void Update () {
@@ -719,14 +718,6 @@ public class RoundCounter : MonoBehaviour {
 		if(camMoveMode && MoveCam){
 			translateMainCam(0.4f);
 		}
-	}
-	
-	void OnGUI(){
-		//GUI.backgroundColor = Color.clear;
-		//GUI.Box(new Rect(10,10,100,90), "Round: "+roundCounter);
-		//Head Bar
-		GUI.depth = 5;
-		GUI.DrawTexture(new Rect(0,0,Screen.width,40),InfoBlack);
 	}
 	
 	void OnApplicationQuit(){

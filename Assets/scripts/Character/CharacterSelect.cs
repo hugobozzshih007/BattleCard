@@ -57,7 +57,7 @@ public class CharacterSelect : MonoBehaviour {
 						rootID.step = step;
 						if(!MoveRangeList.Contains(root))
 							MoveRangeList.Add(root);
-						foreach(Transform child in rootID.neighbor){
+						foreach(Transform child in rootID.Neighbor){
 							findMoveRange(child,step+1,maxStep);
 						}
 					}
@@ -79,7 +79,7 @@ public class CharacterSelect : MonoBehaviour {
 						rootID.step = step;
 						if(!MoveRangeList.Contains(root)&& !MapUtility.MapHelper.IsMapOccupied(root))
 							MoveRangeList.Add(root);
-						foreach(Transform child in rootID.neighbor){
+						foreach(Transform child in rootID.Neighbor){
 							findMoveRange(child,step+1,maxStep);
 						}
 					}
@@ -99,7 +99,7 @@ public class CharacterSelect : MonoBehaviour {
 			}else if(maxStep == 2){
 				pathList.Add(root);
 				Dictionary<float, Transform> sortingDict = new Dictionary<float,Transform>();
-				foreach(Transform t in rootID.neighbor){
+				foreach(Transform t in rootID.Neighbor){
 					if(t!=null){
 						Identity tID = t.GetComponent<Identity>();
 						if(!tID.River && !tID.Trees && !MapUtility.MapHelper.IsMapOccupied(t)){
@@ -119,7 +119,7 @@ public class CharacterSelect : MonoBehaviour {
 			}else if(maxStep == 3){
 				pathList.Add(root);
 				Dictionary<float, Transform> sortingDict = new Dictionary<float,Transform>();
-				foreach(Transform t in rootID.neighbor){
+				foreach(Transform t in rootID.Neighbor){
 					if(t!=null){
 						Identity tID = t.GetComponent<Identity>();
 						if(!tID.River && !tID.Trees && !MapUtility.MapHelper.IsMapOccupied(t)){
@@ -137,7 +137,7 @@ public class CharacterSelect : MonoBehaviour {
 				sortingDict.Clear();
 				list.Clear();
 				Identity midPathID = midPath.GetComponent<Identity>();
-				foreach(Transform t in midPathID.neighbor){
+				foreach(Transform t in midPathID.Neighbor){
 					if(t!=null){
 						Identity tID = t.GetComponent<Identity>();
 						if(!tID.River && !tID.Trees && !MapUtility.MapHelper.IsMapOccupied(t)){
@@ -175,7 +175,7 @@ public class CharacterSelect : MonoBehaviour {
 						rootID.step = step;
 						if(!AttackRangeList.Contains(root))
 							AttackRangeList.Add(root);
-						foreach(Transform child in rootID.neighbor){
+						foreach(Transform child in rootID.Neighbor){
 							findAttackRange(child,step+1,maxStep);
 						}
 					}
@@ -197,7 +197,7 @@ public class CharacterSelect : MonoBehaviour {
 						rootID.step = step;
 						if(!AttackRangeList.Contains(root))
 							AttackRangeList.Add(root);
-						foreach(Transform child in rootID.neighbor){
+						foreach(Transform child in rootID.Neighbor){
 							findAttackRange(child,step+1,maxStep);
 						}
 					}

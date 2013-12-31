@@ -79,10 +79,10 @@ public class TutorStageD : MonoBehaviour {
 		fc.CamFollowMe(MainCharacter);
 		chessUI.SomeoneTaking(MainCharacter, content[0], false);
 		showUI = true;
-		currentSel.chess = null;
+		currentSel.ChessInSelection = null;
 		
 		Identity rootID = root.GetComponent<Identity>();
-		foreach(Transform m in rootID.neighbor){
+		foreach(Transform m in rootID.Neighbor){
 			if(m!=null){
 				roundMaps.Add(m);
 			}
@@ -127,7 +127,7 @@ public class TutorStageD : MonoBehaviour {
 	
 	void ArrowCheckLessonA(){
 		if(arrowOn[1]){
-			if(currentSel.chess == MainCharacter){
+			if(currentSel.ChessInSelection == MainCharacter){
 				arrowOn[1] = aUI.HideArrow();
 				UpdateScreenPos(prizeMap);
 				arrowRect = new Rect(screenPos.x+25, screenPos.y-105, 64, 64);
@@ -168,7 +168,7 @@ public class TutorStageD : MonoBehaviour {
 				arrowOn[0] = aUI.HideArrow();
 				sMachine.TutorialBusy = true;
 				currentSel.CancelCmds();
-				currentSel.chess = null;
+				currentSel.ChessInSelection = null;
 			}
 		}
 		if(subLessonB){
@@ -182,7 +182,7 @@ public class TutorStageD : MonoBehaviour {
 				chessUI.SomeoneTaking(MainCharacter, content[contentIndex], false);
 				subLessonB = false;
 				currentSel.CancelCmds();
-				currentSel.chess = null;
+				currentSel.ChessInSelection = null;
 				sMachine.TutorialBusy = true;
 			}
 		}
@@ -202,7 +202,7 @@ public class TutorStageD : MonoBehaviour {
 					sMachine.TutorialBusy = false;
 					tutorMom.ResetPlayerA(MainCharacter);
 					tutorMom.ShowContinue(false);
-					chessUI.FadeOutUI();
+					//chessUI.FadeOutUI();
 					UpdateScreenPos(MainCharacter);
 					arrowRect = new Rect(screenPos.x+25, screenPos.y-105, 64, 64);
 					arrowOn[0] = aUI.ShowArrow(arrowRect, ArrowUI.ArrowMode.downLeft);
@@ -218,7 +218,7 @@ public class TutorStageD : MonoBehaviour {
 					sMachine.TutorialBusy = false;
 					tutorMom.ResetPlayerA(MainCharacter);
 					tutorMom.ShowContinue(false);
-					chessUI.FadeOutUI();
+					//chessUI.FadeOutUI();
 					UpdateScreenPos(MainCharacter);
 					arrowRect = new Rect(screenPos.x+25, screenPos.y-105, 64, 64);
 					arrowOn[1] = aUI.ShowArrow(arrowRect, ArrowUI.ArrowMode.downLeft);
@@ -234,7 +234,7 @@ public class TutorStageD : MonoBehaviour {
 					DeathUI dUI = new DeathUI(MainCharacter,MainCharacter);
 					tutorMom.ResetMap(0);
 					tutorMom.ShowContinue(false);
-					chessUI.FadeOutUI();
+					//chessUI.FadeOutUI();
 					nextStage.StartPause(3.0f);
 					currentSel.CancelCmds();
 					showUI = false;

@@ -92,7 +92,7 @@ namespace BuffUtility{
 				buff = 17;
 			}else if(rate >= 50 && rate < 66){
 				buff = 30;
-			}else if(rate >= 66 && rate > 75){
+			}else if(rate >= 66 && rate < 75){
 				buff = 45;
 			}else if(rate >= 75){
 				buff = 60;

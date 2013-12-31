@@ -5,10 +5,17 @@ using System.Collections.Generic;
 
 public class CharacterProperty : MonoBehaviour {
 	public string NameString = "";
+	public string BigIcon_Name = "";
 	public Texture2D BigIcon;
 	public Texture2D SmallIcon;
 	public Texture2D GuardianIcon;
 	public Transform DisplayModel;
+	//for new NGUI system
+	//public Transform UIQuickInfo;  
+	public Transform QuickInfoRealUI;
+	//store it's own HUDtext gameobject 
+	public Transform HUDText;
+
 	public bool LeadingCharacter; 
 	public bool Summoner;
 	public bool InSelection; 
@@ -72,11 +79,12 @@ public class CharacterProperty : MonoBehaviour {
 	float turnsHeight = 12.0f/720.0f*Screen.height;
 	
 	GeneralSelection currentSel;
-	  
+	MainInfoUI infoUI;  
 	// Use this for initialization
 	void Start () {
 		UnStatusCounter = new Dictionary<UnnormalStatus, int>();
 		LastUnStatusCounter = new Dictionary<UnnormalStatus, int>();
+		infoUI = Camera.main.GetComponent<MainInfoUI>();
 		//print("Dictionary length:" + UnStatusCounter.Count);
 		UnStatusCounter.Add(UnnormalStatus.Burned,0);
 		UnStatusCounter.Add(UnnormalStatus.Chaos,0);
@@ -145,6 +153,7 @@ public class CharacterProperty : MonoBehaviour {
 		oldHp = Hp+1;
 		arrow = new Texture2D(10, 10);
 		redSpot = (Texture2D)Resources.Load("redSpot");
+		GenerateHUDText();
 	}
 	void Awake(){
 		
@@ -218,9 +227,26 @@ public class CharacterProperty : MonoBehaviour {
 			Attacked = true;
 			TurnFinished = true;
 		}
-		bloodVolume = (float)Hp/(float)MaxHp*(bloodWidth-4.0f);
+		bloodVolume = (float)Hp/(float)MaxHp;//*(bloodWidth-4.0f)
+		if(QuickInfoRealUI){
+			Transform trueBlood = MapHelper.FindAnyChildren(QuickInfoRealUI, "true_blood");
+			trueBlood.GetComponent<UISprite>().fillAmount = bloodVolume;
+		}
+
+		UpdateActPoints();
+		UpdateBasicBuffInfo();
 	}
-	
+
+	//Instance HUDtext for this character  
+	void GenerateHUDText(){
+		GameObject uiText = NGUITools.AddChild(GameObject.Find("main_info_panel"), infoUI.HUDText.gameObject); 
+		uiText.gameObject.layer = 8;
+		uiText.GetComponent<UIFollowTarget>().target = transform; 
+		uiText.GetComponent<UIFollowTarget>().gameCamera = Camera.main;
+		uiText.GetComponent<UIFollowTarget>().uiCamera = GameObject.Find("UICamera").camera; 
+		HUDText = uiText.transform;
+	}
+
 	Texture2D GetBloodTexture(int side){
 		Texture2D blood= new Texture2D(8, 8);
 		switch(side){
@@ -351,19 +377,119 @@ public class CharacterProperty : MonoBehaviour {
 		}
 		
 	}
-	
+
+	//for new NGUI system
+	void UpdateBasicBuffInfo(){
+		if(QuickInfoRealUI){
+			GameObject atkBuffInfo = QuickInfoRealUI.GetChild(1).GetChild(0).gameObject;
+			GameObject defBuffInfo = QuickInfoRealUI.GetChild(1).GetChild(1).gameObject;
+			if(Damage>atkPower){
+				atkBuffInfo.SetActive(true); 
+				atkBuffInfo.transform.GetChild(1).gameObject.SetActive(false);
+				atkBuffInfo.transform.GetChild(0).gameObject.SetActive(true);
+			}else if(Damage == atkPower){
+				atkBuffInfo.SetActive(false);
+				atkBuffInfo.transform.GetChild(1).gameObject.SetActive(false);
+				atkBuffInfo.transform.GetChild(0).gameObject.SetActive(false);
+			}else{
+				atkBuffInfo.SetActive(true);
+				atkBuffInfo.transform.GetChild(1).gameObject.SetActive(true);
+				atkBuffInfo.transform.GetChild(0).gameObject.SetActive(false);
+			}
+
+			if(ModifiedDefPow > defPower){
+				defBuffInfo.SetActive(true); 
+				defBuffInfo.transform.GetChild(1).gameObject.SetActive(false);
+				defBuffInfo.transform.GetChild(0).gameObject.SetActive(true);
+			}else if(ModifiedDefPow == defPower){
+				defBuffInfo.SetActive(false); 
+				defBuffInfo.transform.GetChild(1).gameObject.SetActive(false);
+				defBuffInfo.transform.GetChild(0).gameObject.SetActive(false);
+			}else{
+				defBuffInfo.SetActive(true); 
+				defBuffInfo.transform.GetChild(1).gameObject.SetActive(true);
+				defBuffInfo.transform.GetChild(0).gameObject.SetActive(false);
+			}
+		}
+	}
+
+	//for character's HUD text info
+	public void UpdateHudText(string content, Color textColor){
+		if(HUDText){
+			HUDText.GetComponent<HUDText>().Add(content, textColor,0.2f);
+		}
+	}
+
+	//for new NGUI system
+	void UpdateActPoints(){
+		if(QuickInfoRealUI){
+			GameObject[] actPoint = {QuickInfoRealUI.GetChild(0).GetChild(0).gameObject, QuickInfoRealUI.GetChild(0).GetChild(1).gameObject, QuickInfoRealUI.GetChild(0).GetChild(2).gameObject};
+			if(guiShow){
+				QuickInfoRealUI.gameObject.SetActive(true);
+				if(!Tower && CheckInPlaying()){
+					QuickInfoRealUI.GetChild(0).gameObject.SetActive(true);
+					switch(CmdTimes){
+						case 0:
+							foreach(GameObject obj in actPoint){
+								obj.SetActive(false);
+							}
+							break;
+						case 1:
+							actPoint[0].SetActive(false);
+							actPoint[1].SetActive(false);
+							actPoint[2].SetActive(true);
+							if(!Attacked){
+								actPoint[2].GetComponent<UISprite>().spriteName = "atk_turn";
+							}else{
+								actPoint[2].GetComponent<UISprite>().spriteName = "one_turn";
+							}
+							break;
+						case 2:
+							actPoint[0].SetActive(false);
+							actPoint[1].SetActive(true);
+							actPoint[2].SetActive(true);
+							if(!Attacked){
+								actPoint[1].GetComponent<UISprite>().spriteName = "atk_turn";
+								actPoint[2].GetComponent<UISprite>().spriteName = "one_turn";
+							}else{
+								actPoint[1].GetComponent<UISprite>().spriteName = "one_turn";
+								actPoint[2].GetComponent<UISprite>().spriteName = "one_turn";
+							}
+							break;
+						case 3:
+							actPoint[0].SetActive(true);
+							actPoint[1].SetActive(true);
+							actPoint[2].SetActive(true);
+							
+							actPoint[0].GetComponent<UISprite>().spriteName = "atk_turn";
+							actPoint[1].GetComponent<UISprite>().spriteName = "one_turn";
+							actPoint[2].GetComponent<UISprite>().spriteName = "one_turn";
+							
+							break;
+						default:
+							break;
+					}
+				}else{
+					QuickInfoRealUI.GetChild(0).gameObject.SetActive(false);
+				}
+			}else{
+				QuickInfoRealUI.gameObject.SetActive(false);
+			}
+		}
+	}
+
 	void OnGUI(){
+
+		/*
 		GUI.backgroundColor = Color.clear;
 		GUI.color = new Color(1.0f,1.0f,1.0f,0.75f);
 		GUI.depth = 5; 
 		if(guiShow ){
 			if(CmdTimes<0)
 				CmdTimes = 0;
-			//cmdRect = new Rect(screenPos.x, screenPos.y+40, 20.0f,20.0f);
 			if(!Tower && CheckInPlaying()){
 				turnRect = new Rect(screenPos.x-28, screenPos.y+45+bloodHeight, turnsWidth, turnsHeight);
 				rectRedSpot = new Rect(turnRect.x+turnsWidth+1, turnRect.y+turnsHeight/4, turnsHeight/2, turnsHeight/2);
-				//if(!currentSel.CheckIfShowBlood()){
 				if(!Attacked && !TurnFinished){
 					GUI.DrawTexture(rectRedSpot, redSpot);
 				}
@@ -376,6 +502,7 @@ public class CharacterProperty : MonoBehaviour {
 			trueBloodRect = new Rect(bloodRect.x+2, bloodRect.y+2,bloodVolume, bloodHeight-4); 
 			GUI.DrawTexture(trueBloodRect, trueBloodLine);
 			DrawBasicBuffUI();
-		}
+
+		}*/
 	}
 }

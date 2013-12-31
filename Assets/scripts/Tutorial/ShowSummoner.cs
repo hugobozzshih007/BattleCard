@@ -23,7 +23,7 @@ public class ShowSummoner : MonoBehaviour {
 		CharacterProperty ap = SummonerA.GetChild(0).GetComponent<CharacterProperty>();
 		ap.Activated = true;
 		ap.Attacked = true;
-		Camera.mainCamera.GetComponent<MainUI>().InTutorial = true;
+		//Camera.mainCamera.GetComponent<MainUI>().InTutorial = true;
 		transform.GetComponent<InitStage>().ShowSelCmd = true;
 	}
 	

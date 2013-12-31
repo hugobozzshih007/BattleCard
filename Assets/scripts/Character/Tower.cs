@@ -54,7 +54,7 @@ public class Tower : MonoBehaviour {
 			deadExcuted = false;
 			Transform localMap = transform.GetComponent<CharacterSelect>().getMapPosition();
 			FixedMaps.Add(localMap);
-			foreach(Transform map in localMap.GetComponent<Identity>().neighbor){
+			foreach(Transform map in localMap.GetComponent<Identity>().Neighbor){
 				if(map!=null){
 					FixedMaps.Add(map);
 					Transform redRing = null;
