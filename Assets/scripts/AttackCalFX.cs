@@ -14,7 +14,6 @@ public class AttackCalFX : MonoBehaviour {
 	CharacterProperty attackerProperty, targetProperty;
 	CharacterSelect attackerSelect, targetSelect;
 	GeneralSelection currentSel;
-	DeathFX dFX;
 	
 	bool wait = false;
 
@@ -143,8 +142,8 @@ public class AttackCalFX : MonoBehaviour {
 	}
 	
 	void ShowDamageUI(Transform target,int damage, Transform atk){
-		DamageSlidingFX targetSFX = target.GetComponent<DamageSlidingFX>();
-		targetSFX.ActivateSlidingFX(atk, damage);
+		//DamageSlidingFX targetSFX = target.GetComponent<DamageSlidingFX>();
+		//targetSFX.ActivateSlidingFX(atk, damage);
 
 		//for NGUI HUD text to show dmg
 		target.GetComponent<CharacterProperty>().UpdateHudText("-"+damage.ToString(), Color.green);
@@ -162,7 +161,6 @@ public class AttackCalFX : MonoBehaviour {
 	}
 	
 	public void UpdateAttackResult(AttackType mode){
-		dFX = Camera.mainCamera.GetComponent<DeathFX>();
 		if(mode == AttackType.physical){
 			if(Attacker.GetComponent<CharacterPassive>().PassiveDict[PassiveType.SuddenDeath]){
 				if(!targetProperty.Tower && MapHelper.Success(10)){
@@ -214,26 +212,15 @@ public class AttackCalFX : MonoBehaviour {
 				ShowDamageUI(Target, trueDamage, Attacker);
 			}
 		}
-		/*
-		if(Attackable()){
-			attackerProperty.Hp -= targetProperty.Damage;
-		}*/
 		
 		if(attackerProperty.Hp<=0){
-			//attackerProperty.death = true;
-			//dFX.SetDeathSequence(Attacker);
-			attackerProperty.Ready = false;
-			attackerProperty.WaitRounds = attackerProperty.StandByRounds;
+			Attacker.GetComponent<SummonFX>().StartDelayDeath(1.5f);
 		}
 		
 		if(targetProperty.Hp<=0){
 			targetProperty.Hp = 0;
 			targetProperty.Attacked = true;
-			//cancel attack buff
-			Target.GetComponent<BuffList>().ExtraDict[BuffType.Attack] = 0;
-			Target.GetComponent<BuffList>().ExtraDict[BuffType.CriticalHit] = 0;
-			targetProperty.CmdTimes -= 1;
-			currentSel.TurnFinished(Target, false);
+			Target.GetComponent<SummonFX>().StartDelayDeath(1.5f);
 			if(chessUI.PlayerSide ==1){
 				// NGUI
 				chessUI.DelayDeactivateInfoUI(1);
@@ -248,7 +235,7 @@ public class AttackCalFX : MonoBehaviour {
 				//cancel attack buff
 				Target.GetComponent<BuffList>().ExtraDict[BuffType.Attack] = 0;
 				Target.GetComponent<BuffList>().ExtraDict[BuffType.CriticalHit] = 0;
-				targetProperty.CmdTimes -= 1;
+
 				currentSel.TurnFinished(Target, false);
 			}else{
 				sMachine.InBusy = false;

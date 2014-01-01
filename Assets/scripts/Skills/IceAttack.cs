@@ -23,8 +23,8 @@ public class IceAttack : MonoBehaviour, SkillInterface {
 	public IList GetSelectionRange ()
 	{
 		IList selectionRange = new List<Transform>();
-		AttackCalculation atkCal = new AttackCalculation(attacker);
-		foreach(Transform map in atkCal.GetMagicTarget(atkCal.Attacker)){
+		AttackCalFX atkCal = Camera.main.GetComponent<AttackCalFX>();
+		foreach(Transform map in atkCal.GetMagicTarget(attacker)){
 			selectionRange.Add(map);
 		}
 		return selectionRange;

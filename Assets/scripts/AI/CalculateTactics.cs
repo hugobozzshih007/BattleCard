@@ -78,66 +78,6 @@ public class CalculateTactics : MonoBehaviour {
 		TacticPoint[] doOnly = new TacticPoint[1];
 		doOnly[0] = GetUnitTactic(localMap, gf, tacNone);
 		sortDict.Add(doOnly, doOnly[0].Point);
-		
-		/*
-		if(CheckSteps(gf, 1)){
-			// Case One: Do -> Move -> Do
-			TacticPoint[] doMoveDo = new TacticPoint[2];
-			doMoveDo[0] = GetUnitTactic(localMap, gf, tacNone);
-			
-			if(doMoveDo[0].Tactic == Tactics.Melee_Attack || doMoveDo[0].Tactic == Tactics.Range_Attack || IsTacticSkill(doMoveDo[0]))
-				doMoveDo[1] = GetMoveTactic(gf, 1, new Tactics[]{doMoveDo[0].Tactic});
-			else 
-				doMoveDo[1] = GetMoveTactic(gf, 1, tacNone);
-			int doMoveDoPoint = doMoveDo[0].Point + doMoveDo[1].Point; 
-			sortDict.Add(doMoveDo, doMoveDoPoint);
-		
-			//Case two: Move -> Do -> Do 
-			TacticPoint[] moveDoDo = new TacticPoint[2];  
-			moveDoDo[0] = GetMoveTactic(gf, 1, tacNone);
-			moveDoDo[1] = GetUnitTactic(moveDoDo[0].MapUnit, gf ,new Tactics[]{moveDoDo[0].Tactic});
-			int moveDoDoPoint = moveDoDo[0].Point + moveDoDo[1].Point;
-			sortDict.Add(moveDoDo, moveDoDoPoint);
-		}
-		
-		
-		
-		if(CheckSteps(gf, 3)){
-			// Case Four: Move -> move -> move
-			TacticPoint[] moveMoveMove = new TacticPoint[1];
-			moveMoveMove[0] = GetUnitToMove(gf, 3, localMap);
-			sortDict.Add(moveMoveMove, moveMoveMove[0].Point);
-		}
-		
-		if(CheckSteps(gf,1)){
-			// Case Five: Move -> Do -> Move
-			TacticPoint[] moveDoMove = new TacticPoint[2];
-			moveDoMove[0] = GetMoveTactic(gf, 1, tacNone);
-			moveDoMove[1] = GetUnitToMove(gf, 1, moveDoMove[0].MapUnit);
-			sortDict.Add(moveDoMove, moveDoMove[0].Point + moveDoMove[1].Point);
-		
-		
-			// Case Six: Do -> Do -> Move
-			TacticPoint[] doDoMove = new TacticPoint[3];
-			doDoMove[0] = GetUnitTactic(localMap, gf, tacNone);
-			doDoMove[1] = GetUnitTactic(localMap, gf, new Tactics[]{doDoMove[0].Tactic});
-			doDoMove[2] = GetUnitToMove(gf, 1, doDoMove[1].MapUnit);
-			sortDict.Add(doDoMove, doDoMove[0].Point + doDoMove[1].Point + doDoMove[2].Point);
-		}
-		
-		// Case Seven: Do -> Do -> Do
-		TacticPoint[] doThree = new TacticPoint[3];   
-		doThree[0] = GetUnitTactic(localMap, gf, tacNone);
-		doThree[1] = GetUnitTactic(localMap, gf, new Tactics[]{doThree[0].Tactic});
-		
-		// attack only once 
-		if(doThree[0].Tactic == Tactics.Melee_Attack || doThree[0].Tactic == Tactics.Range_Attack || IsTacticSkill(doThree[0])){
-			doThree[2] = GetUnitTactic(localMap, gf, new Tactics[]{doThree[0].Tactic, doThree[1].Tactic});
-		}else{
-			doThree[2] = GetUnitTactic(localMap, gf, new Tactics[]{doThree[1].Tactic});
-		}	
-		sortDict.Add(doThree, doThree[0].Point + doThree[1].Point + doThree[2].Point);
-		*/
 		//Sort the dict by it's value
 		var sortedDict = (from entry in sortDict orderby entry.Value descending select entry).ToDictionary(pair => pair.Key, pair => pair.Value);
 		IList tactics = new List<TacticPoint>();
@@ -151,6 +91,17 @@ public class CalculateTactics : MonoBehaviour {
 	//get the different score from different gf
 	void GetGfBasicScore(Transform gf){
 		
+	}
+
+	public Transform GetRevivePos(){
+		Transform targetMap = null;
+		IList pPosList = new List<Transform>();
+		pPosList = currentSel.GetAllEmptyMaps();
+		IList farList = new List<Transform>();
+		farList = MapHelper.GetFarestMaps(currentRC.playerA, pPosList);
+		int rnd = Random.Range(0, farList.Count-1);
+		targetMap = farList[rnd] as Transform;
+		return targetMap;
 	}
 	
 	// move and do somthing
@@ -493,25 +444,25 @@ public class CalculateTactics : MonoBehaviour {
 			}*/
 			if(currentRC.PlayerBTerritory.Contains(map)){
 				if(MapHelper.CheckBuffList(BuffType.Attack, gf)){
-					gfNewDamage = gfp.atkPower + gfBuffList.ExtraDict[BuffType.Attack] + currentBuff;
+					gfNewDamage = gfp.AtkPower + gfBuffList.ExtraDict[BuffType.Attack] + currentBuff;
 				}else{
 					gfNewDamage = gfp.Damage; 
 				}
 				
 				if(MapHelper.CheckBuffList(BuffType.Defense, gf)){
-					gfNewDef = gfp.defPower+ gfBuffList.ExtraDict[BuffType.Defense] + currentBuff;
+					gfNewDef = gfp.DefPower+ gfBuffList.ExtraDict[BuffType.Defense] + currentBuff;
 				}else{
 					gfNewDef = gfp.ModifiedDefPow;
 				}
 			}else if(currentRC.PlayerATerritory.Contains(map)){
 				if(MapHelper.CheckDeBuffList(BuffType.Attack, gf)){
-					gfNewDamage = gfp.atkPower + gfBuffList.ExtraDict[BuffType.Attack] - currentBuff;
+					gfNewDamage = gfp.AtkPower + gfBuffList.ExtraDict[BuffType.Attack] - currentBuff;
 				}else{
 					gfNewDamage = gfp.Damage;
 				}
 				
 				if(MapHelper.CheckDeBuffList(BuffType.Defense, gf)){
-					gfNewDef = gfp.defPower + gfBuffList.ExtraDict[BuffType.Defense] - currentBuff;
+					gfNewDef = gfp.DefPower + gfBuffList.ExtraDict[BuffType.Defense] - currentBuff;
 				}else{
 					gfNewDef = gfp.ModifiedDefPow;
 				}
@@ -706,8 +657,8 @@ public class CalculateTactics : MonoBehaviour {
 	
 	public bool IsTargetFightBack(Transform attacker, Transform target){
 		bool fightBack = false;
-		AttackCalculation atkCal = new AttackCalculation(target);
-		IList fightBackList = atkCal.GetAttableTarget(atkCal.Attacker);
+		AttackCalFX atkCal = Camera.main.GetComponent<AttackCalFX>();
+		IList fightBackList = atkCal.GetAttackableTarget(target);
 		if(fightBackList != null && fightBackList.Count>0){
 			foreach(Transform nMap in fightBackList){
 				Transform ngf = MapHelper.GetMapOccupiedObj(nMap);
@@ -852,7 +803,7 @@ public class CalculateTactics : MonoBehaviour {
 		int summonAble = Summonable(2); 
 		if(summonAble>0){
 			foreach(Transform gf in currentRC.PlayerBChesses){
-				if(gf.GetComponent<CharacterProperty>().Ready && gf.GetComponent<CharacterProperty>().death){
+				if(gf.GetComponent<CharacterProperty>().Ready && gf.GetComponent<CharacterProperty>().Death){
 					gfs.Add(gf);
 				}
 			}

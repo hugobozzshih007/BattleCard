@@ -12,6 +12,10 @@ public class SummonFX : MonoBehaviour {
 	float fadeInTime = 2.0f;
 	float timeToDie = 1.5f;
 	bool summonIn = false;
+	bool delayDeath = false;
+	float delayTimeToDeath = 1.5f;
+	float delaySeg = 0.0f;
+
 	Color red = new Color(1.0f,155.0f/255.0f,155.0f/255.0f,1.0f);
 	Color yellow = new Color(1.0f,245.0f/255.0f,90.0f/255.0f,1.0f);
 	PointCalculation pCal;
@@ -25,6 +29,7 @@ public class SummonFX : MonoBehaviour {
 	bool soundInPlayed = false;
 	bool soundOutPlayed = false;
 	SystemSound sSound; 
+	GeneralSelection currentSel; 
 	// Use this for initialization
 	void Start () {
 		pSummoner = GameObject.Find("InitStage").transform.GetComponent<PlaceSummoner>();
@@ -35,6 +40,7 @@ public class SummonFX : MonoBehaviour {
 		sMachine = GameObject.Find("StatusMachine").GetComponent<StatusMachine>();
 		pCal = GameObject.Find("EndStage").GetComponent<PointCalculation>();
 		sSound = GameObject.Find("SystemSound").GetComponent<SystemSound>();
+		currentSel = Camera.main.GetComponent<GeneralSelection>();
 	}
 	
 	public void ActivateSummonFX(){
@@ -48,7 +54,13 @@ public class SummonFX : MonoBehaviour {
 		}
 		
 	}
-	
+
+	public void StartDelayDeath(float delayTime){
+		delayTimeToDeath = delayTime;
+		delayDeath = true; 
+		delaySeg = 0.0f;
+	}
+
 	public void ActivateDying(){
 		if(RecordOldShaderList(transform)){
 			Color col = GetSideColor();
@@ -73,26 +85,7 @@ public class SummonFX : MonoBehaviour {
 			cp.QuickInfoRealUI = null;
 		}
 	}
-
-	//Instance HUDtext for this character  
-	/*
-	void GenerateHUDText(){
-		GameObject uiText = NGUITools.AddChild(GameObject.Find("main_info_panel"), infoUI.HUDText.gameObject); 
-		uiText.gameObject.layer = 8;
-		uiText.GetComponent<UIFollowTarget>().target = transform; 
-		uiText.GetComponent<UIFollowTarget>().gameCamera = Camera.main;
-		uiText.GetComponent<UIFollowTarget>().uiCamera = GameObject.Find("UICamera").camera; 
-		cp.HUDText = uiText.transform;
-	}
-
-
-	//Kill HUDtext for this character
-	void KillHUDText(){
-		if(cp.HUDText){
-			Destroy(cp.HUDText.gameObject, 1.0f);
-			cp.HUDText = null;
-		}
-	}*/
+	
 
 	bool RecordOldShaderList(Transform gf){
 		oldShaderDict.Clear();
@@ -125,6 +118,21 @@ public class SummonFX : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+		if(delayDeath){
+			delaySeg += Time.deltaTime/delayTimeToDeath;  
+			if(delaySeg >= 0.99f){
+				CommonFX cFX = Camera.mainCamera.GetComponent<CommonFX>();
+				CharacterSelect cSelect = transform.GetComponent<CharacterSelect>();
+				Transform map = cSelect.getMapPosition();
+				Vector3 FxPos = new Vector3(map.transform.position.x,map.transform.position.y+0.1f,map.transform.position.z);
+				Transform fx = Object.Instantiate(cFX.DeadOut,FxPos,Quaternion.identity) as Transform;
+				Object.Destroy(GameObject.Find(fx.name).gameObject, 3.0f);
+				ActivateDying();
+				delaySeg = 0.0f;
+				delayDeath = false;
+			}
+		}
+
 		if(summonIn){
 			if(!soundInPlayed){
 				sSound.PlaySound(SysSoundFx.SummonIn);
@@ -201,7 +209,7 @@ public class SummonFX : MonoBehaviour {
 			if(alpha<=0.05){
 				if(pCal != null)
 					pCal.AddDeadNum(transform);
-				cp.death = true;
+				cp.Death = true;
 				startDie = false;
 				rUI.Wait = false;
 				if(!sMachine.TutorialMode){
@@ -219,7 +227,12 @@ public class SummonFX : MonoBehaviour {
 				MapHelper.SetObjOldShader(this.transform,oldShaderDict,1.0f);
 				GameObject.Find("StatusMachine").GetComponent<StatusMachine>().InBusy = false;
 				KillHUDInfo();
-				//KillHUDText();
+
+				//Initial Champ
+				cp.Ready = false;
+				cp.WaitRounds = cp.StandByRounds;
+				currentSel.TurnFinished(transform, false);
+
 				if(Network.connections.Length==0){
 					Transform npcPlayer = GameObject.Find("NpcPlayer").transform;
 					NpcPlayer npc = npcPlayer.GetComponent<NpcPlayer>();

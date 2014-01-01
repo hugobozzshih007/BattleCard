@@ -19,7 +19,7 @@ public class ShowSummoner : MonoBehaviour {
 	public void ShowSummonerA(){
 		SummonerA.transform.position = GameObject.Find("unit_start_point_A").transform.position;
 		SummonerA.transform.Translate(0.0f,1.5f,0.0f);
-		SummonerB.GetChild(0).GetComponent<CharacterProperty>().death = true;
+		SummonerB.GetChild(0).GetComponent<CharacterProperty>().Death = true;
 		CharacterProperty ap = SummonerA.GetChild(0).GetComponent<CharacterProperty>();
 		ap.Activated = true;
 		ap.Attacked = true;

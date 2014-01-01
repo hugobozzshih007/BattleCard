@@ -26,7 +26,7 @@ public class GainPassive : MonoBehaviour, SkillInterface{
 		IList selectionRange = new List<Transform>();
 		foreach(Transform chess in chessStorage.AllChesses){
 			CharacterProperty property = chess.GetComponent<CharacterProperty>();
-			if(!property.death){
+			if(!property.Death){
 				selectionRange.Add(chess.GetComponent<CharacterSelect>().getMapPosition());
 			}
 		}

@@ -143,12 +143,12 @@ public class MoveCharacter : MonoBehaviour {
 		RoundCounter rc = transform.GetComponent<RoundCounter>();
 		if(chess.GetComponent<CharacterProperty>().Player==1){
 			foreach(Transform t in rc.PlayerBChesses){
-				if(!t.GetComponent<CharacterProperty>().death)
+				if(!t.GetComponent<CharacterProperty>().Death)
 					targets.Add(t);
 			}
 		}else{
 			foreach(Transform t in rc.PlayerAChesses){
-				if(!t.GetComponent<CharacterProperty>().death)
+				if(!t.GetComponent<CharacterProperty>().Death)
 					targets.Add(t);
 			}
 		}

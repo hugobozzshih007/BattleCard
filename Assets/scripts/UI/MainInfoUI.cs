@@ -40,6 +40,7 @@ public class MainInfoUI : MonoBehaviour {
 		Right_Info.gameObject.SetActive(false);
 		fCam = transform.GetComponent<FollowCam>();
 		rc = transform.GetComponent<RoundCounter>();
+		currentSel = transform.GetComponent<GeneralSelection>();
 		sMachine = GameObject.Find("StatusMachine").transform.GetComponent<StatusMachine>();
 		sysSound = GameObject.Find("SystemSoundB").transform.GetComponent<SystemSound>();
 		leftChess = null;
@@ -166,7 +167,7 @@ public class MainInfoUI : MonoBehaviour {
 			float progress = (float)(cp.StandByRounds - cp.WaitRounds) / (float)cp.StandByRounds;
 			summonBT.GetComponent<UISprite>().fillAmount = progress; 
 			if(progress >= 1.0f){
-				if(cp.death){
+				if(cp.Death){
 					if(summonBT.GetChild(0).GetComponent<UIButton>().isEnabled == false)
 						summonBT.GetChild(0).GetComponent<UIButton>().isEnabled = true;
 					if(summonBT.GetComponent<TweenAlpha>().enabled == false)
@@ -177,7 +178,7 @@ public class MainInfoUI : MonoBehaviour {
 				}
 				//summonBT.GetComponent<TweenAlpha>().Play();
 			}else{
-				if(cp.death){
+				if(cp.Death){
 					if(summonBT.GetComponent<UISprite>().color.a != 1.0f)
 						summonBT.GetComponent<UISprite>().color = new Color(originColor.r, originColor.g, originColor.b, 1.0f);
 				}
@@ -188,7 +189,7 @@ public class MainInfoUI : MonoBehaviour {
 			}
 
 			//update skiil button with skill cool down info
-			if(!cp.death){
+			if(!cp.Death){
 				skillBT.GetComponent<UISprite>().color = Color.white;
 				skillBT.GetChild(0).GetComponent<UILabel>().color = Color.white;
 				if(summonBT.GetChild(0).GetComponent<UIButton>().isEnabled == true)
@@ -407,25 +408,25 @@ public class MainInfoUI : MonoBehaviour {
 		CharacterProperty cp = chess.GetComponent<CharacterProperty>();
 		switch(mode){
 			case BuffType.MoveRange:
-				if(cp.BuffMoveRange == cp.moveRange)
+				if(cp.BuffMoveRange == cp.MoveRange)
 					icon += "move";
-				else if(cp.BuffMoveRange > cp.moveRange)
+				else if(cp.BuffMoveRange > cp.MoveRange)
 					icon += "moveUP";
 				else
 					icon += "moveDN";
 				break;
 			case BuffType.AttackRange:
-				if(cp.BuffAtkRange == cp.atkRange)
+				if(cp.BuffAtkRange == cp.AtkRange)
 					icon += "renge";
-				else if(cp.BuffAtkRange > cp.atkRange)
+				else if(cp.BuffAtkRange > cp.AtkRange)
 					icon += "rengeUP";
 				else
 					icon += "rengeDN";
 				break;
 			case BuffType.Attack:
-				if(cp.Damage == cp.atkPower)
+				if(cp.Damage == cp.AtkPower)
 					icon += "atk";
-				else if(cp.Damage > cp.atkPower)
+				else if(cp.Damage > cp.AtkPower)
 					icon += "atkUP";
 				else
 					icon += "atkDN";
@@ -447,9 +448,9 @@ public class MainInfoUI : MonoBehaviour {
 					icon += "critiqDN";
 				break;
 			case BuffType.Defense:
-				if(cp.ModifiedDefPow == cp.defPower)
+				if(cp.ModifiedDefPow == cp.DefPower)
 					icon += "def";
-				else if(cp.ModifiedDefPow > cp.defPower)
+				else if(cp.ModifiedDefPow > cp.DefPower)
 					icon += "defUP";
 				else
 					icon += "defDN";

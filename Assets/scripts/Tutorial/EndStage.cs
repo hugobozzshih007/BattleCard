@@ -18,7 +18,7 @@ public class EndStage : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if(yellowTower.GetComponent<CharacterProperty>().death){
+		if(yellowTower.GetComponent<CharacterProperty>().Death){
 			playerData.GetComponent<GuardianStorage>().AddingAward(stageAward);
 			playerData = GameObject.Find("PlayerData").transform;
 			GuardianStorage guardians = playerData.GetComponent<GuardianStorage>();
@@ -34,7 +34,7 @@ public class EndStage : MonoBehaviour {
 	
 	void OnGUI(){
 		if(GUI.Button(endRect, nextBut)){
-			yellowTower.GetComponent<CharacterProperty>().death = true;
+			yellowTower.GetComponent<CharacterProperty>().Death = true;
 		}
 	}
 }

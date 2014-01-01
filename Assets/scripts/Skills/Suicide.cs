@@ -47,7 +47,8 @@ public class Suicide : MonoBehaviour, SkillInterface {
 		}
 		int d = attacker.GetComponent<CharacterProperty>().Hp+1;
 		attacker.GetComponent<CharacterProperty>().Hp -= d;
-		DeathUI atkDUI = new DeathUI(attacker, attacker);
+		attacker.GetComponent<CharacterProperty>().UpdateHudText("-"+(d-1).ToString(), Color.green);
+		attacker.GetComponent<SummonFX>().StartDelayDeath(1.5f);
 		
 		if(atkList.Count>0){
 			foreach(Transform target in atkList){
@@ -55,9 +56,9 @@ public class Suicide : MonoBehaviour, SkillInterface {
 				int trueDmg = 5;
 				if(dmg > target.GetComponent<CharacterProperty>().Hp)
 					trueDmg = target.GetComponent<CharacterProperty>().Hp;
-				target.GetComponent<DamageSlidingFX>().ActivateSlidingFX(attacker, trueDmg);
+				target.GetComponent<CharacterProperty>().UpdateHudText("-"+trueDmg.ToString(), Color.green);
 				if(target.GetComponent<CharacterProperty>().Hp <= 0){
-					DeathUI dUI = new DeathUI(target, attacker);
+					target.GetComponent<SummonFX>().StartDelayDeath(1.5f);
 				}
 			}
 		}

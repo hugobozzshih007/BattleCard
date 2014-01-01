@@ -8,10 +8,9 @@ public class CharacterProperty : MonoBehaviour {
 	public string BigIcon_Name = "";
 	public Texture2D BigIcon;
 	public Texture2D SmallIcon;
-	public Texture2D GuardianIcon;
+
 	public Transform DisplayModel;
-	//for new NGUI system
-	//public Transform UIQuickInfo;  
+	 
 	public Transform QuickInfoRealUI;
 	//store it's own HUDtext gameobject 
 	public Transform HUDText;
@@ -21,10 +20,10 @@ public class CharacterProperty : MonoBehaviour {
 	public bool InSelection; 
 	public int Player = 1;
 	public int InitPlayer = 1;
-	public int moveRange = 1; 
-	public int atkRange = 1;
-	public int atkPower = 1; 
-	public int defPower = 1;
+	public int MoveRange = 1; 
+	public int AtkRange = 1;
+	public int AtkPower = 1; 
+	public int DefPower = 1;
 	public int CriticalhitChance = 18;
 	public int SkillRate = 18;
 	public int ModifiedDefPow;
@@ -35,16 +34,15 @@ public class CharacterProperty : MonoBehaviour {
 	public int BuffMoveRange;
 	public int BuffCriticalHit = 18;
 	public int BuffSkillRate = 18;
-	public int summonCost = 2;
 	public int StandByRounds = 2;
 	public int WaitRounds;
-	public bool character = true;
+	//public bool character = true;
 	public bool UnStatus = false;
 	public bool AbleDef = true;
 	public bool Damaged = false;
 	public Dictionary<UnnormalStatus, int> UnStatusCounter;
 	public Dictionary<UnnormalStatus, int> LastUnStatusCounter;
-	public bool death;
+	public bool Death;
 	public bool Ready;
 	public bool TurnFinished = false;
 	public bool Moved = false;
@@ -65,19 +63,9 @@ public class CharacterProperty : MonoBehaviour {
 	//bool summonList;
 	Vector3 noWhere = new Vector3(0.0f,1000.0f,0.0f);
 	Vector3 screenPos;
-	Rect cmdRect, bloodRect, trueBloodRect, rectRedSpot;
-	Rect turnRect; 
-	Rect[] buffRect = new Rect[4];
-	GUIStyle cStyle = new GUIStyle();
+
 	float bloodVolume = 0.0f;
-	Texture2D bloodLine, trueBloodLine, arrowUp, arrowDown, s_Atk, s_Def; 
-	Texture2D turnsFull, turnsTwo, turnsOne, turnsEmpty;
-	Texture2D currentTurn;
-	float bloodWidth = 62.0f/1280.0f*Screen.width; 
-	float bloodHeight = 8.0f/720.0f*Screen.height;
-	float turnsWidth = 62.0f/1280.0f*Screen.width;
-	float turnsHeight = 12.0f/720.0f*Screen.height;
-	
+
 	GeneralSelection currentSel;
 	MainInfoUI infoUI;  
 	// Use this for initialization
@@ -99,10 +87,7 @@ public class CharacterProperty : MonoBehaviour {
 		LastUnStatusCounter.Add(UnnormalStatus.Poisoned,0);
 		LastUnStatusCounter.Add(UnnormalStatus.Sleeping,0);
 		LastUnStatusCounter.Add(UnnormalStatus.Wounded,0);
-		//print("Dictionary length after adds:" + UnStatusCounter.Count);
-		cStyle.normal.textColor = Color.green;
-		cStyle.fontSize = 20; 
-		cStyle.alignment = TextAnchor.MiddleCenter;
+
 		if(Player==1){
 			Moved = false;
 			Attacked = false;
@@ -113,14 +98,14 @@ public class CharacterProperty : MonoBehaviour {
 			Activated = true;
 		}
 		//init initial status
-		death = true;
+		Death = true;
 		Ready = false;
 		Hp = MaxHp;
-		ModifiedDefPow = defPower;
-		Damage = atkPower;
-		BuffAtkRange = atkRange;
+		ModifiedDefPow = DefPower;
+		Damage = AtkPower;
+		BuffAtkRange = AtkRange;
 		BuffCriticalHit = CriticalhitChance;
-		BuffMoveRange = moveRange;
+		BuffMoveRange = MoveRange;
 		BuffSkillRate = SkillRate;
 		
 		if(Player>1)
@@ -130,7 +115,7 @@ public class CharacterProperty : MonoBehaviour {
 		
 		if(Summoner || LeadingCharacter){
 			Ready = true;
-			death = false;
+			Death = false;
 			WaitRounds = 0;
 		}
 		CmdTimes = 3; 
@@ -139,17 +124,7 @@ public class CharacterProperty : MonoBehaviour {
 		if(!currentSel.NpcPlaying && Player==2){
 			CmdTimes = 0;
 		}
-		
-		bloodLine = (Texture2D)Resources.Load("bloodLine");
-		trueBloodLine = GetBloodTexture(Player);
-		turnsFull = (Texture2D)Resources.Load("turns_line_full");
-		turnsEmpty = (Texture2D)Resources.Load("turns_line_empty");
-		turnsOne = (Texture2D)Resources.Load("turns_line_1");
-		turnsTwo = (Texture2D)Resources.Load("turns_line_2");
-		arrowUp = (Texture2D)Resources.Load("arrow_up");
-		arrowDown = (Texture2D)Resources.Load("arrow_down");
-		s_Atk = (Texture2D)Resources.Load("small_attack");
-		s_Def = (Texture2D)Resources.Load("small_def");
+
 		oldHp = Hp+1;
 		arrow = new Texture2D(10, 10);
 		redSpot = (Texture2D)Resources.Load("redSpot");
@@ -163,7 +138,7 @@ public class CharacterProperty : MonoBehaviour {
 		screenPos = Camera.main.WorldToScreenPoint(transform.position);
 		screenPos.y = Screen.height - screenPos.y;
 		
-		if(death){
+		if(Death){
 			transform.position = noWhere;
 			Damaged = false;
 			guiShow = false;
@@ -311,24 +286,7 @@ public class CharacterProperty : MonoBehaviour {
 		transform.GetComponent<CharacterSelect>().AttackRangeList.Clear();
 		return targetLocations;
 	}
-	
-	void GetTurnTexture(int cmdTime){
-		
-		switch(cmdTime){
-			case 1:
-				currentTurn = turnsOne;
-				break;
-			case 2:
-				currentTurn = turnsTwo;
-				break;
-			case 3:
-				currentTurn = turnsFull;
-				break;
-			case 0:
-				currentTurn = turnsEmpty;
-				break;
-		}
-	}
+
 	
 	bool CheckInPlaying(){
 		bool playing = false;
@@ -343,51 +301,18 @@ public class CharacterProperty : MonoBehaviour {
 		
 		return playing;
 	}
-	
-	Texture2D GetTrueArrow(PowerType mode){
-		if(mode == PowerType.Damage){
-			if(Damage > atkPower)
-				arrow = arrowUp;
-			else if(Damage < atkPower)
-				arrow = arrowDown;
-		}else if(mode == PowerType.Defense){
-			if(ModifiedDefPow > defPower)
-				arrow = arrowUp;
-			else if(ModifiedDefPow < defPower)
-				arrow = arrowDown;
-		}
-		return arrow;
-	}
-	
-	void DrawBasicBuffUI(){
-		for(int i=0; i<4; i++){
-			buffRect[i] = new Rect(bloodRect.x + 12*i, bloodRect.y - 12, 10, 10);
-		}
-		if(Damage!=atkPower && ModifiedDefPow!=defPower){
-			GUI.DrawTexture(buffRect[0], s_Atk);
-			GUI.DrawTexture(buffRect[1], GetTrueArrow(PowerType.Damage));
-			GUI.DrawTexture(buffRect[2], s_Def);
-			GUI.DrawTexture(buffRect[3], GetTrueArrow(PowerType.Defense));
-		}else if(Damage!=atkPower && ModifiedDefPow==defPower){
-			GUI.DrawTexture(buffRect[0], s_Atk);
-			GUI.DrawTexture(buffRect[1], GetTrueArrow(PowerType.Damage));
-		}else if(Damage==atkPower && ModifiedDefPow!=defPower){
-			GUI.DrawTexture(buffRect[0], s_Def);
-			GUI.DrawTexture(buffRect[1], GetTrueArrow(PowerType.Defense));
-		}
-		
-	}
+
 
 	//for new NGUI system
 	void UpdateBasicBuffInfo(){
 		if(QuickInfoRealUI){
 			GameObject atkBuffInfo = QuickInfoRealUI.GetChild(1).GetChild(0).gameObject;
 			GameObject defBuffInfo = QuickInfoRealUI.GetChild(1).GetChild(1).gameObject;
-			if(Damage>atkPower){
+			if(Damage>AtkPower){
 				atkBuffInfo.SetActive(true); 
 				atkBuffInfo.transform.GetChild(1).gameObject.SetActive(false);
 				atkBuffInfo.transform.GetChild(0).gameObject.SetActive(true);
-			}else if(Damage == atkPower){
+			}else if(Damage == AtkPower){
 				atkBuffInfo.SetActive(false);
 				atkBuffInfo.transform.GetChild(1).gameObject.SetActive(false);
 				atkBuffInfo.transform.GetChild(0).gameObject.SetActive(false);
@@ -397,11 +322,11 @@ public class CharacterProperty : MonoBehaviour {
 				atkBuffInfo.transform.GetChild(0).gameObject.SetActive(false);
 			}
 
-			if(ModifiedDefPow > defPower){
+			if(ModifiedDefPow > DefPower){
 				defBuffInfo.SetActive(true); 
 				defBuffInfo.transform.GetChild(1).gameObject.SetActive(false);
 				defBuffInfo.transform.GetChild(0).gameObject.SetActive(true);
-			}else if(ModifiedDefPow == defPower){
+			}else if(ModifiedDefPow == DefPower){
 				defBuffInfo.SetActive(false); 
 				defBuffInfo.transform.GetChild(1).gameObject.SetActive(false);
 				defBuffInfo.transform.GetChild(0).gameObject.SetActive(false);
@@ -476,33 +401,5 @@ public class CharacterProperty : MonoBehaviour {
 				QuickInfoRealUI.gameObject.SetActive(false);
 			}
 		}
-	}
-
-	void OnGUI(){
-
-		/*
-		GUI.backgroundColor = Color.clear;
-		GUI.color = new Color(1.0f,1.0f,1.0f,0.75f);
-		GUI.depth = 5; 
-		if(guiShow ){
-			if(CmdTimes<0)
-				CmdTimes = 0;
-			if(!Tower && CheckInPlaying()){
-				turnRect = new Rect(screenPos.x-28, screenPos.y+45+bloodHeight, turnsWidth, turnsHeight);
-				rectRedSpot = new Rect(turnRect.x+turnsWidth+1, turnRect.y+turnsHeight/4, turnsHeight/2, turnsHeight/2);
-				if(!Attacked && !TurnFinished){
-					GUI.DrawTexture(rectRedSpot, redSpot);
-				}
-				GetTurnTexture(CmdTimes);
-				GUI.DrawTexture(turnRect, currentTurn);
-			}
-			
-			bloodRect = new Rect(screenPos.x-28, screenPos.y+45, bloodWidth, bloodHeight);
-			GUI.DrawTexture(bloodRect, bloodLine);
-			trueBloodRect = new Rect(bloodRect.x+2, bloodRect.y+2,bloodVolume, bloodHeight-4); 
-			GUI.DrawTexture(trueBloodRect, trueBloodLine);
-			DrawBasicBuffUI();
-
-		}*/
 	}
 }

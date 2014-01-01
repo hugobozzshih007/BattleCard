@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class UseSkill : MonoBehaviour {
+public class UseSkill : MonoBehaviour { 
 	Transform champ;  
 	SystemSound sysSound;
 	GeneralSelection currentSel;
@@ -19,8 +19,16 @@ public class UseSkill : MonoBehaviour {
 		playerSide = gf.GetComponent<CharacterProperty>().Player;
 	}
 
+	public Transform GetCurrentChamp(){
+		if(champ)
+			return champ;
+		else
+			return null; 
+	}
+
 	public void ActivateSkill(){
 		if(currentSel.Playing && chessUI.PlayerSide == playerSide){
+			currentSel.CleanMapsMat();
 			Transform champSkill = champ.GetComponent<SkillSets>().Skills[0];
 			chessUI.StopSkillRender = false;
 			currentSel.ChessInSelection = champ;

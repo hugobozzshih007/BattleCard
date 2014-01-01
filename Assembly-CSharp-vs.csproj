@@ -283,7 +283,6 @@
      <Compile Include="Assets\scripts\AI\CalculateTactics.cs" />
      <Compile Include="Assets\scripts\AI\CharacterTactics.cs" />
      <Compile Include="Assets\scripts\AI\CommonSkillTP.cs" />
-     <Compile Include="Assets\scripts\AI\Decisions.cs" />
      <Compile Include="Assets\scripts\AI\EnumCommand.cs" />
      <Compile Include="Assets\scripts\AI\FollowCam.cs" />
      <Compile Include="Assets\scripts\AI\NpcPlayer.cs" />
@@ -311,7 +310,6 @@
      <Compile Include="Assets\scripts\Animations\UIDelayFade.cs" />
      <Compile Include="Assets\scripts\Animations\firingArrow.cs" />
      <Compile Include="Assets\scripts\AttackCalFX.cs" />
-     <Compile Include="Assets\scripts\AttackCalculation.cs" />
      <Compile Include="Assets\scripts\BigMap\Basic_UI.cs" />
      <Compile Include="Assets\scripts\BigMap\StageStates.cs" />
      <Compile Include="Assets\scripts\BigMap\SwitchStages.cs" />
@@ -329,8 +327,6 @@
      <Compile Include="Assets\scripts\CommandType.cs" />
      <Compile Include="Assets\scripts\ConnectMasterServer.cs" />
      <Compile Include="Assets\scripts\Cover\DemoUI.cs" />
-     <Compile Include="Assets\scripts\DamageSlidingUI.cs" />
-     <Compile Include="Assets\scripts\DeathUI.cs" />
      <Compile Include="Assets\scripts\DisplayScene\AwardTitle.cs" />
      <Compile Include="Assets\scripts\DisplayScene\DisplayCircular.cs" />
      <Compile Include="Assets\scripts\DisplayScene\FadeOut.cs" />
@@ -342,8 +338,6 @@
      <Compile Include="Assets\scripts\FX\ActivateSkillFX.cs" />
      <Compile Include="Assets\scripts\FX\BuffSlidingFX.cs" />
      <Compile Include="Assets\scripts\FX\CommonFX.cs" />
-     <Compile Include="Assets\scripts\FX\DamageSlidingFX.cs" />
-     <Compile Include="Assets\scripts\FX\DeathFX.cs" />
      <Compile Include="Assets\scripts\FX\EdgeShowUp.cs" />
      <Compile Include="Assets\scripts\FX\HealthCircleEffect.cs" />
      <Compile Include="Assets\scripts\FX\RandomSounds.cs" />
@@ -357,12 +351,9 @@
      <Compile Include="Assets\scripts\InfoUI.cs" />
      <Compile Include="Assets\scripts\LoadingFadeIn.cs" />
      <Compile Include="Assets\scripts\LoadingScreen.cs" />
-     <Compile Include="Assets\scripts\MainInfoUI.cs" />
-     <Compile Include="Assets\scripts\ManaCounter.cs" />
      <Compile Include="Assets\scripts\MapHelper.cs" />
      <Compile Include="Assets\scripts\NameMaps.cs" />
      <Compile Include="Assets\scripts\NetworkLevelLoad.cs" />
-     <Compile Include="Assets\scripts\Occupation.cs" />
      <Compile Include="Assets\scripts\PassiveType.cs" />
      <Compile Include="Assets\scripts\PlayerData\GuardianStorage.cs" />
      <Compile Include="Assets\scripts\PlayerData\PillarData.cs" />
@@ -372,9 +363,7 @@
      <Compile Include="Assets\scripts\Prizes\PlacePrizes.cs" />
      <Compile Include="Assets\scripts\Prizes\PrizeStorage.cs" />
      <Compile Include="Assets\scripts\ProceduralControl.cs" />
-     <Compile Include="Assets\scripts\RaceType.cs" />
      <Compile Include="Assets\scripts\RoundCounter.cs" />
-     <Compile Include="Assets\scripts\RoundUI.cs" />
      <Compile Include="Assets\scripts\SelfDestroy.cs" />
      <Compile Include="Assets\scripts\SixGonRays.cs" />
      <Compile Include="Assets\scripts\Skills\BombAttack.cs" />
@@ -388,7 +377,6 @@
      <Compile Include="Assets\scripts\Skills\GainSelfPowerAndPassive.cs" />
      <Compile Include="Assets\scripts\Skills\IceAttack.cs" />
      <Compile Include="Assets\scripts\Skills\Leadership.cs" />
-     <Compile Include="Assets\scripts\Skills\ManaStealing.cs" />
      <Compile Include="Assets\scripts\Skills\MapStealing.cs" />
      <Compile Include="Assets\scripts\Skills\OneMoreAct.cs" />
      <Compile Include="Assets\scripts\Skills\PoisonAid.cs" />
@@ -404,12 +392,10 @@
      <Compile Include="Assets\scripts\Sound\BGMusic.cs" />
      <Compile Include="Assets\scripts\Sound\SystemSound.cs" />
      <Compile Include="Assets\scripts\StatusMachine.cs" />
-     <Compile Include="Assets\scripts\SummonChamp.cs" />
      <Compile Include="Assets\scripts\SummonLand\EndSummonland.cs" />
      <Compile Include="Assets\scripts\SummonLand\PlaceSummoner.cs" />
      <Compile Include="Assets\scripts\SummonLand\SetTeam.cs" />
      <Compile Include="Assets\scripts\SummonLand\SetTeamTemp.cs" />
-     <Compile Include="Assets\scripts\SummonUI.cs" />
      <Compile Include="Assets\scripts\TalkingContent.cs" />
      <Compile Include="Assets\scripts\TeamEditor\InitTeamEditor.cs" />
      <Compile Include="Assets\scripts\TeamEditor\SetPillars.cs" />
@@ -430,9 +416,13 @@
      <Compile Include="Assets\scripts\Tutorial\TutorStageD.cs" />
      <Compile Include="Assets\scripts\Tutorial\TutorStageE.cs" />
      <Compile Include="Assets\scripts\Tutorial\Tutorial.cs" />
+     <Compile Include="Assets\scripts\UI\MainInfoUI.cs" />
+     <Compile Include="Assets\scripts\UI\RoundUI.cs" />
+     <Compile Include="Assets\scripts\UI\ShowSkillRange.cs" />
+     <Compile Include="Assets\scripts\UI\SummonChamp.cs" />
+     <Compile Include="Assets\scripts\UI\UseSkill.cs" />
      <Compile Include="Assets\scripts\UnNormalSlidingUI.cs" />
      <Compile Include="Assets\scripts\UnnormalStatus.cs" />
-     <Compile Include="Assets\scripts\UseSkill.cs" />
      <Compile Include="Assets\scripts\VFX\PlaneShadows.cs" />
      <Compile Include="Assets\scripts\WinningUI.cs" />
      <Compile Include="Assets\vertexLitShader Package\demoscene\Standard Assets\Character Controllers\Sources\Scripts\MouseLook.cs" />

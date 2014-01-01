@@ -80,7 +80,7 @@ public class UnNormalSlidingUI : MonoBehaviour {
 		GUI.backgroundColor = Color.clear;
 		if(sMachine.InitGame){
 			foreach(Transform gf in rc.AllChesses){
-				if(!gf.GetComponent<CharacterProperty>().death){
+				if(!gf.GetComponent<CharacterProperty>().Death){
 					UnNormalUI unUI = new UnNormalUI(gf);
 					UIItems.Add(unUI);
 				}

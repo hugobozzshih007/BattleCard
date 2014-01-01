@@ -24,7 +24,7 @@ public class PosExchange :MonoBehaviour, SkillInterface{
 		IList selectionRange = new List<Transform>();
 		foreach(Transform chess in chessStorage.AllChesses){
 			CharacterProperty property = chess.GetComponent<CharacterProperty>();
-			if((chess != attacker) && !property.death){
+			if((chess != attacker) && !property.Death){
 				selectionRange.Add(chess.GetComponent<CharacterSelect>().getMapPosition());
 			}
 		}

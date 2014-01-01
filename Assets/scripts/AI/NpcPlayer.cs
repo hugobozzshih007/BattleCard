@@ -6,7 +6,6 @@ using System.Linq;
 
 public class NpcPlayer : MonoBehaviour {
 	GeneralSelection currentSel;
-	Decisions decisions;
 	RoundCounter currentRC;
 	public Transform currentInMove; 
 	Transform lastInMove; 
@@ -35,7 +34,6 @@ public class NpcPlayer : MonoBehaviour {
 	void Start () {
 		InMove = false;
 		InPause = false;
-		decisions = transform.GetComponent<Decisions>();
 		currentSel = Camera.main.GetComponent<GeneralSelection>();
 		currentRC = Camera.main.GetComponent<RoundCounter>();
 		playerBList = new List<Transform>();
@@ -51,7 +49,7 @@ public class NpcPlayer : MonoBehaviour {
 	}
 	
 	public void InsertNewGf(Transform gf){
-		if(gf!=null && !gf.GetComponent<CharacterProperty>().death)
+		if(gf!=null && !gf.GetComponent<CharacterProperty>().Death)
 			firstPhaseList.Add(gf);
 	}
 	
@@ -61,7 +59,7 @@ public class NpcPlayer : MonoBehaviour {
 		GFs.Clear();
 		initPhase = true;
 		foreach(Transform chess in currentRC.PlayerBChesses){
-			if(!chess.GetComponent<CharacterProperty>().death){
+			if(!chess.GetComponent<CharacterProperty>().Death){
 				playerBList.Add(chess);
 			}
 		}
@@ -328,7 +326,6 @@ public class NpcPlayer : MonoBehaviour {
 	
 	bool SummonCommand(Transform chess, Transform gf){
 		bool summoned = false;
-		//Transform gf = decisions.GetSummonGF(chess);
 		Transform map = calTactic.GetSummonPosition(chess);
 		if(gf!=null && map!=null){
 			currentSel.currentGF = gf;
@@ -385,7 +382,7 @@ public class NpcPlayer : MonoBehaviour {
 	}
 	
 	public void ReviveSummoner(Transform masterChess){
-		Transform map = decisions.GetRevivePos();
+		Transform map = calTactic.GetRevivePos();
 		if(map!=null){
 			currentSel.currentGF = masterChess;
 			currentSel.SummonTrueCmd(masterChess, masterChess, map);
@@ -405,9 +402,14 @@ public class NpcPlayer : MonoBehaviour {
 		if(showUp){
 			chess.gameObject.layer = 11;
 			currentSel.MoveToLayer(chess,11);
+			//NGUI
+			chessUI.ActivateInfoUI(chess);
 		}else{
 			chess.gameObject.layer = 10;
 			currentSel.MoveToLayer(chess,10);
+			//for NGUI
+			chessUI.DeactivateInfoUI(1);
+			chessUI.DeactivateInfoUI(2);
 		}
 	}
 	
@@ -419,7 +421,7 @@ public class NpcPlayer : MonoBehaviour {
 		Transform inMove = null;
 		foreach(Transform gf in currentRC.PlayerBChesses){
 			CharacterProperty gfp = gf.GetComponent<CharacterProperty>();
-			if(!gfp.death && gfp.CmdTimes>0 && !gfp.Tower){
+			if(!gfp.Death && gfp.CmdTimes>0 && !gfp.Tower){
 				gfsOnField.Add(gf);
 			}
 		}
@@ -540,7 +542,7 @@ public class NpcPlayer : MonoBehaviour {
 			if(currentCmdList.Count>2 && !CheckDeath(currentInMove)){
 				IList liveList = new List<Transform>();
 				foreach(Transform gf in currentRC.PlayerBChesses){
-					if(!gf.GetComponent<CharacterProperty>().death)
+					if(!gf.GetComponent<CharacterProperty>().Death)
 						liveList.Add(gf);
 				}
 				if(liveList.Count > firstPhaseList.Count){
@@ -571,7 +573,7 @@ public class NpcPlayer : MonoBehaviour {
 	}
 	
 	bool CheckDeath(Transform chess){
-		return chess.GetComponent<CharacterProperty>().death;  
+		return chess.GetComponent<CharacterProperty>().Death;  
 	}
 	
 	
@@ -582,7 +584,7 @@ public class NpcPlayer : MonoBehaviour {
 			foreach(Transform chess in playerBList){
 				//NpcCommands endCmd = new NpcCommands(UICommands.Turnfinished, null);
 				//ExcuteCommand(chess,endCmd);
-				if(!chess.GetComponent<CharacterProperty>().death){
+				if(!chess.GetComponent<CharacterProperty>().Death){
 					ShowSelection(chess, false);
 					chess.GetComponent<CharacterProperty>().TurnFinished = true;
 					chess.GetComponent<CharacterProperty>().CmdTimes = 0;

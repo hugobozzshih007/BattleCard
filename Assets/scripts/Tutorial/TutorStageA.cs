@@ -80,7 +80,7 @@ public class TutorStageA : MonoBehaviour {
 		tutorMom.ShowContinue(true);
 		root = GameObject.Find("unit_start_point_A").transform;
 		currentSel.updateMapSteps();
-		mainS.findMoveRange(root, 0, mainP.moveRange);
+		mainS.findMoveRange(root, 0, mainP.MoveRange);
 		showUI = true;
 		foreach(Transform m in mainS.MoveRangeList){
 			moveList.Add(m);
@@ -242,7 +242,7 @@ public class TutorStageA : MonoBehaviour {
 					contentIndex+=1;
 					chessUI.SomeoneTaking(MainCharacter, content[contentIndex], false);
 				}else if(contentIndex == 14){
-					DeathUI dUI = new DeathUI(MainCharacter,MainCharacter);
+					MainCharacter.GetComponent<SummonFX>().StartDelayDeath(0.2f);
 					tutorMom.ResetMap(0);
 					tutorMom.ShowContinue(false);
 					nextStage.StartPause(3.0f);

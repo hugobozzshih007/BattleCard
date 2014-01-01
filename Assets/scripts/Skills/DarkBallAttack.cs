@@ -7,12 +7,10 @@ public class DarkBallAttack : MonoBehaviour, SkillInterface{
 	Transform attacker;
 	Transform model; 
 	int damage = 2;
-	DamageSlidingUI sUI;
 	// Use this for initialization
 	void Start () {
 		attacker = transform.parent.parent; 
 		model = attacker.Find("Models");
-		sUI = Camera.mainCamera.GetComponent<DamageSlidingUI>();
 	}
 	public void InsertSelection (Transform map)
 	{
@@ -73,8 +71,9 @@ public class DarkBallAttack : MonoBehaviour, SkillInterface{
 		atkList = GetTargets();
 		if(atkList.Count>0){
 			foreach(Transform gf in atkList){
-				DamageSlidingFX gfDFX = gf.GetComponent<DamageSlidingFX>();
-				gfDFX.ActivateSlidingFX(attacker, damage);
+				//DamageSlidingFX gfDFX = gf.GetComponent<DamageSlidingFX>();
+				//gfDFX.ActivateSlidingFX(attacker, damage);
+				gf.GetComponent<CharacterProperty>().UpdateHudText("-"+damage.ToString(),Color.green);
 			}
 		}
 	}

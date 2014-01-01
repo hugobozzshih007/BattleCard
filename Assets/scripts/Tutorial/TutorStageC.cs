@@ -97,7 +97,7 @@ public class TutorStageC : MonoBehaviour {
 				gfClone.gameObject.layer = 10;
 				currentRC.PlayerAChesses.Add(gfClone);
 				currentRC.AllChesses.Add(gfClone);
-				gfClone.GetComponent<CharacterProperty>().death = true;
+				gfClone.GetComponent<CharacterProperty>().Death = true;
 				gfClone.GetComponent<CharacterProperty>().Player = 1;
 				gfClone.GetComponent<CharacterProperty>().InitPlayer = 1;
 			}
@@ -165,7 +165,7 @@ public class TutorStageC : MonoBehaviour {
 		bool check = false;
 		Transform archer = (Transform)currentRC.PlayerAChesses[1];
 		CharacterProperty archerP = archer.GetComponent<CharacterProperty>();
-		if(!archerP.death){
+		if(!archerP.Death){
 			check = true;
 			arrowOn[2] = aUI.HideArrow();
 		}
@@ -182,7 +182,7 @@ public class TutorStageC : MonoBehaviour {
 		CharacterProperty archerP = archer.GetComponent<CharacterProperty>();
 		archerP.CmdTimes = 0;
 		archerP.TurnFinished = true;
-		if(archerP.Damage > archerP.atkPower){
+		if(archerP.Damage > archerP.AtkPower){
 			check = true;
 		}
 		if(!check && mainP.CmdTimes == 0){
@@ -341,8 +341,8 @@ public class TutorStageC : MonoBehaviour {
 					contentIndex+=1;
 					chessUI.SomeoneTaking(MainCharacter, content[contentIndex], false);
 				}else if(contentIndex == 18){
-					DeathUI dUI = new DeathUI(MainCharacter,MainCharacter);
-					DeathUI dUIB = new DeathUI(archerInstance,archerInstance);
+					MainCharacter.GetComponent<SummonFX>().StartDelayDeath(0.2f);
+					archerInstance.GetComponent<SummonFX>().StartDelayDeath(0.2f);
 					tutorMom.ShowContinue(false);
 					//chessUI.FadeOutUI();
 					showUI = false;

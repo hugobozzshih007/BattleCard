@@ -31,7 +31,7 @@ public class Tower : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if(towerProperty.death && !deadExcuted){
+		if(towerProperty.Death && !deadExcuted){
 			
 			if(FixedMaps.Count>0){
 				foreach(Transform maps in FixedMaps){
@@ -50,7 +50,7 @@ public class Tower : MonoBehaviour {
 			deadExcuted = true;
 		}
 		
-		if(!towerProperty.death && !liveExcuted){
+		if(!towerProperty.Death && !liveExcuted){
 			deadExcuted = false;
 			Transform localMap = transform.GetComponent<CharacterSelect>().getMapPosition();
 			FixedMaps.Add(localMap);

@@ -56,7 +56,7 @@ public class BGMusic : MonoBehaviour {
 		StageState ss = StageState.InitMoment;
 		int people = 0;  
 		foreach(Transform gf in currentRC.AllChesses){
-			if(!gf.GetComponent<CharacterProperty>().death){
+			if(!gf.GetComponent<CharacterProperty>().Death){
 				people+=1;
 			}
 		}

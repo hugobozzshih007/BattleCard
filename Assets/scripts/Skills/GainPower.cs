@@ -44,7 +44,7 @@ public class GainPower : MonoBehaviour, SkillInterface {
 			
 		foreach(Transform chess in playerSide){
 			CharacterProperty property = chess.GetComponent<CharacterProperty>();
-			if(!property.death){
+			if(!property.Death){
 				selectionRange.Add(chess.GetComponent<CharacterSelect>().getMapPosition());
 			}
 		}

@@ -32,14 +32,14 @@ public class CtrlStealing : MonoBehaviour, SkillInterface{
 		if(Player == 1){
 			foreach(Transform chess in chessStorage.PlayerBChesses){
 				CharacterProperty property = chess.GetComponent<CharacterProperty>();
-				if(!property.death && !property.Summoner){
+				if(!property.Death && !property.Summoner){
 					selectionRange.Add(chess.GetComponent<CharacterSelect>().getMapPosition());
 				}
 			}
 		}else if(Player == 2){
 			foreach(Transform chess in chessStorage.PlayerAChesses){
 				CharacterProperty property = chess.GetComponent<CharacterProperty>();
-				if(!property.death && !property.Summoner){
+				if(!property.Death && !property.Summoner){
 					selectionRange.Add(chess.GetComponent<CharacterSelect>().getMapPosition());
 				}
 			}

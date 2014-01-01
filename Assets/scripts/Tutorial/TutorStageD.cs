@@ -231,7 +231,7 @@ public class TutorStageD : MonoBehaviour {
 					contentIndex+=1;
 					chessUI.SomeoneTaking(MainCharacter, content[contentIndex], false);
 				}else if(contentIndex == 10){
-					DeathUI dUI = new DeathUI(MainCharacter,MainCharacter);
+					MainCharacter.GetComponent<SummonFX>().StartDelayDeath(0.2f);
 					tutorMom.ResetMap(0);
 					tutorMom.ShowContinue(false);
 					//chessUI.FadeOutUI();

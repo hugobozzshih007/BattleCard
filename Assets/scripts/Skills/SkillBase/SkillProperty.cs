@@ -23,7 +23,7 @@ public class SkillProperty : MonoBehaviour{
 		PassSkillRate = false;
 		SkillReady = false;
 		character = transform.parent.parent;
-		if(character.GetComponent<CharacterProperty>().Summoner && !character.GetComponent<CharacterProperty>().death){
+		if(character.GetComponent<CharacterProperty>().Summoner && !character.GetComponent<CharacterProperty>().Death){
 			DefaultCDRounds();
 		}
 	}

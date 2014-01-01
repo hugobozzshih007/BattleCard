@@ -141,7 +141,7 @@ public class RoundCounter : MonoBehaviour {
 				Transform gfClone = Instantiate(gf,noWhere,Quaternion.identity) as Transform;
 				gfClone.gameObject.layer = 10;
 				PlayerAChesses.Add(gfClone);
-				gfClone.GetComponent<CharacterProperty>().death = true;
+				gfClone.GetComponent<CharacterProperty>().Death = true;
 				gfClone.GetComponent<CharacterProperty>().Player = 1;
 				gfClone.GetComponent<CharacterProperty>().InitPlayer = 1;
 			}
@@ -152,7 +152,7 @@ public class RoundCounter : MonoBehaviour {
 				Transform gfClone = Instantiate(gf,noWhere,Quaternion.identity) as Transform;
 				gfClone.gameObject.layer = 10;
 				PlayerBChesses.Add(gfClone);
-				gfClone.GetComponent<CharacterProperty>().death = true;
+				gfClone.GetComponent<CharacterProperty>().Death = true;
 				gfClone.GetComponent<CharacterProperty>().Player = playerB.GetComponent<CharacterProperty>().Player;
 				gfClone.GetComponent<CharacterProperty>().InitPlayer = playerB.GetComponent<CharacterProperty>().Player;
 			}
@@ -365,7 +365,7 @@ public class RoundCounter : MonoBehaviour {
 	bool CheckRound(IList chesses){
 		bool phaseEnd = false;
 		foreach(Transform gf in chesses){
-			if(!gf.GetComponent<CharacterProperty>().death){
+			if(!gf.GetComponent<CharacterProperty>().Death){
 				if(!gf.GetComponent<CharacterProperty>().TurnFinished){
 					phaseEnd = false;
 					break;
@@ -381,7 +381,7 @@ public class RoundCounter : MonoBehaviour {
 	bool checkAllDeath(IList chesses){
 		bool allDeath = false;
 		foreach(Transform gf in chesses){
-			if(!gf.GetComponent<CharacterProperty>().death){
+			if(!gf.GetComponent<CharacterProperty>().Death){
 				allDeath = false;
 				break;
 			}else{
@@ -413,7 +413,7 @@ public class RoundCounter : MonoBehaviour {
 			CharacterProperty cProperty = chess.GetComponent<CharacterProperty>();
 			cProperty.UnStatus = false;
 			List<UnnormalStatus> keys = new List<UnnormalStatus>(cProperty.UnStatusCounter.Keys);
-			if(!cProperty.death){
+			if(!cProperty.Death){
 				foreach(UnnormalStatus key in keys){
 					if(cProperty.UnStatusCounter[key] > 0){
 						cProperty.UnStatus = true;
@@ -472,7 +472,7 @@ public class RoundCounter : MonoBehaviour {
 	
 	void updateExtraBuff(IList chesses){
 		foreach(Transform gf in chesses){
-			if(!gf.GetComponent<CharacterProperty>().death){
+			if(!gf.GetComponent<CharacterProperty>().Death){
 				//foreach(BuffType Buff in Enum.GetValues(typeof(BuffType))){
 					if(MapHelper.CheckPassive(PassiveType.DefenseAddOne, gf))
 						gf.GetComponent<BuffList>().ExtraDict[BuffType.Defense] = 0;
@@ -517,7 +517,7 @@ public class RoundCounter : MonoBehaviour {
 	
 	void updateSkillCDRounds(){
 		foreach(Transform gf in AllChesses){
-			if(!gf.GetComponent<CharacterProperty>().death){
+			if(!gf.GetComponent<CharacterProperty>().Death){
 				Transform[] skills = gf.GetComponent<SkillSets>().Skills;
 				foreach(Transform skill in skills){
 					SkillProperty gfSp = skill.GetComponent<SkillProperty>();
@@ -532,7 +532,7 @@ public class RoundCounter : MonoBehaviour {
 	
 	void updatePassive(IList chesses){
 		foreach(Transform chess in chesses){
-			if(!chess.GetComponent<CharacterProperty>().death){
+			if(!chess.GetComponent<CharacterProperty>().Death){
 				CharacterPassive chessPassive = chess.GetComponent<CharacterPassive>();
 				foreach(PassiveType passive in Enum.GetValues(typeof(PassiveType))){
 					if(passive == PassiveType.Flying)
@@ -551,7 +551,7 @@ public class RoundCounter : MonoBehaviour {
 		Transform liveOne = null;
 		if(player ==1){
 			foreach(Transform chess in PlayerAChesses){
-				if(!chess.GetComponent<CharacterProperty>().death){
+				if(!chess.GetComponent<CharacterProperty>().Death){
 					liveOne = chess;
 					break;
 				}
@@ -561,7 +561,7 @@ public class RoundCounter : MonoBehaviour {
 				liveOne = playerB;
 			}else{
 				foreach(Transform chess in PlayerBChesses){
-					if(!chess.GetComponent<CharacterProperty>().death){
+					if(!chess.GetComponent<CharacterProperty>().Death){
 						liveOne = chess;
 						break;
 					}
@@ -574,7 +574,7 @@ public class RoundCounter : MonoBehaviour {
 	
 	void revivePlayer(Transform player){
 		CharacterProperty property = player.GetComponent<CharacterProperty>();
-		if(property.death && property.Ready){
+		if(property.Death && property.Ready){
 			if(npcMode && currentSel.player == playerB){
 				npc.ReviveSummoner(player);
 			}else
@@ -723,11 +723,11 @@ public class RoundCounter : MonoBehaviour {
 	void OnApplicationQuit(){
 		foreach(Transform gf in playerA.GetComponent<CharacterProperty>().soldiers){
 			if(gf!=null)
-				gf.GetComponent<CharacterProperty>().death = true;
+				gf.GetComponent<CharacterProperty>().Death = true;
 		}
 		foreach(Transform gf in playerB.GetComponent<CharacterProperty>().soldiers){
 			if(gf!=null)
-				gf.GetComponent<CharacterProperty>().death = true;
+				gf.GetComponent<CharacterProperty>().Death = true;
 		}
 	}
 	

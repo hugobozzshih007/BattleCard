@@ -14,8 +14,7 @@ public class SetTeam : MonoBehaviour {
 			sp.Summoner = true;
 			sp.InitPlayer = 1;
 			sp.Player = 1;
-			sp.summonCost = 0;
-			sp.death = false;
+			sp.Death = false;
 			sp.TurnFinished = false;
 			int num = gfStore.SelectedGFs.Count; 
 			if(num>0){
@@ -26,7 +25,7 @@ public class SetTeam : MonoBehaviour {
 			foreach(Transform gf in sp.soldiers){
 				CharacterProperty gfp = gf.GetComponent<CharacterProperty>();
 				gfp.Summoner = false;
-				gfp.death = true;
+				gfp.Death = true;
 			}
 			summoner.parent = ps.SummonerA;   
 			Camera.mainCamera.GetComponent<RoundCounter>().SetPlayerChesses();

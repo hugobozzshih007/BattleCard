@@ -231,7 +231,9 @@ public class GeneralSelection : MonoBehaviour {
 			//screenPos.y = Screen.height - screenPos.y;
 		}
 	}
-	
+
+
+
 	public void SummonTrueCmd(Transform currentChess,Transform gf, Transform map){
 		gf.position = map.position;
 		CharacterProperty gfp = gf.GetComponent<CharacterProperty>();
@@ -257,7 +259,7 @@ public class GeneralSelection : MonoBehaviour {
 			DefenseCommand(gf);
 		}
 		
-		gfp.death = false;
+		gfp.Death = false;
 		gfp.Attacked = true;
 		gfp.Activated = true;
 		gfp.CmdTimes = 0;
@@ -643,7 +645,7 @@ public class GeneralSelection : MonoBehaviour {
 	
 	public void updateAllCharactersPowers(){
 		foreach(Transform character in players.AllChesses){
-			if(!character.GetComponent<CharacterProperty>().death)
+			if(!character.GetComponent<CharacterProperty>().Death)
 				updateCharacterPowers(character);
 		}
 	}
@@ -691,11 +693,11 @@ public class GeneralSelection : MonoBehaviour {
 			updateAllCharactersPowers();
 			if(chess!=null){
 				//updateMapSteps();
-				AttackCalculation attackerCal = new AttackCalculation(chess);
+				AttackCalFX attackerCal = transform.GetComponent<AttackCalFX>();
 				CharacterSelect character = chess.GetComponent<CharacterSelect>();
 				Transform currentPos = character.getMapPosition();
 				if(currentPos!=null){
-					attackableLists = attackerCal.GetAttableTarget(attackerCal.Attacker);
+					attackableLists = attackerCal.GetAttackableTarget(chess);
 					if(attackableLists.Count>0){
 						foreach(Transform sixGon in attackableLists){
 							sixGon.renderer.material= GetEnemyMat(sixGon);
@@ -804,7 +806,7 @@ public class GeneralSelection : MonoBehaviour {
 		neighbors.Clear();
 		updateAllCharactersPowers();
 		CharacterProperty chessP = chess.GetComponent<CharacterProperty>();
-		if(chessP!=null && !chessP.death){
+		if(chessP!=null && !chessP.Death){
 			CharacterSelect character = chess.GetComponent<CharacterSelect>();
 			Transform currentPos = character.getMapPosition();
 			if(currentPos!=null){
@@ -869,16 +871,18 @@ public class GeneralSelection : MonoBehaviour {
 	}
 	
 	public void RenderSkillRange(Transform gf){
-		CleanSkillMapMat();
-		CharacterSelect character = gf.GetComponent<CharacterSelect>();
-		Transform currentPos = character.getMapPosition();
-		Transform skill = gf.GetComponent<SkillSets>().Skills[0];
-		if(currentPos!=null){
-			SkillInterface cSkill = skill.GetComponent(skill.GetComponent<SkillProperty>().ScriptName) as SkillInterface;
-			skillrollOverList = cSkill.GetSelectionRange();
-			if(skillrollOverList.Count > 0){
-				foreach(Transform sixGon in skillrollOverList){
-					sixGon.renderer.material= rollOverSkill;
+		if(!gf.GetComponent<CharacterProperty>().Death){
+			CleanSkillMapMat();
+			CharacterSelect character = gf.GetComponent<CharacterSelect>();
+			Transform currentPos = character.getMapPosition();
+			Transform skill = gf.GetComponent<SkillSets>().Skills[0];
+			if(currentPos!=null){
+				SkillInterface cSkill = skill.GetComponent(skill.GetComponent<SkillProperty>().ScriptName) as SkillInterface;
+				skillrollOverList = cSkill.GetSelectionRange();
+				if(skillrollOverList.Count > 0){
+					foreach(Transform sixGon in skillrollOverList){
+						sixGon.renderer.material= rollOverSkill;
+					}
 				}
 			}
 		}
@@ -1201,7 +1205,7 @@ public class GeneralSelection : MonoBehaviour {
 		Transform chess = GameObject.Find(chessName).transform;
 		CharacterProperty chessProperty = chess.GetComponent<CharacterProperty>();
 		chessProperty.Hp = chessProperty.MaxHp;
-		chessProperty.death = false;
+		chessProperty.Death = false;
 		chessProperty.Attacked = true;
 		chessProperty.Activated = true;
 		chessProperty.Moved = true;

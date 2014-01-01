@@ -20,6 +20,8 @@ public class SummonChamp : MonoBehaviour {
 		playerSide = gf.GetComponent<CharacterProperty>().Player;
 	}
 
+
+
 	public void ShowTheSummonField(){
 		if(!currentSel.reviveMode && currentSel.Playing && chessUI.PlayerSide == playerSide){
 			if(gf && player){

@@ -49,7 +49,7 @@ namespace MapUtility{
 			bool tower = false;
 			foreach(Transform gf in RC.AllChesses){
 				CharacterProperty gfp = gf.GetComponent<CharacterProperty>();
-				if(!gfp.death && gfp.Tower){
+				if(!gfp.Death && gfp.Tower){
 					tower = true;
 					break;
 				}
@@ -62,7 +62,7 @@ namespace MapUtility{
 			IList towerMaps = new List<Transform>();
 			foreach(Transform gf in RC.AllChesses){
 				CharacterProperty gfp = gf.GetComponent<CharacterProperty>();
-				if(!gfp.death && gfp.Tower){
+				if(!gfp.Death && gfp.Tower){
 					IList defRange = gf.GetComponent<Tower>().GetDefRange();
 					if(defRange.Count>0){
 						foreach(Transform map in defRange){
@@ -139,8 +139,8 @@ namespace MapUtility{
 			MoveCharacter mc = Camera.main.GetComponent<MoveCharacter>();
 			bool able = false;
 			if(!mc.MoveMode){
-				AttackCalculation atc = new AttackCalculation(chess);
-				able = (atc.GetAttableTarget(atc.Attacker).Count>0);
+				AttackCalFX atc = Camera.main.GetComponent<AttackCalFX>();
+				able = (atc.GetAttackableTarget(chess).Count>0);
 			}else{
 				able = false;
 			}

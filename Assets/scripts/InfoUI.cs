@@ -18,25 +18,25 @@ public class InfoUI : MonoBehaviour {
 		CharacterProperty cp = chess.GetComponent<CharacterProperty>();
 		switch(mode){
 			case BuffType.MoveRange:
-				if(cp.BuffMoveRange == cp.moveRange)
+				if(cp.BuffMoveRange == cp.MoveRange)
 					icon = Move[0];
-				else if(cp.BuffMoveRange > cp.moveRange)
+				else if(cp.BuffMoveRange > cp.MoveRange)
 					icon = Move[1];
 				else
 					icon = Move[2];
 				break;
 			case BuffType.AttackRange:
-				if(cp.BuffAtkRange == cp.atkRange)
+				if(cp.BuffAtkRange == cp.AtkRange)
 					icon = Range[0];
-				else if(cp.BuffAtkRange > cp.atkRange)
+				else if(cp.BuffAtkRange > cp.AtkRange)
 					icon = Range[1];
 				else
 					icon = Range[2];
 				break;
 			case BuffType.Attack:
-				if(cp.Damage == cp.atkPower)
+				if(cp.Damage == cp.AtkPower)
 					icon = Damage[0];
-				else if(cp.Damage > cp.atkPower)
+				else if(cp.Damage > cp.AtkPower)
 					icon = Damage[1];
 				else
 					icon = Damage[2];
@@ -58,9 +58,9 @@ public class InfoUI : MonoBehaviour {
 					icon = Critiq[2];
 				break;
 			case BuffType.Defense:
-				if(cp.ModifiedDefPow == cp.defPower)
+				if(cp.ModifiedDefPow == cp.DefPower)
 					icon = Defense[0];
-				else if(cp.ModifiedDefPow > cp.defPower)
+				else if(cp.ModifiedDefPow > cp.DefPower)
 					icon = Defense[1];
 				else
 					icon = Defense[2];
@@ -89,17 +89,17 @@ public class InfoUI : MonoBehaviour {
 		*/
 		Rect moveIcon = new Rect(30,8,sq,sq);
 		GUI.DrawTexture(moveIcon,Move[0]);
-		GUI.Label(new Rect(moveIcon.x+sq+seg,moveIcon.y,sq,sq),cp.moveRange.ToString(),style);
+		GUI.Label(new Rect(moveIcon.x+sq+seg,moveIcon.y,sq,sq),cp.MoveRange.ToString(),style);
 		GUI.DrawTexture(new Rect(moveIcon.x+sq*2+seg*2,moveIcon.y,sq,sq),Range[0]);
-		GUI.Label(new Rect(moveIcon.x+sq*3+seg*3,moveIcon.y,sq,sq),cp.atkRange.ToString(),style);
+		GUI.Label(new Rect(moveIcon.x+sq*3+seg*3,moveIcon.y,sq,sq),cp.AtkRange.ToString(),style);
 		GUI.DrawTexture(new Rect(moveIcon.x+sq*4+seg*4,moveIcon.y,sq,sq),Damage[0]);
-		GUI.Label(new Rect(moveIcon.x+sq*5+seg*5,moveIcon.y,sq,sq),cp.atkPower.ToString(),style);
+		GUI.Label(new Rect(moveIcon.x+sq*5+seg*5,moveIcon.y,sq,sq),cp.AtkPower.ToString(),style);
 		GUI.DrawTexture(new Rect(moveIcon.x+sq*6+seg*6,moveIcon.y,sq,sq),Hp[0]);
 		GUI.Label(new Rect(moveIcon.x+sq*7+seg*7,moveIcon.y,sq,sq),cp.MaxHp.ToString(),style);
 		GUI.DrawTexture(new Rect(moveIcon.x+sq*8+seg*8,moveIcon.y,sq,sq),Critiq[0]);
 		GUI.Label(new Rect(moveIcon.x+sq*9+seg*9,moveIcon.y,sq*3,sq),cp.CriticalhitChance.ToString(),style);
 		GUI.DrawTexture(new Rect(moveIcon.x+sq*10+seg*10,moveIcon.y,sq,sq),Defense[0]);
-		GUI.Label(new Rect(moveIcon.x+sq*11+seg*11,moveIcon.y,sq*3,sq),cp.defPower.ToString(),style);
+		GUI.Label(new Rect(moveIcon.x+sq*11+seg*11,moveIcon.y,sq*3,sq),cp.DefPower.ToString(),style);
 		Rect posPass = new Rect(moveIcon.x+sq*11+seg*11,8,sq,sq);
 		if(cpp.PassiveAbility.Length>0){
 			int sg = 1; sq = 24;

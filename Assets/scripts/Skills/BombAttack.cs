@@ -8,12 +8,10 @@ public class BombAttack : MonoBehaviour, SkillInterface {
 	int damage;
 	int skillRate;
 	Transform attacker, target, targetMap;
-	DamageSlidingUI sUI;
 	
 	// Use this for initialization
 	void Start () {
 		damage = 1;
-		sUI = Camera.mainCamera.GetComponent<DamageSlidingUI>();
 		attacker = transform.parent.parent;
 		models = attacker.Find("Models");
 	}
@@ -27,8 +25,8 @@ public class BombAttack : MonoBehaviour, SkillInterface {
 	public IList GetSelectionRange ()
 	{
 		IList selectionRange = new List<Transform>();
-		AttackCalculation atkCal = new AttackCalculation(attacker);
-		foreach(Transform map in atkCal.GetMagicTarget(atkCal.Attacker)){
+		AttackCalFX atkCal = Camera.main.GetComponent<AttackCalFX>();
+		foreach(Transform map in atkCal.GetMagicTarget(attacker)){
 			selectionRange.Add(map);
 		}
 		return selectionRange;
@@ -40,8 +38,9 @@ public class BombAttack : MonoBehaviour, SkillInterface {
 	}
 	
 	void ShowDamageUI(Transform target,int damage, Transform atk){
-		DamageSlidingFX targetSFX = target.GetComponent<DamageSlidingFX>();
-		targetSFX.ActivateSlidingFX(atk, damage);
+		//DamageSlidingFX targetSFX = target.GetComponent<DamageSlidingFX>();
+		//targetSFX.ActivateSlidingFX(atk, damage);
+		target.GetComponent<CharacterProperty>().UpdateHudText("-"+damage.ToString(),Color.green);
 	}
 	
 	public void CalculateDamage(){

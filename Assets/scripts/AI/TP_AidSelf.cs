@@ -57,8 +57,8 @@ public class TP_AidSelf : MonoBehaviour, CommonSkillTP {
 	
 	int GetAtkTP(Transform map){
 		int tPoint = 0;
-		AttackCalculation attackerCal = new AttackCalculation(transform);
-		IList attackableLists = attackerCal.GetAttableTarget(attackerCal.Attacker);
+		AttackCalFX attackerCal = Camera.main.GetComponent<AttackCalFX>();
+		IList attackableLists = attackerCal.GetAttackableTarget(transform);
 		float midTarget = 3.0f;
 		tPoint = Mathf.RoundToInt(((float)attackableLists.Count / midTarget)*skillScore);
 		return tPoint;

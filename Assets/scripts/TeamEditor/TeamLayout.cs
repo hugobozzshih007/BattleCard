@@ -199,10 +199,10 @@ public class TeamLayout : MonoBehaviour {
 			GUI.DrawTexture(bigIconRect, bigIcon);
 			GUI.Label(nameRect, property.NameString, gStyle);
 			//statics
-			GUI.Label(staticRects[0], property.defPower.ToString(), bStyle);
-			GUI.Label(staticRects[1], property.atkPower.ToString(), bStyle);
-			GUI.Label(staticRects[2], property.moveRange.ToString(), bStyle);
-			GUI.Label(staticRects[3], property.atkRange.ToString(), bStyle);
+			GUI.Label(staticRects[0], property.DefPower.ToString(), bStyle);
+			GUI.Label(staticRects[1], property.AtkPower.ToString(), bStyle);
+			GUI.Label(staticRects[2], property.MoveRange.ToString(), bStyle);
+			GUI.Label(staticRects[3], property.AtkRange.ToString(), bStyle);
 			GUI.Label(staticRects[4], property.SkillRate.ToString(), bStyle);
 			GUI.Label(staticRects[5], property.CriticalhitChance.ToString(), bStyle);
 			GUI.Label(staticRects[6], property.MaxHp.ToString(), bStyle);
